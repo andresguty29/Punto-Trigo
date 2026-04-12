@@ -1,0 +1,10 @@
+node_modules/
+dist/
+coverage/
+.angular/
+.env
+.env.local
+*.log
+apps/frontend/.angular/
+apps/frontend/dist/
+services/*/dist/

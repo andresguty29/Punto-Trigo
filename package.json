@@ -1,0 +1,19 @@
+{
+  "name": "puntotrigo-platform",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/frontend",
+    "services/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:frontend": "npm run start -w @puntotrigo/frontend",
+    "build:frontend": "npm run build -w @puntotrigo/frontend",
+    "dev:gateway": "npm run dev -w @puntotrigo/api-gateway",
+    "build:gateway": "npm run build -w @puntotrigo/api-gateway"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

@@ -1,0 +1,31 @@
+<svg width="720" height="200" viewBox="0 0 720 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="720" height="200" rx="28" fill="white"/>
+  <path d="M111 59C96 56 81 65 77 79C72 95 81 109 96 111C106 112 114 109 119 102" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+  <path d="M96 39C71 29 36 40 29 67" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+  <path d="M124 95L157 61L194 61" stroke="#111111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M160 48C165 38 163 27 157 20" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+  <path d="M180 48C185 38 183 27 177 20" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+  <path d="M200 48C205 38 203 27 197 20" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+  <path d="M52 53C46 36 58 20 79 20C94 20 100 29 111 29C124 29 129 20 145 20C168 20 180 39 173 57" stroke="#111111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M39 113H96" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+  <path d="M39 113V189" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+  <path d="M163 63L114 113V189" stroke="#111111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M194 61L227 61" stroke="#D8943D" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="103" cy="73" r="4" fill="#111111"/>
+  <circle cx="119" cy="74" r="4" fill="#111111"/>
+  <path d="M46 189H170" stroke="#111111" stroke-width="4" stroke-linecap="round"/>
+  <g opacity="0.95">
+    <path d="M280 120C293 97 298 74 296 50" stroke="#E1B35A" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M284 82C274 78 269 69 268 55" stroke="#E1B35A" stroke-width="4" stroke-linecap="round"/>
+    <path d="M291 91C281 87 275 77 274 62" stroke="#E1B35A" stroke-width="4" stroke-linecap="round"/>
+    <path d="M297 101C286 96 281 85 280 70" stroke="#E1B35A" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <g opacity="0.95">
+    <path d="M668 120C655 97 650 74 652 50" stroke="#E1B35A" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M664 82C674 78 679 69 680 55" stroke="#E1B35A" stroke-width="4" stroke-linecap="round"/>
+    <path d="M657 91C667 87 673 77 674 62" stroke="#E1B35A" stroke-width="4" stroke-linecap="round"/>
+    <path d="M651 101C662 96 667 85 668 70" stroke="#E1B35A" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <text x="365" y="88" text-anchor="middle" font-family="'Bebas Neue', sans-serif" font-size="82" letter-spacing="2" fill="#0D75BC">PANADERIA</text>
+  <text x="470" y="165" text-anchor="middle" font-family="'Brush Script MT', cursive" font-size="92" fill="#EF2F4F">La Florida</text>
+</svg>

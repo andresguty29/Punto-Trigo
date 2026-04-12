@@ -1,0 +1,63 @@
+<div class="page-shell">
+  <header class="navbar">
+    <nav class="nav-section nav-left">
+      <a href="#dashboard">Dashboard</a>
+      <a href="#help">Ayuda</a>
+    </nav>
+
+    <div class="brand-container">
+      <div class="brand-logo">
+        <h1>Punto Trigo</h1>
+        <p class="brand-tagline">Sistema de Panadería</p>
+      </div>
+    </div>
+
+    <nav class="nav-section nav-right">
+      <button class="icon-btn" aria-label="Notificaciones" title="Notificaciones">
+        <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+        <span class="badge">3</span>
+      </button>
+      <button class="icon-btn" aria-label="Perfil de usuario" title="Perfil">
+        <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="welcome-section" id="dashboard">
+      <div class="welcome-header">
+        <h2>Bienvenido a Punto Trigo</h2>
+        <p>Plataforma operativa para la gestión integral de Panadería La Florida</p>
+      </div>
+    </section>
+
+    <section class="modules-section">
+      <div class="modules-container">
+        @for (module of modules; track module.key) {
+          <article class="module-card" [style.--card-accent]="module.accent">
+            <div class="module-header">
+              <h3>{{ module.name }}</h3>
+              <span class="module-tag">{{ module.tag }}</span>
+            </div>
+            
+            <p class="module-description">{{ module.description }}</p>
+            
+            <ul class="module-features">
+              @for (point of module.points; track point) {
+                <li>✓ {{ point }}</li>
+              }
+            </ul>
+            
+            <a href="#{{ module.key }}" class="module-link">Acceder →</a>
+          </article>
+        }
+      </div>
+    </section>
+  </main>
+</div>
