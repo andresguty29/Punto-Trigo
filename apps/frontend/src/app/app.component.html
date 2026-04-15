@@ -1,63 +1,92 @@
 <div class="page-shell">
-  <header class="navbar">
-    <nav class="nav-section nav-left">
-      <a href="#dashboard">Dashboard</a>
-      <a href="#help">Ayuda</a>
-    </nav>
-
-    <div class="brand-container">
-      <div class="brand-logo">
-        <h1>Punto Trigo</h1>
-        <p class="brand-tagline">Sistema de Panadería</p>
-      </div>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Demo sin base de datos</p>
+      <h1>Punto Trigo | Centro de modulos</h1>
     </div>
-
-    <nav class="nav-section nav-right">
-      <button class="icon-btn" aria-label="Notificaciones" title="Notificaciones">
-        <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-        </svg>
-        <span class="badge">3</span>
-      </button>
-      <button class="icon-btn" aria-label="Perfil de usuario" title="Perfil">
-        <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-          <circle cx="12" cy="7" r="4"></circle>
-        </svg>
-      </button>
-    </nav>
+    <p class="date-label">{{ today | date: 'EEEE, d MMM y' }}</p>
   </header>
 
-  <main>
-    <section class="welcome-section" id="dashboard">
-      <div class="welcome-header">
-        <h2>Bienvenido a Punto Trigo</h2>
-        <p>Plataforma operativa para la gestión integral de Panadería La Florida</p>
-      </div>
-    </section>
-
-    <section class="modules-section">
-      <div class="modules-container">
+  <div class="workspace">
+    <aside class="sidebar" aria-label="Navegacion de modulos">
+      <p class="sidebar-title">Modulos</p>
+      <div class="module-list">
         @for (module of modules; track module.key) {
-          <article class="module-card" [style.--card-accent]="module.accent">
-            <div class="module-header">
-              <h3>{{ module.name }}</h3>
-              <span class="module-tag">{{ module.tag }}</span>
-            </div>
-            
-            <p class="module-description">{{ module.description }}</p>
-            
-            <ul class="module-features">
-              @for (point of module.points; track point) {
-                <li>✓ {{ point }}</li>
-              }
-            </ul>
-            
-            <a href="#{{ module.key }}" class="module-link">Acceder →</a>
-          </article>
+          <button
+            type="button"
+            class="module-item"
+            [class.is-active]="module.key === selectedModuleKey"
+            [style.--item-accent]="module.accent"
+            (click)="selectModule(module.key)">
+            <span class="module-name">{{ module.name }}</span>
+            <span class="module-chip">{{ module.status }}</span>
+            <span class="module-copy">{{ module.description }}</span>
+          </button>
         }
       </div>
-    </section>
-  </main>
+    </aside>
+
+    <main class="module-view" aria-live="polite">
+      <section class="headline" [style.--headline-accent]="selectedModule.accent">
+        <p class="tag">{{ selectedModule.tag }}</p>
+        <h2>{{ selectedModule.name }}</h2>
+        <p>{{ selectedModule.description }}</p>
+        <div class="focus-points">
+          @for (point of selectedModule.points; track point) {
+            <span>{{ point }}</span>
+          }
+        </div>
+      </section>
+
+      <section class="kpi-grid">
+        @for (metric of selectedModule.metrics; track metric.label) {
+          <article class="kpi-card">
+            <p>{{ metric.label }}</p>
+            <h3>{{ metric.value }}</h3>
+            <small>{{ metric.trend }}</small>
+          </article>
+        }
+      </section>
+
+      <section class="sections-grid">
+        @for (section of selectedModule.sections; track section.title) {
+          <article class="section-card">
+            <header>
+              <h3>{{ section.title }}</h3>
+              <p>{{ section.description }}</p>
+            </header>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    @for (column of section.columns; track $index) {
+                      <th>{{ column }}</th>
+                    }
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of section.rows; track $index) {
+                    <tr>
+                      @for (cell of row; track $index) {
+                        <td>{{ cell }}</td>
+                      }
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </article>
+        }
+      </section>
+
+      <section class="activity-card">
+        <h3>Actividad reciente</h3>
+        <ul>
+          @for (event of selectedModule.activity; track event) {
+            <li>{{ event }}</li>
+          }
+        </ul>
+      </section>
+    </main>
+  </div>
 </div>
