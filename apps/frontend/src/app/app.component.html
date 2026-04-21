@@ -1,15 +1,38 @@
 <div class="page-shell">
   <header class="topbar">
     <div>
-      <p class="eyebrow">Demo sin base de datos</p>
-      <h1>Punto Trigo | Centro de modulos</h1>
+      <p class="eyebrow">Sistema de gestión</p>
+      <h1>Punto Trigo | Centro de Control</h1>
     </div>
-    <p class="date-label">{{ today | date: 'EEEE, d MMM y' }}</p>
+    <p class="date-label">{{ today | date: "EEEE, d 'de' MMMM 'de' y" }}</p>
   </header>
+
+  <section class="hero-welcome">
+    <div class="hero-content">
+      <p class="hero-greeting">Bienvenido de vuelta</p>
+      <h2>Centro de Control Operativo</h2>
+      <p class="hero-subtitle">Acceso centralizado a todos los módulos de tu negocio. Información en tiempo real, decisiones más rápidas.</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="stat-value">6</span>
+          <span class="stat-label">Módulos disponibles</span>
+        </div>
+        <div class="hero-stat">
+          <span class="stat-value">100%</span>
+          <span class="stat-label">Operación normal</span>
+        </div>
+        <div class="hero-stat">
+          <span class="stat-value">48</span>
+          <span class="stat-label">Usuarios activos</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual"></div>
+  </section>
 
   <div class="workspace">
     <aside class="sidebar" aria-label="Navegacion de modulos">
-      <p class="sidebar-title">Modulos</p>
+      <p class="sidebar-title">📋 Módulos</p>
       <div class="module-list">
         @for (module of modules; track module.key) {
           <button
@@ -17,7 +40,8 @@
             class="module-item"
             [class.is-active]="module.key === selectedModuleKey"
             [style.--item-accent]="module.accent"
-            (click)="selectModule(module.key)">
+            (click)="selectModule(module.key)"
+            title="Ir a {{ module.name }}">
             <span class="module-name">{{ module.name }}</span>
             <span class="module-chip">{{ module.status }}</span>
             <span class="module-copy">{{ module.description }}</span>
@@ -33,7 +57,7 @@
         <p>{{ selectedModule.description }}</p>
         <div class="focus-points">
           @for (point of selectedModule.points; track point) {
-            <span>{{ point }}</span>
+            <span>✓ {{ point }}</span>
           }
         </div>
       </section>
@@ -80,7 +104,7 @@
       </section>
 
       <section class="activity-card">
-        <h3>Actividad reciente</h3>
+        <h3>📊 Actividad reciente</h3>
         <ul>
           @for (event of selectedModule.activity; track event) {
             <li>{{ event }}</li>

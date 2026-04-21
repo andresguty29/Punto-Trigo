@@ -1,16 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Crimson+Text:ital@0;1&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-  --brand-gold: #d4a574;
-  --brand-gold-dark: #a67c52;
-  --brand-brown: #6b4423;
-  --brand-cream: #f7efe0;
-  --brand-accent: #e8b88d;
-  --ink-900: #3d2817;
-  --ink-700: #6b5447;
-  --ink-500: #8b7355;
-  --canvas: #faf7f2;
-  --canvas-strong: #f0ebe3;
+  --brand-primary: #0B3D6E;
+  --brand-primary-light: #1976D2;
+  --brand-accent-red: #D32F2F;
+  --brand-accent-gold: #FFC107;
+  --brand-white: #FFFFFF;
+  --brand-light: #F5F5F5;
+  --brand-gray-light: #E0E0E0;
+  --brand-gray: #757575;
+  --brand-dark: #212121;
+  --ink-900: #1C1C1C;
+  --ink-700: #424242;
+  --ink-500: #666666;
+  --canvas: #FAFAFA;
+  --canvas-strong: #F5F5F5;
   --font-display: 'Playfair Display', serif;
   --font-heading: 'Crimson Text', serif;
   --font-body: 'Inter', sans-serif;
@@ -29,7 +33,7 @@ body {
   min-width: 320px;
   font-family: var(--font-body);
   color: var(--ink-900);
-  background: linear-gradient(135deg, #faf7f2 0%, #f0ebe3 100%);
+  background: linear-gradient(135deg, #FAFAFA 0%, #F5F5F5 100%);
 }
 
 img {

@@ -43,7 +43,7 @@ export class AppComponent {
       description: 'Base para roles, permisos, perfiles de colaborador y trazabilidad de accesos.',
       status: 'Online',
       points: ['Roles por area', 'Bitacora de sesion', 'Perfiles por sucursal'],
-      accent: '#d4a574',
+      accent: '#D32F2F',
       metrics: [
         { label: 'Usuarios activos', value: '48', trend: '+3 esta semana' },
         { label: 'Sesiones abiertas', value: '12', trend: '2 fuera de horario' },
@@ -84,7 +84,7 @@ export class AppComponent {
       description: 'Turnos, horas trabajadas, incidencias y preparacion de pagos sin friccion.',
       status: 'Revisando corte',
       points: ['Control de jornada', 'Bonos e incidencias', 'Cierre quincenal'],
-      accent: '#a67c52',
+      accent: '#1976D2',
       metrics: [
         { label: 'Colaboradores en turno', value: '26', trend: 'Turno manana completo' },
         { label: 'Horas extras', value: '18h', trend: '+2h vs ayer' },
@@ -125,7 +125,7 @@ export class AppComponent {
       description: 'Seguimiento de existencias, mermas y alertas para insumos criticos.',
       status: '2 alertas criticas',
       points: ['Alertas de stock', 'Entradas y salidas', 'Mermas y ajustes'],
-      accent: '#c9956b',
+      accent: '#FFC107',
       metrics: [
         { label: 'Items en catalogo', value: '126', trend: '4 nuevos esta semana' },
         { label: 'Stock critico', value: '2', trend: 'Harina y levadura' },
@@ -166,7 +166,7 @@ export class AppComponent {
       description: 'Catalogo, recetas base y costeo para el dia a dia del horno.',
       status: 'Lotes en ejecucion',
       points: ['Recetas estandar', 'Lotes del dia', 'Costeo por producto'],
-      accent: '#d4a574',
+      accent: '#0B3D6E',
       metrics: [
         { label: 'Productos activos', value: '34', trend: '2 en temporada' },
         { label: 'Lotes de hoy', value: '17', trend: '63% completado' },
@@ -207,7 +207,7 @@ export class AppComponent {
       description: 'Control de ordenes, entregas y contactos clave para abastecimiento continuo.',
       status: 'Entrega en camino',
       points: ['Ordenes de compra', 'Historial de entrega', 'Evaluacion proveedor'],
-      accent: '#a67c52',
+      accent: '#D32F2F',
       metrics: [
         { label: 'Proveedores activos', value: '19', trend: '3 estrategicos' },
         { label: 'Ordenes abiertas', value: '7', trend: '2 con entrega hoy' },
@@ -248,7 +248,7 @@ export class AppComponent {
       description: 'Resumen de ingresos, egresos y cierres para una operacion ordenada.',
       status: 'Cierre diario en curso',
       points: ['Flujo de caja', 'Cierres diarios', 'Reportes ejecutivos'],
-      accent: '#c9956b',
+      accent: '#1976D2',
       metrics: [
         { label: 'Ventas del dia', value: 'L 183,420', trend: '+6.2% vs ayer' },
         { label: 'Egresos del dia', value: 'L 74,900', trend: 'Dentro del presupuesto' },
