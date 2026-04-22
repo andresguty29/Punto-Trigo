@@ -1,116 +1,516 @@
-<div class="page-shell">
+﻿<div class="page-shell">
+  <!-- TOPBAR -->
   <header class="topbar">
-    <div>
-      <p class="eyebrow">Sistema de gestión</p>
-      <h1>Punto Trigo | Centro de Control</h1>
+    <div class="topbar-brand">
+      <i class="brand-icon fa-solid fa-wheat-awn"></i>
+      <span class="brand-name">Punto Trigo</span>
+      <span class="brand-sep">|</span>
+      <span class="brand-subtitle">Sistema de Gestión</span>
     </div>
-    <p class="date-label">{{ today | date: "EEEE, d 'de' MMMM 'de' y" }}</p>
+    <div class="topbar-right">
+      <span class="topbar-date">{{ today | date:'EEEE d \'de\' MMMM yyyy':'':'es' }}</span>
+      <div class="topbar-avatar">AC</div>
+    </div>
   </header>
 
-  <section class="hero-welcome">
-    <div class="hero-content">
-      <p class="hero-greeting">Bienvenido de vuelta</p>
-      <h2>Centro de Control Operativo</h2>
-      <p class="hero-subtitle">Acceso centralizado a todos los módulos de tu negocio. Información en tiempo real, decisiones más rápidas.</p>
-      <div class="hero-stats">
-        <div class="hero-stat">
-          <span class="stat-value">6</span>
-          <span class="stat-label">Módulos disponibles</span>
-        </div>
-        <div class="hero-stat">
-          <span class="stat-value">100%</span>
-          <span class="stat-label">Operación normal</span>
-        </div>
-        <div class="hero-stat">
-          <span class="stat-value">48</span>
-          <span class="stat-label">Usuarios activos</span>
-        </div>
-      </div>
-    </div>
-    <div class="hero-visual"></div>
-  </section>
-
+  <!-- WORKSPACE -->
   <div class="workspace">
-    <aside class="sidebar" aria-label="Navegacion de modulos">
-      <p class="sidebar-title">📋 Módulos</p>
-      <div class="module-list">
-        @for (module of modules; track module.key) {
-          <button
-            type="button"
-            class="module-item"
-            [class.is-active]="module.key === selectedModuleKey"
-            [style.--item-accent]="module.accent"
-            (click)="selectModule(module.key)"
-            title="Ir a {{ module.name }}">
-            <span class="module-name">{{ module.name }}</span>
-            <span class="module-chip">{{ module.status }}</span>
-            <span class="module-copy">{{ module.description }}</span>
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      @for (m of modules; track m.key) {
+        <button class="sidebar-item" [class.active]="selectedModuleKey === m.key"
+                [style.--accent]="m.accent" (click)="selectModule(m.key)">
+          <i class="sidebar-wheat fa-solid fa-wheat-awn" aria-hidden="true"></i>
+          <span class="sidebar-label">{{ m.name }}</span>
+        </button>
+      }
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="module-view">
+      <!-- MODULE HEADER -->
+      <section class="module-header" [style.--accent]="selectedModule.accent">
+        <div class="mh-left">
+          <h1 class="mh-title">{{ selectedModule.name }}</h1>
+          <span class="mh-tag">{{ selectedModule.tag }}</span>
+          <p class="mh-desc">{{ selectedModule.description }}</p>
+        </div>
+        <div class="mh-right">
+          <span class="mh-status">{{ selectedModule.status }}</span>
+          <ul class="mh-points">
+            @for (p of selectedModule.points; track p) {
+              <li>{{ p }}</li>
+            }
+          </ul>
+        </div>
+      </section>
+
+      <!-- KPI METRICS -->
+      <section class="kpi-row">
+        @for (m of selectedModule.metrics; track m.label) {
+          <div class="kpi-card" [style.--accent]="selectedModule.accent">
+            <div class="kpi-value">{{ m.value }}</div>
+            <div class="kpi-label">{{ m.label }}</div>
+            <div class="kpi-trend">{{ m.trend }}</div>
+          </div>
+        }
+      </section>
+
+      <!-- SUB-VIEW TABS -->
+      <nav class="subview-tabs">
+        @for (sv of selectedModule.subViews; track sv.key) {
+          <button class="sv-tab" [class.sv-active]="currentSubView === sv.key"
+                  [style.--accent]="selectedModule.accent"
+                  (click)="selectSubView(sv.key)">
+            <i [class]="'sv-icon ' + sv.icon"></i> {{ sv.label }}
           </button>
         }
-      </div>
-    </aside>
+      </nav>
 
-    <main class="module-view" aria-live="polite">
-      <section class="headline" [style.--headline-accent]="selectedModule.accent">
-        <p class="tag">{{ selectedModule.tag }}</p>
-        <h2>{{ selectedModule.name }}</h2>
-        <p>{{ selectedModule.description }}</p>
-        <div class="focus-points">
-          @for (point of selectedModule.points; track point) {
-            <span>✓ {{ point }}</span>
-          }
-        </div>
-      </section>
+      <!-- ══════════════ USUARIOS ══════════════ -->
+      @if (selectedModuleKey === 'usuarios') {
 
-      <section class="kpi-grid">
-        @for (metric of selectedModule.metrics; track metric.label) {
-          <article class="kpi-card">
-            <p>{{ metric.label }}</p>
-            <h3>{{ metric.value }}</h3>
-            <small>{{ metric.trend }}</small>
-          </article>
-        }
-      </section>
-
-      <section class="sections-grid">
-        @for (section of selectedModule.sections; track section.title) {
-          <article class="section-card">
-            <header>
-              <h3>{{ section.title }}</h3>
-              <p>{{ section.description }}</p>
-            </header>
-            <div class="table-wrap">
-              <table>
-                <thead>
+        @if (currentSubView === 'directorio') {
+          <div class="subview-panel">
+            <div class="sv-toolbar">
+              <h2>Directorio de Usuarios</h2>
+              <button class="btn-primary" (click)="showNewUsuarioForm = !showNewUsuarioForm">
+                {{ showNewUsuarioForm ? 'Cancelar' : '+ Nuevo usuario' }}
+              </button>
+            </div>
+            @if (showNewUsuarioForm) {
+              <form class="inline-form" (ngSubmit)="addUsuario()">
+                <input [(ngModel)]="newUsuario.nombre" name="nombre" placeholder="Nombre completo" required />
+                <select [(ngModel)]="newUsuario.rol" name="rol">
+                  <option>Cajero</option><option>Administrador</option>
+                </select>
+                <select [(ngModel)]="newUsuario.estado" name="estado">
+                  <option>Activo</option><option>Inactivo</option>
+                </select>
+                <button type="submit" class="btn-primary">Guardar</button>
+              </form>
+            }
+            <table class="data-table">
+              <thead><tr><th>Nombre</th><th>Rol</th><th>Sucursal</th><th>Estado</th><th>Acción</th></tr></thead>
+              <tbody>
+                @for (row of usuariosRows; track $index) {
                   <tr>
-                    @for (column of section.columns; track $index) {
-                      <th>{{ column }}</th>
+                    @for (cell of row; track $index) {
+                      <td><span [class]="rowBadge(cell)">{{ cell }}</span></td>
+                    }
+                    <td><button class="btn-link" (click)="toggleUsuarioEstado($index)">Activar/Desactivar</button></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+        @if (currentSubView === 'roles') {
+          <div class="subview-panel">
+            <div class="sv-toolbar"><h2>Roles y Permisos</h2></div>
+            <table class="data-table">
+              <thead><tr><th>Módulo</th><th>Cajero</th><th>Administrador</th><th>Solo Lectura</th></tr></thead>
+              <tbody>
+                <tr><td>Usuarios</td><td>❌</td><td>✅ Completo</td><td>❌</td></tr>
+                <tr><td>Planilla</td><td>👁️ Ver</td><td>✅ Completo</td><td>👁️ Ver</td></tr>
+                <tr><td>Inventario</td><td>✅ Completo</td><td>✅ Completo</td><td>👁️ Ver</td></tr>
+                <tr><td>Productos</td><td>👁️ Ver</td><td>✅ Completo</td><td>👁️ Ver</td></tr>
+                <tr><td>Proveedores</td><td>👁️ Ver</td><td>✅ Completo</td><td>👁️ Ver</td></tr>
+                <tr><td>Financiero</td><td>✅ Caja/Tiquetes</td><td>✅ Completo</td><td>👁️ Ver</td></tr>
+              </tbody>
+            </table>
+          </div>
+        }
+
+        @if (currentSubView === 'sesiones') {
+          <div class="subview-panel">
+            <div class="sv-toolbar"><h2>Auditoría de Sesiones — Hoy</h2></div>
+            <table class="data-table">
+              <thead><tr><th>Usuario</th><th>Rol</th><th>Inicio</th><th>Cierre</th><th>Estado</th></tr></thead>
+              <tbody>
+                @for (row of sesionesRows; track $index) {
+                  <tr>
+                    @for (cell of row; track $index) {
+                      <td><span [class]="rowBadge(cell)">{{ cell }}</span></td>
                     }
                   </tr>
-                </thead>
-                <tbody>
-                  @for (row of section.rows; track $index) {
-                    <tr>
-                      @for (cell of row; track $index) {
-                        <td>{{ cell }}</td>
-                      }
-                    </tr>
-                  }
-                </tbody>
-              </table>
-            </div>
-          </article>
+                }
+              </tbody>
+            </table>
+          </div>
         }
-      </section>
+      }
 
-      <section class="activity-card">
-        <h3>📊 Actividad reciente</h3>
+      <!-- ══════════════ PLANILLA ══════════════ -->
+      @if (selectedModuleKey === 'planilla') {
+
+        @if (currentSubView === 'empleados') {
+          <div class="subview-panel">
+            <div class="sv-toolbar">
+              <h2>Empleados</h2>
+              <button class="btn-primary" (click)="showNewEmpleadoForm = !showNewEmpleadoForm">
+                {{ showNewEmpleadoForm ? 'Cancelar' : '+ Nuevo empleado' }}
+              </button>
+            </div>
+            @if (showNewEmpleadoForm) {
+              <form class="inline-form" (ngSubmit)="addEmpleado()">
+                <input [(ngModel)]="newEmpleado.nombre" name="nombre" placeholder="Nombre completo" required />
+                <input [(ngModel)]="newEmpleado.puesto" name="puesto" placeholder="Puesto" />
+                <input [(ngModel)]="newEmpleado.salario" name="salario" placeholder="Salario base (L)" type="number" />
+                <button type="submit" class="btn-primary">Guardar</button>
+              </form>
+            }
+            <table class="data-table">
+              <thead><tr><th>Nombre</th><th>Puesto</th><th>Ingreso</th><th>Salario</th><th>Período</th><th>Estado</th></tr></thead>
+              <tbody>
+                @for (row of empleadosRows; track $index) {
+                  <tr>@for (cell of row; track $index) { <td><span [class]="rowBadge(cell)">{{ cell }}</span></td> }</tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+        @if (currentSubView === 'asistencia') {
+          <div class="subview-panel">
+            <div class="sv-toolbar"><h2>Control de Asistencia — Hoy</h2></div>
+            <table class="data-table">
+              <thead><tr><th>Empleado</th><th>Entrada</th><th>Salida</th><th>Estado</th><th>Tardanzas</th><th>H. Extra</th></tr></thead>
+              <tbody>
+                @for (row of asistenciaRows; track $index) {
+                  <tr>@for (cell of row; track $index) { <td><span [class]="rowBadge(cell)">{{ cell }}</span></td> }</tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+        @if (currentSubView === 'vales') {
+          <div class="subview-panel">
+            <div class="sv-toolbar"><h2>Adelantos de Sueldo</h2><button class="btn-primary">+ Nuevo adelanto</button></div>
+            <table class="data-table">
+              <thead><tr><th>Empleado</th><th>Monto</th><th>Fecha</th><th>Estado</th></tr></thead>
+              <tbody>
+                @for (row of valesRows; track $index) {
+                  <tr>@for (cell of row; track $index) { <td><span [class]="rowBadge(cell)">{{ cell }}</span></td> }</tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+        @if (currentSubView === 'pagos') {
+          <div class="subview-panel">
+            <div class="sv-toolbar"><h2>Recibos de Pago — Q2 Abril</h2><button class="btn-primary">Procesar corte</button></div>
+            <table class="data-table">
+              <thead><tr><th>Empleado</th><th>Salario</th><th>Bonos</th><th>Deducciones</th><th>Neto</th><th>Período</th><th>Estado</th></tr></thead>
+              <tbody>
+                @for (row of pagosRows; track $index) {
+                  <tr>@for (cell of row; track $index) { <td><span [class]="rowBadge(cell)">{{ cell }}</span></td> }</tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+        @if (currentSubView === 'vacaciones') {
+          <div class="subview-panel">
+            <div class="sv-toolbar"><h2>Vacaciones por Empleado</h2></div>
+            <table class="data-table">
+              <thead><tr><th>Empleado</th><th>Días ganados</th><th>Gozados</th><th>Disponibles</th><th>Inicio</th><th>Fin</th></tr></thead>
+              <tbody>
+                @for (row of vacacionesRows; track $index) {
+                  <tr>@for (cell of row; track $index) { <td>{{ cell }}</td> }</tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+        @if (currentSubView === 'incapacidades') {
+          <div class="subview-panel">
+            <div class="sv-toolbar"><h2>Incapacidades</h2><button class="btn-primary">+ Registrar incapacidad</button></div>
+            <table class="data-table">
+              <thead><tr><th>Empleado</th><th>Inicio</th><th>Fin</th><th>Duración</th><th>Tipo</th><th>Estado</th></tr></thead>
+              <tbody>
+                @for (row of incapacidadesRows; track $index) {
+                  <tr>@for (cell of row; track $index) { <td><span [class]="rowBadge(cell)">{{ cell }}</span></td> }</tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      }
+
+      <!-- ══════════════ INVENTARIO ══════════════ -->
+      @if (selectedModuleKey === 'inventario') {
+
+        @if (currentSubView === 'existencias') {
+          <div class="subview-panel">
+            <div class="sv-toolbar"><h2>Existencias de Insumos</h2><button class="btn-primary">+ Registrar entrada</button></div>
+            <table class="data-table">
+              <thead><tr><th>Insumo</th><th>Unidad</th><th>Stock actual</th><th>Stock mínimo</th><th>Estado</th><th>Proveedor</th></tr></thead>
+              <tbody>
+                @for (row of insumoRows; track $index) {
+                  <tr>@for (cell of row; track $index) { <td><span [class]="rowBadge(cell)">{{ cell }}</span></td> }</tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+        @if (currentSubView === 'movimientos') {
+          <div class="subview-panel">
+            <div class="sv-toolbar"><h2>Movimientos de Inventario — Hoy</h2><button class="btn-primary">+ Ajuste manual</button></div>
+            <table class="data-table">
+              <thead><tr><th>Hora</th><th>Tipo</th><th>Motivo</th><th>Cantidad</th><th>Responsable</th><th>OC</th></tr></thead>
+              <tbody>
+                @for (row of movimientosRows; track $index) {
+                  <tr>@for (cell of row; track $index) { <td><span [class]="rowBadge(cell)">{{ cell }}</span></td> }</tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+        @if (currentSubView === 'produccion') {
+          <div class="subview-panel">
+            <div class="sv-toolbar"><h2>Listas de Producción — Hoy</h2><button class="btn-primary"><i class="fa-solid fa-print"></i> Imprimir lista</button></div>
+            <table class="data-table">
+              <thead><tr><th>Panadero</th><th>Producto</th><th>Cantidad</th><th>Turno</th><th>Fecha</th><th>✓</th></tr></thead>
+              <tbody>
+                @for (row of produccionRows; track $index) {
+                  <tr>@for (cell of row; track $index) { <td>{{ cell }}</td> }</tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      }
+
+      <!-- ══════════════ PRODUCTOS ══════════════ -->
+      @if (selectedModuleKey === 'productos') {
+
+        @if (currentSubView === 'catalogo') {
+          <div class="subview-panel">
+            <div class="sv-toolbar">
+              <h2>Catálogo de Productos</h2>
+              <div class="sv-toolbar-actions">
+                <input class="search-input" [(ngModel)]="busquedaProducto" placeholder="🔍 Buscar producto…" />
+                <button class="btn-primary" (click)="showNewProductoForm = !showNewProductoForm">
+                  {{ showNewProductoForm ? 'Cancelar' : '+ Nuevo producto' }}
+                </button>
+              </div>
+            </div>
+            @if (showNewProductoForm) {
+              <form class="inline-form" (ngSubmit)="addProducto()">
+                <input [(ngModel)]="newProducto.nombre" name="nombre" placeholder="Nombre del producto" required />
+                <select [(ngModel)]="newProducto.categoria" name="categoria">
+                  <option>Tradicional</option><option>Dulce</option><option>Saludable</option><option>Premium</option>
+                </select>
+                <input [(ngModel)]="newProducto.precio" name="precio" placeholder="Precio (L)" type="number" />
+                <select [(ngModel)]="newProducto.estado" name="estado">
+                  <option>Activo</option><option>Inactivo</option><option>Temporada</option>
+                </select>
+                <button type="submit" class="btn-primary">Guardar</button>
+              </form>
+            }
+            <table class="data-table">
+              <thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Costo</th><th>Estado</th></tr></thead>
+              <tbody>
+                @for (row of filteredProductos(); track $index) {
+                  <tr>@for (cell of row; track $index) { <td><span [class]="rowBadge(cell)">{{ cell }}</span></td> }</tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+        @if (currentSubView === 'recetas') {
+          <div class="subview-panel">
+            <div class="sv-toolbar"><h2>Recetas Base</h2><button class="btn-primary">+ Nueva receta</button></div>
+            <table class="data-table">
+              <thead><tr><th>Receta</th><th>Productos</th><th>Rendimiento</th><th>Costo lote</th><th>Insumos principales</th><th>Versión</th></tr></thead>
+              <tbody>
+                @for (row of recetasRows; track $index) {
+                  <tr>@for (cell of row; track $index) { <td>{{ cell }}</td> }</tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      }
+
+      <!-- ══════════════ PROVEEDORES ══════════════ -->
+      @if (selectedModuleKey === 'proveedores') {
+
+        @if (currentSubView === 'directorio') {
+          <div class="subview-panel">
+            <div class="sv-toolbar">
+              <h2>Directorio de Proveedores</h2>
+              <div class="sv-toolbar-actions">
+                <input class="search-input" [(ngModel)]="busquedaProveedor" placeholder="🔍 Buscar proveedor…" />
+                <button class="btn-primary" (click)="showNewProveedorForm = !showNewProveedorForm">
+                  {{ showNewProveedorForm ? 'Cancelar' : '+ Nuevo proveedor' }}
+                </button>
+              </div>
+            </div>
+            @if (showNewProveedorForm) {
+              <form class="inline-form" (ngSubmit)="addProveedor()">
+                <input [(ngModel)]="newProveedor.nombre" name="nombre" placeholder="Nombre empresa" required />
+                <input [(ngModel)]="newProveedor.contacto" name="contacto" placeholder="Persona de contacto" />
+                <input [(ngModel)]="newProveedor.telefono" name="telefono" placeholder="Teléfono" />
+                <button type="submit" class="btn-primary">Guardar</button>
+              </form>
+            }
+            <table class="data-table">
+              <thead><tr><th>Empresa</th><th>Contacto</th><th>Teléfono</th><th>Correo</th><th>Productos</th><th>Estado</th></tr></thead>
+              <tbody>
+                @for (row of filteredProveedores(); track $index) {
+                  <tr>@for (cell of row; track $index) { <td><span [class]="rowBadge(cell)">{{ cell }}</span></td> }</tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+        @if (currentSubView === 'ordenes') {
+          <div class="subview-panel">
+            <div class="sv-toolbar"><h2>Órdenes de Compra</h2><button class="btn-primary">+ Nueva orden</button></div>
+            <table class="data-table">
+              <thead><tr><th>No. OC</th><th>Fecha</th><th>Proveedor</th><th>Detalle</th><th>Monto</th><th>Estado</th></tr></thead>
+              <tbody>
+                @for (row of ordenesRows; track $index) {
+                  <tr>@for (cell of row; track $index) { <td><span [class]="rowBadge(cell)">{{ cell }}</span></td> }</tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+        @if (currentSubView === 'historial') {
+          <div class="subview-panel">
+            <div class="sv-toolbar"><h2>Historial de Compras</h2></div>
+            <table class="data-table">
+              <thead><tr><th>Proveedor</th><th>Fecha</th><th>Monto</th><th>Detalle</th><th>OC</th><th>Estado</th></tr></thead>
+              <tbody>
+                @for (row of historialComprasRows; track $index) {
+                  <tr>@for (cell of row; track $index) { <td><span [class]="rowBadge(cell)">{{ cell }}</span></td> }</tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      }
+
+      <!-- ══════════════ FINANCIERO ══════════════ -->
+      @if (selectedModuleKey === 'financiero') {
+
+        @if (currentSubView === 'caja') {
+          <div class="subview-panel">
+            <div class="sv-toolbar"><h2>Caja del Día — 21/04/2026</h2><button class="btn-primary">Cerrar caja</button></div>
+            <div class="summary-cards">
+              <div class="sum-card green"><div class="sum-label">Ingresos</div><div class="sum-value">L 183,420</div></div>
+              <div class="sum-card red"><div class="sum-label">Egresos</div><div class="sum-value">L 74,900</div></div>
+              <div class="sum-card blue"><div class="sum-label">Caja neta</div><div class="sum-value">L 108,520</div></div>
+            </div>
+            <table class="data-table">
+              <thead><tr><th>Concepto</th><th>Monto</th><th>Tipo</th><th>Estado</th></tr></thead>
+              <tbody>
+                @for (row of cajaDiariaRows; track $index) {
+                  <tr>@for (cell of row; track $index) { <td><span [class]="rowBadge(cell)">{{ cell }}</span></td> }</tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+        @if (currentSubView === 'tiquetes') {
+          <div class="subview-panel">
+            <div class="sv-toolbar"><h2>Tiquetes de Venta</h2><button class="btn-primary" (click)="emitirTiquete()">+ Emitir tiquete</button></div>
+            <table class="data-table">
+              <thead><tr><th>No.</th><th>Fecha</th><th>Hora</th><th>Cajero</th><th>Total</th><th>Detalle</th><th>Estado</th><th>Acción</th></tr></thead>
+              <tbody>
+                @for (row of tiquetesRows; track $index) {
+                  <tr>
+                    @for (cell of row; track $index) { <td><span [class]="rowBadge(cell)">{{ cell }}</span></td> }
+                    <td>
+                      @if (row[6] !== 'Anulado') {
+                        <button class="btn-link danger" (click)="anularTiquete($index)">Anular</button>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+        @if (currentSubView === 'facturas') {
+          <div class="subview-panel">
+            <div class="sv-toolbar"><h2>Facturas de Compra</h2><button class="btn-primary">+ Registrar factura</button></div>
+            <table class="data-table">
+              <thead><tr><th>No. FAC</th><th>Fecha</th><th>Proveedor</th><th>Monto</th><th>Detalle</th><th>Categoría</th><th>Estado</th></tr></thead>
+              <tbody>
+                @for (row of facturasRows; track $index) {
+                  <tr>@for (cell of row; track $index) { <td><span [class]="rowBadge(cell)">{{ cell }}</span></td> }</tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+        @if (currentSubView === 'reportes') {
+          <div class="subview-panel">
+            <div class="sv-toolbar"><h2>Reportes Financieros</h2><button class="btn-primary"><i class="fa-solid fa-file-arrow-down"></i> Exportar PDF</button></div>
+            <div class="summary-cards">
+              <div class="sum-card green"><div class="sum-label">Ingresos del mes</div><div class="sum-value">L 2,438,500</div></div>
+              <div class="sum-card red"><div class="sum-label">Egresos del mes</div><div class="sum-value">L 1,612,300</div></div>
+              <div class="sum-card blue"><div class="sum-label">Utilidad neta</div><div class="sum-value">L 826,200</div></div>
+            </div>
+            <table class="data-table">
+              <thead><tr><th>KPI</th><th>Meta</th><th>Actual</th><th>Variación</th><th>Estado</th></tr></thead>
+              <tbody>
+                @for (row of kpiRows; track $index) {
+                  <tr>@for (cell of row; track $index) { <td><span [class]="rowBadge(cell)">{{ cell }}</span></td> }</tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+        @if (currentSubView === 'clientes') {
+          <div class="subview-panel">
+            <div class="sv-toolbar"><h2>Directorio de Clientes</h2><button class="btn-primary">+ Nuevo cliente</button></div>
+            <table class="data-table">
+              <thead><tr><th>Nombre</th><th>Teléfono</th><th>Correo</th><th>Tipo</th><th>Estado</th></tr></thead>
+              <tbody>
+                @for (row of clientesRows; track $index) {
+                  <tr>@for (cell of row; track $index) { <td><span [class]="rowBadge(cell)">{{ cell }}</span></td> }</tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      }
+
+      <!-- ACTIVITY FEED -->
+      <aside class="activity-feed">
+        <h3 class="activity-title">Actividad reciente</h3>
         <ul>
-          @for (event of selectedModule.activity; track event) {
-            <li>{{ event }}</li>
+          @for (item of selectedModule.activity; track item) {
+            <li>{{ item }}</li>
           }
         </ul>
-      </section>
+      </aside>
     </main>
   </div>
 </div>
+
+<!-- TOAST -->
+@if (toast) {
+  <div class="toast" [class.toast-success]="toast.type==='success'" [class.toast-info]="toast.type==='info'">
+    {{ toast.msg }}
+  </div>
+}
