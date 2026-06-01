@@ -1,7 +1,10 @@
 using Abstracciones.Interfaces.DA;
 using Abstracciones.Interfaces.DA.ProductoDA;
+using Abstracciones.Interfaces.DA.ProveedorDA;
 using Abstracciones.Interfaces.Flujo.Producto;
+using Abstracciones.Interfaces.Flujo.Proveedor;
 using DA.ProductoDA;
+using DA.ProveedorDA;
 using DA.Repositorios;
 using Flujo;
 
@@ -15,6 +18,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IProductoFlujo, ProductoFlujo>();
 builder.Services.AddScoped<IProductoDA, ProductoDA>();
+builder.Services.AddScoped<IProveedorFlujo, ProveedorFlujo>();
+builder.Services.AddScoped<IProveedorDA, ProveedorDA>();
 builder.Services.AddScoped<IRepositorioDapper,RepositorioDapper>();
 
 var app = builder.Build();
