@@ -52,7 +52,7 @@ namespace DA.ProductoDA
 
             var resultadoConsulta = await _sqlConnection.ExecuteScalarAsync<Guid>(query, new
             {
-                IdProducto = Id
+                Id_Producto = Id
             });
             return resultadoConsulta;
         }
