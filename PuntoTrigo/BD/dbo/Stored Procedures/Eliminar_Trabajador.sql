@@ -1,0 +1,14 @@
+CREATE PROCEDURE Eliminar_Trabajador
+	@Cedula VARCHAR (MAX),
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	BEGIN TRANSACTION
+
+		UPDATE dbo.Trabajador_TB
+		SET Estado = 2
+		WHERE Cedula = @Cedula
+
+	COMMIT TRANSACTION
+END
