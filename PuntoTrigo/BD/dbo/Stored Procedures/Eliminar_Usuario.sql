@@ -1,14 +1,16 @@
 CREATE PROCEDURE Eliminar_Usuario
-	@Id_Usuario UNIQUEIDENTIFIER,
+    @Id_Usuario UNIQUEIDENTIFIER
 AS
 BEGIN
-	SET NOCOUNT ON;
+    SET NOCOUNT ON;
 
-	BEGIN TRANSACTION
+    BEGIN TRANSACTION;
 
-		UPDATE dbo.Usuario_TB
-		SET Estado = 2
-		WHERE Id_Usuario = @Id_Usuario
+        UPDATE [dbo].[Usuario_TB]
+        SET [Id_Estado] = 2
+        WHERE [Id_Usuario] = @Id_Usuario;
 
-	COMMIT TRANSACTION
+        SELECT @Id_Usuario AS Id_Usuario;
+
+    COMMIT TRANSACTION;
 END

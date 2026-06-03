@@ -1,20 +1,22 @@
 CREATE PROCEDURE Editar_Usuario
     @Id_Usuario UNIQUEIDENTIFIER,
-	@Nombre_Usuario VARCHAR (MAX),
-	@Contrasena   VARCHAR (MAX),
-    @Id_Trabajdor    INT,
+    @Nombre_Usuario VARCHAR(MAX),
+    @Contrasena VARCHAR(MAX),
+    @Id_Trabajador UNIQUEIDENTIFIER
 AS
 BEGIN
-	SET NOCOUNT ON;
+    SET NOCOUNT ON;
 
-	BEGIN TRANSACTION
+    BEGIN TRANSACTION;
 
-		UPDATE dbo.Usuario_TB
-		SET
-			Nombre_Usuario = @Nombre_Usuario,
-            Contrasena = @Contrasena,
-            Id_Trabajdor = @Id_Trabajdor
-		WHERE Id_Usuario = @Id_Usuario
+        UPDATE [dbo].[Usuario_TB]
+        SET
+            [Nombre_Usuario] = @Nombre_Usuario,
+            [Contrasena] = @Contrasena,
+            [Id_Trabajador] = @Id_Trabajador
+        WHERE [Id_Usuario] = @Id_Usuario;
 
-	COMMIT TRANSACTION
+        SELECT @Id_Usuario AS Id_Usuario;
+
+    COMMIT TRANSACTION;
 END

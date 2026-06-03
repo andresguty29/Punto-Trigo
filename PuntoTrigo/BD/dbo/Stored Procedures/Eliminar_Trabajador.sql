@@ -1,14 +1,16 @@
 CREATE PROCEDURE Eliminar_Trabajador
-	@Cedula VARCHAR (MAX),
+    @Id_Trabajador UNIQUEIDENTIFIER
 AS
 BEGIN
-	SET NOCOUNT ON;
+    SET NOCOUNT ON;
 
-	BEGIN TRANSACTION
+    BEGIN TRANSACTION;
 
-		UPDATE dbo.Trabajador_TB
-		SET Estado = 2
-		WHERE Cedula = @Cedula
+        UPDATE [dbo].[Trabajador_TB]
+        SET [Id_Estado] = 2
+        WHERE [Id_Trabajador] = @Id_Trabajador;
 
-	COMMIT TRANSACTION
+        SELECT @Id_Trabajador AS Id_Trabajador;
+
+    COMMIT TRANSACTION;
 END
