@@ -74,5 +74,27 @@
     <Build Include="dbo\Stored Procedures\Editar_Producto.sql" />
     <Build Include="dbo\Stored Procedures\Agregar_Proveedor.sql" />
     <Build Include="dbo\Stored Procedures\Agregar_Producto.sql" />
+    <Build Include="dbo\Stored Procedures\Agregar_Puesto.sql" />
+    <Build Include="dbo\Stored Procedures\Agregar_Trabajador.sql" />
+    <Build Include="dbo\Stored Procedures\Agregar_Usuario.sql" />
+    <Build Include="dbo\Stored Procedures\Editar_Puesto.sql" />
+    <Build Include="dbo\Stored Procedures\Editar_Trabajador.sql" />
+    <Build Include="dbo\Stored Procedures\Editar_Usuario.sql" />
+    <Build Include="dbo\Stored Procedures\Eliminar_Puesto.sql" />
+    <Build Include="dbo\Stored Procedures\Eliminar_Trabajador.sql" />
+    <Build Include="dbo\Stored Procedures\Eliminar_Usuario.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Puesto.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Trajador.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Usuario.sql" />
+    <Build Include="dbo\Tables\Cliente_TB.sql" />
+    <Build Include="dbo\Tables\Puesto_TB.sql" />
+    <Build Include="dbo\Tables\Trabajador_TB.sql" />
+    <Build Include="dbo\Tables\Usuario_TB.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Trabajadores.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Usuarios.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Puestos.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="BD.refactorlog" />
   </ItemGroup>
 </Project>

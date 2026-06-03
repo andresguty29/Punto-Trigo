@@ -1,5 +1,4 @@
-CREATE PROCEDURE Obtener_Puesto
-    @Id_Puesto UNIQUEIDENTIFIER
+﻿CREATE PROCEDURE Obtener_Puestos
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -9,5 +8,5 @@ BEGIN
         [Nombre_Puesto],
         [Id_Estado]
     FROM [dbo].[Puesto_TB]
-    WHERE [Id_Puesto] = @Id_Puesto;
+    WHERE [Id_Estado] = 1;
 END

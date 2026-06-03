@@ -1,5 +1,4 @@
-CREATE PROCEDURE Obtener_Trabajador
-    @Id_Trabajador UNIQUEIDENTIFIER
+﻿CREATE PROCEDURE Obtener_Trabajadores
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -11,5 +10,5 @@ BEGIN
         [Id_Estado],
         [Id_Puesto]
     FROM [dbo].[Trabajador_TB]
-    WHERE [Id_Trabajador] = @Id_Trabajador;
+    WHERE [Id_Estado] = 1;
 END

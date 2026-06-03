@@ -1,26 +1,26 @@
-CREATE PROCEDURE Agregar_Pueso 
-	@Id_Puesto UNIQUEIDENTIFIER,
-	@Nombre_Puesto VARCHAR(MAX)
+CREATE PROCEDURE Agregar_Puesto
+    @Id_Puesto UNIQUEIDENTIFIER,
+    @Nombre_Puesto VARCHAR(MAX)
 AS
 BEGIN
-	SET NOCOUNT ON;
+    SET NOCOUNT ON;
 
-	BEGIN TRANSACTION
+    BEGIN TRANSACTION;
 
-		INSERT INTO [dbo].[Producto_TB]
-		(
-			[Id_Puesto],
+        INSERT INTO [dbo].[Puesto_TB]
+        (
+            [Id_Puesto],
             [Nombre_Puesto],
             [Id_Estado]
-		)
-		VALUES
-		(
-			@Id_Puesto,
+        )
+        VALUES
+        (
+            @Id_Puesto,
             @Nombre_Puesto,
-			1
-		)
+            1
+        );
 
-		SELECT @Id_Puesto
+        SELECT @Id_Puesto AS Id_Puesto;
 
-	COMMIT TRANSACTION
+    COMMIT TRANSACTION;
 END

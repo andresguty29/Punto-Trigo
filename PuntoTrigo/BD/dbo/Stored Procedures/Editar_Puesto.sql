@@ -1,16 +1,18 @@
-CREATE PROCEDURE Editar_Puest0
-	@Id_Puesto UNIQUEIDENTIFIER,
-	@Nombre_Puesto VARCHAR(MAX)
+CREATE PROCEDURE Editar_Puesto
+    @Id_Puesto UNIQUEIDENTIFIER,
+    @Nombre_Puesto VARCHAR(MAX)
 AS
 BEGIN
-	SET NOCOUNT ON;
+    SET NOCOUNT ON;
 
-	BEGIN TRANSACTION
+    BEGIN TRANSACTION;
 
-		UPDATE dbo.Puesto_TB
-		SET
-			Nombre_Puesto = @Nombre_Puesto
-		WHERE Id_Puesto = @Id_Puesto
+        UPDATE [dbo].[Puesto_TB]
+        SET
+            [Nombre_Puesto] = @Nombre_Puesto
+        WHERE [Id_Puesto] = @Id_Puesto;
 
-	COMMIT TRANSACTION
+        SELECT @Id_Puesto AS Id_Puesto;
+
+    COMMIT TRANSACTION;
 END

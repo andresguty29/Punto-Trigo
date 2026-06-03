@@ -1,32 +1,33 @@
 CREATE PROCEDURE Agregar_Trabajador
-	@Id_Usuario UNIQUEIDENTIFIER,
-	@Cedula VARCHAR (MAX),
-	@Nombre_Completo   VARCHAR (MAX),
-    @Id_Puesto    INT,
+    @Id_Trabajador UNIQUEIDENTIFIER,
+    @Cedula VARCHAR(MAX),
+    @Nombre_Completo VARCHAR(MAX),
+    @Id_Puesto UNIQUEIDENTIFIER
 AS
 BEGIN
-	SET NOCOUNT ON;
+    SET NOCOUNT ON;
 
-	BEGIN TRANSACTION
+    BEGIN TRANSACTION;
 
-		INSERT INTO [dbo].[Trabajador_TB]
-		(
-			[Id_Usuario]
-			[Cedula],
+        INSERT INTO [dbo].[Trabajador_TB]
+        (
+            [Id_Trabajador],
+            [Cedula],
             [Nombre_Completo],
+            [Id_Estado],
             [Id_Puesto]
-            [Id_Estado]
-		)
-		VALUES
-		(
-			@Id_Usuario
-			@Cedula,
+        )
+        VALUES
+        (
+            @Id_Trabajador,
+            @Cedula,
             @Nombre_Completo,
-            @Id_Puesto,
-			1
-		)
+            1,
+            @Id_Puesto
+        );
 
-		SELECT @Id_Usuario
+        SELECT @Id_Trabajador AS Id_Trabajador;
 
-	COMMIT TRANSACTION
+    COMMIT TRANSACTION;
 END
+GO

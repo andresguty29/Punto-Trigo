@@ -1,29 +1,32 @@
 CREATE PROCEDURE Agregar_Usuario
-	@Nombre_Usuario VARCHAR (MAX),
-	@Contrasena   VARCHAR (MAX),
-    @Id_Trabajdor    INT,
+    @Id_Usuario UNIQUEIDENTIFIER,
+    @Nombre_Usuario VARCHAR(MAX),
+    @Contrasena VARCHAR(MAX),
+    @Id_Trabajador UNIQUEIDENTIFIER
 AS
 BEGIN
-	SET NOCOUNT ON;
+    SET NOCOUNT ON;
 
-	BEGIN TRANSACTION
+    BEGIN TRANSACTION;
 
-		INSERT INTO [dbo].[Uusuario_TB]
-		(
-			[Nombre_Usuario],
+        INSERT INTO [dbo].[Usuario_TB]
+        (
+            [Id_Usuario],
+            [Nombre_Usuario],
             [Contrasena],
-            [Id_Trabajdor]
+            [Id_Trabajador],
             [Id_Estado]
-		)
-		VALUES
-		(
-			@Nombre_Usuario,
+        )
+        VALUES
+        (
+            @Id_Usuario,
+            @Nombre_Usuario,
             @Contrasena,
-            @Id_Estado,
-			1
-		)
+            @Id_Trabajador,
+            1
+        );
 
-		SELECT @Nombre_Usuario
+        SELECT @Id_Usuario AS Id_Usuario;
 
-	COMMIT TRANSACTION
+    COMMIT TRANSACTION;
 END
