@@ -1,0 +1,14 @@
+CREATE PROCEDURE Eliminar_Puesto
+	@Id_Puesto UNIQUEIDENTIFIER
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	BEGIN TRANSACTION
+
+		UPDATE dbo.Producto_TB
+		SET Estado = 2
+		WHERE Id_Puesto = @Id_Puesto
+
+	COMMIT TRANSACTION
+END
