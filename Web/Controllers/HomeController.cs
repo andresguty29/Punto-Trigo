@@ -1,7 +1,7 @@
-using API.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Web.Models;
 
-namespace API.Controllers;
+namespace Web.Controllers;
 
 public class HomeController : Controller
 {
@@ -24,7 +24,7 @@ public class HomeController : Controller
                     Points = ["Usuarios registrados", "Control de acceso", "Estado de cuenta"],
                     Metrics =
                     [
-                        new DashboardMetricViewModel { Label = "Fuente", Value = "API", Trend = "/api/usuario" },
+                        new DashboardMetricViewModel { Label = "Fuente", Value = "API", Trend = "/api/Usuario" },
                         new DashboardMetricViewModel { Label = "Datos", Value = "En vivo", Trend = "Lectura directa" },
                         new DashboardMetricViewModel { Label = "Uso", Value = "Operativo", Trend = "Gestión diaria" },
                     ],
@@ -32,10 +32,10 @@ public class HomeController : Controller
                     Table = new DashboardTableViewModel
                     {
                         Title = "Directorio de usuarios",
-                        Columns = ["Usuario", "ID", "Estado"],
+                        Columns = ["Usuario", "Trabajador", "Estado"],
                         Rows = [],
                         EmptyMessage = "Sin usuarios registrados.",
-                        SourceUrl = "/api/usuario"
+                        SourceUrl = "https://localhost:44378/api/Usuario"
                     },
                     Activity = ["Consulta activa de usuarios", "Sincronizado con API de usuarios", "Listo para altas y mantenimiento"]
                 },
@@ -50,7 +50,7 @@ public class HomeController : Controller
                     Points = ["Trabajadores activos", "Puesto asociado", "Estado visible"],
                     Metrics =
                     [
-                        new DashboardMetricViewModel { Label = "Fuente", Value = "API", Trend = "/api/trabajador" },
+                        new DashboardMetricViewModel { Label = "Fuente", Value = "API", Trend = "/api/Trabajador" },
                         new DashboardMetricViewModel { Label = "Cobertura", Value = "Planilla", Trend = "Personal" },
                         new DashboardMetricViewModel { Label = "Estado", Value = "Operando", Trend = "Actualizable" },
                     ],
@@ -61,7 +61,7 @@ public class HomeController : Controller
                         Columns = ["Cédula", "Nombre", "Puesto", "Estado"],
                         Rows = [],
                         EmptyMessage = "Sin trabajadores registrados.",
-                        SourceUrl = "/api/trabajador"
+                        SourceUrl = "https://localhost:44378/api/Trabajador"
                     },
                     Activity = ["Consulta de trabajadores habilitada", "Puesto visible por cada registro", "Base lista para gestión de personal"]
                 },
@@ -76,7 +76,7 @@ public class HomeController : Controller
                     Points = ["Puestos disponibles", "Referencia para planilla", "Gestión centralizada"],
                     Metrics =
                     [
-                        new DashboardMetricViewModel { Label = "Fuente", Value = "API", Trend = "/api/puesto" },
+                        new DashboardMetricViewModel { Label = "Fuente", Value = "API", Trend = "/api/Puesto" },
                         new DashboardMetricViewModel { Label = "Tipo", Value = "Catálogo", Trend = "Operativo" },
                         new DashboardMetricViewModel { Label = "Estado", Value = "Disponible", Trend = "Administrable" },
                     ],
@@ -87,7 +87,7 @@ public class HomeController : Controller
                         Columns = ["Puesto", "ID", "Estado"],
                         Rows = [],
                         EmptyMessage = "Sin puestos registrados.",
-                        SourceUrl = "/api/puesto"
+                        SourceUrl = "https://localhost:44378/api/Puesto"
                     },
                     Activity = ["Consulta de puestos activa", "Integrado con planilla", "Listo para altas y edición"]
                 },
@@ -102,7 +102,7 @@ public class HomeController : Controller
                     Points = ["Inventario disponible", "Precio actualizado", "Stock visible"],
                     Metrics =
                     [
-                        new DashboardMetricViewModel { Label = "Fuente", Value = "API", Trend = "/api/producto" },
+                        new DashboardMetricViewModel { Label = "Fuente", Value = "API", Trend = "/api/Producto" },
                         new DashboardMetricViewModel { Label = "Cobertura", Value = "Productos", Trend = "Inventario" },
                         new DashboardMetricViewModel { Label = "Estado", Value = "Operando", Trend = "Con actualización" },
                     ],
@@ -113,7 +113,7 @@ public class HomeController : Controller
                         Columns = ["Nombre", "Precio", "Stock", "Estado"],
                         Rows = [],
                         EmptyMessage = "Sin productos registrados.",
-                        SourceUrl = "/api/producto"
+                        SourceUrl = "https://localhost:44378/api/Producto"
                     },
                     Activity = ["Consulta de productos activa", "Visualización de precio y stock", "Listo para mantener inventario"]
                 },
@@ -128,7 +128,7 @@ public class HomeController : Controller
                     Points = ["Contacto centralizado", "Estado del proveedor", "Consulta rápida"],
                     Metrics =
                     [
-                        new DashboardMetricViewModel { Label = "Fuente", Value = "API", Trend = "/api/proveedor" },
+                        new DashboardMetricViewModel { Label = "Fuente", Value = "API", Trend = "/api/Proveedor" },
                         new DashboardMetricViewModel { Label = "Cobertura", Value = "Proveedores", Trend = "Compras" },
                         new DashboardMetricViewModel { Label = "Estado", Value = "Operando", Trend = "Actualizable" },
                     ],
@@ -139,7 +139,7 @@ public class HomeController : Controller
                         Columns = ["Nombre", "Teléfono", "Correo", "Estado"],
                         Rows = [],
                         EmptyMessage = "Sin proveedores registrados.",
-                        SourceUrl = "/api/proveedor"
+                        SourceUrl = "https://localhost:44378/api/Proveedor"
                     },
                     Activity = ["Consulta de proveedores activa", "Datos de contacto visibles", "Listo para gestión de abastecimiento"]
                 },

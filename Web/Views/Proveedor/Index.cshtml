@@ -1,0 +1,45 @@
+﻿@model IEnumerable<Abstracciones.Modelos.Proveedor.Proveedor.ProveedorResponse>
+
+<h1>Proveedores</h1>
+
+<p>
+    <a asp-action="Crear" class="btn btn-primary">
+        Agregar Proveedor
+    </a>
+</p>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+            <th>Correo</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var proveedor in Model)
+        {
+            <tr>
+                <td>@proveedor.Nombre_Proveedor</td>
+                <td>@proveedor.Telefono_Proveedor</td>
+                <td>@proveedor.Correo_Proveedor</td>
+                <td>@proveedor.Estado</td>
+                <td>
+                    <a asp-action="Editar"
+                       asp-route-id="@proveedor.Id_Proveedor"
+                       class="btn btn-warning btn-sm">
+                        Editar
+                    </a>
+
+                    <a asp-action="Eliminar"
+                       asp-route-id="@proveedor.Id_Proveedor"
+                       class="btn btn-danger btn-sm">
+                        Eliminar
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

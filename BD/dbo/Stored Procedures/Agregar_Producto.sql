@@ -1,5 +1,5 @@
 ﻿
-CREATE OR ALTER PROCEDURE Agregar_Producto 
+CREATE PROCEDURE Agregar_Producto 
 	@Id_Producto UNIQUEIDENTIFIER,
 	@Nombre_Producto VARCHAR(MAX),
 	@Precio_Venta DECIMAL(18,0),
@@ -10,25 +10,24 @@ BEGIN
 
 	BEGIN TRANSACTION
 
-		INSERT INTO [dbo].[PRODUCTO_TB]
+		INSERT INTO [dbo].[Producto_TB]
 		(
-			[NOMBRE_PRODUCTO],
-			[PRECIO_VENTA],
-			[STOCK_ACTUAL],
-			[ID_ESTADO]
+			[Id_Producto],
+			[Estado],
+			[Nombre_Producto],
+			[Precio_Venta],
+			[Stock_Actual]
 		)
 		VALUES
 		(
+			@Id_Producto,
+			1, 
 			@Nombre_Producto,
 			@Precio_Venta,
-			@Stock_Actual,
-			1
+			@Stock_Actual
 		)
 
-		DECLARE @IdInt INT = CAST(SCOPE_IDENTITY() AS INT)
-		DECLARE @IdGuid UNIQUEIDENTIFIER = CONVERT(UNIQUEIDENTIFIER, '00000000-0000-0000-0000-' + RIGHT('000000000000' + CONVERT(VARCHAR(8), CONVERT(VARBINARY(4), @IdInt), 2), 12))
-
-		SELECT @IdGuid
+		SELECT @Id_Producto
 
 	COMMIT TRANSACTION
 END

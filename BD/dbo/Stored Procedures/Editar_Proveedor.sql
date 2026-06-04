@@ -1,5 +1,5 @@
 ﻿
-CREATE OR ALTER PROCEDURE Editar_Proveedor
+CREATE PROCEDURE Editar_Proveedor
 	@Id_Proveedor UNIQUEIDENTIFIER,
 	@Nombre_Proveedor VARCHAR(MAX),
 	@Telefono_Proveedor VARCHAR(MAX),
@@ -7,32 +7,15 @@ CREATE OR ALTER PROCEDURE Editar_Proveedor
 AS
 BEGIN
 	SET NOCOUNT ON;
-	DECLARE @IdInt INT = CONVERT(INT, CONVERT(VARBINARY(4), RIGHT(CONVERT(VARCHAR(36), @Id_Proveedor), 8), 2));
 
 	BEGIN TRANSACTION
 
-		UPDATE dbo.PROVEEDOR_TB
+		UPDATE dbo.Proveedor_TB
 		SET
-			NOMBRE_PROVEEDOR = @Nombre_Proveedor
-		WHERE ID_PROVEEDOR = @IdInt
-
-		IF EXISTS (SELECT 1 FROM dbo.PROVEEDOR_TELEFONO_TB WHERE ID_PROVEEDOR = @IdInt)
-			UPDATE dbo.PROVEEDOR_TELEFONO_TB
-			SET TELEFONO = ISNULL(@Telefono_Proveedor, '')
-			WHERE ID_PROVEEDOR = @IdInt;
-		ELSE
-			INSERT INTO dbo.PROVEEDOR_TELEFONO_TB (ID_PROVEEDOR, TELEFONO)
-			VALUES (@IdInt, ISNULL(@Telefono_Proveedor, ''));
-
-		IF EXISTS (SELECT 1 FROM dbo.PROVEEDOR_CORREO_TB WHERE ID_PROVEEDOR = @IdInt)
-			UPDATE dbo.PROVEEDOR_CORREO_TB
-			SET CORREO = ISNULL(@Correo_Proveedor, '')
-			WHERE ID_PROVEEDOR = @IdInt;
-		ELSE
-			INSERT INTO dbo.PROVEEDOR_CORREO_TB (ID_PROVEEDOR, CORREO)
-			VALUES (@IdInt, ISNULL(@Correo_Proveedor, ''));
-
-		SELECT @Id_Proveedor
+			Nombre_Proveedor = @Nombre_Proveedor,
+			Telefono_Proveedor = @Telefono_Proveedor,
+			Correo_Proveedor = @Correo_Proveedor
+		WHERE Id_Proveedor = @Id_Proveedor
 
 	COMMIT TRANSACTION
 END

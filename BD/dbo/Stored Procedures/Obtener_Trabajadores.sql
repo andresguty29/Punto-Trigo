@@ -1,14 +1,14 @@
-﻿CREATE OR ALTER PROCEDURE Obtener_Trabajadores
+﻿CREATE PROCEDURE Obtener_Trabajadores
 AS
 BEGIN
     SET NOCOUNT ON;
 
     SELECT
-        CONVERT(UNIQUEIDENTIFIER, '00000000-0000-0000-0000-' + RIGHT('000000000000' + CONVERT(VARCHAR(8), CONVERT(VARBINARY(4), ID_TRABAJADOR), 2), 12)) AS Id_Trabajador,
-        [CEDULA] AS Cedula,
-        LTRIM(RTRIM([NOMBRE] + ' ' + [APELLIDO])) AS Nombre_Completo,
-        [ID_ESTADO] AS Id_Estado,
-        CONVERT(UNIQUEIDENTIFIER, '00000000-0000-0000-0000-' + RIGHT('000000000000' + CONVERT(VARCHAR(8), CONVERT(VARBINARY(4), ID_PUESTO), 2), 12)) AS Id_Puesto
-    FROM [dbo].[TRABAJADOR_TB]
-    WHERE [ID_ESTADO] = 1;
+        [Id_Trabajador],
+        [Cedula],
+        [Nombre_Completo],
+        [Id_Estado],
+        [Id_Puesto]
+    FROM [dbo].[Trabajador_TB]
+    WHERE [Id_Estado] = 1;
 END

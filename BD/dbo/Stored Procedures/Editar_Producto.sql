@@ -1,5 +1,5 @@
 ﻿
-CREATE OR ALTER PROCEDURE Editar_Producto
+CREATE PROCEDURE Editar_Producto
 	@Id_Producto UNIQUEIDENTIFIER,
 	@Nombre_Producto VARCHAR(MAX),
 	@Precio_Venta DECIMAL(18,0),
@@ -7,18 +7,15 @@ CREATE OR ALTER PROCEDURE Editar_Producto
 AS
 BEGIN
 	SET NOCOUNT ON;
-	DECLARE @IdInt INT = CONVERT(INT, CONVERT(VARBINARY(4), RIGHT(CONVERT(VARCHAR(36), @Id_Producto), 8), 2));
 
 	BEGIN TRANSACTION
 
-		UPDATE dbo.PRODUCTO_TB
+		UPDATE dbo.Producto_TB
 		SET
-			NOMBRE_PRODUCTO = @Nombre_Producto,
-			PRECIO_VENTA = @Precio_Venta,
-			STOCK_ACTUAL = @Stock_Actual
-		WHERE ID_PRODUCTO = @IdInt
-
-		SELECT @Id_Producto
+			Nombre_Producto = @Nombre_Producto,
+			Precio_Venta = @Precio_Venta,
+			Stock_Actual = @Stock_Actual
+		WHERE Id_Producto = @Id_Producto
 
 	COMMIT TRANSACTION
 END

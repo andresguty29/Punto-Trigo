@@ -1,5 +1,5 @@
 ﻿
-CREATE OR ALTER PROCEDURE Agregar_Proveedor
+CREATE PROCEDURE Agregar_Proveedor
 	@Id_Proveedor UNIQUEIDENTIFIER,
 	@Nombre_Proveedor VARCHAR(MAX),
 	@Telefono_Proveedor VARCHAR(MAX),
@@ -11,29 +11,24 @@ BEGIN
 
 	BEGIN TRANSACTION
 
-		INSERT INTO [dbo].[PROVEEDOR_TB]
+		INSERT INTO [dbo].[Proveedor_TB]
 		(
-			[NOMBRE_PROVEEDOR],
-			[ID_DIRECCION],
-			[ID_ESTADO]
+			[Id_Proveedor],
+			[Estado],
+			[Nombre_Proveedor],
+			[Telefono_Proveedor],
+			[Correo_Proveedor]
 		)
 		VALUES
 		(
+			@Id_Proveedor,
+			1, 
 			@Nombre_Proveedor,
-			NULL,
-			1
+			@Telefono_Proveedor,
+			@Correo_Proveedor
 		)
 
-		DECLARE @IdInt INT = CAST(SCOPE_IDENTITY() AS INT)
-		DECLARE @IdGuid UNIQUEIDENTIFIER = CONVERT(UNIQUEIDENTIFIER, '00000000-0000-0000-0000-' + RIGHT('000000000000' + CONVERT(VARCHAR(8), CONVERT(VARBINARY(4), @IdInt), 2), 12))
-
-		INSERT INTO [dbo].[PROVEEDOR_TELEFONO_TB] ([ID_PROVEEDOR], [TELEFONO])
-		VALUES (@IdInt, ISNULL(@Telefono_Proveedor, ''))
-
-		INSERT INTO [dbo].[PROVEEDOR_CORREO_TB] ([ID_PROVEEDOR], [CORREO])
-		VALUES (@IdInt, ISNULL(@Correo_Proveedor, ''))
-
-		SELECT @IdGuid
+		SELECT @Id_Proveedor
 
 	COMMIT TRANSACTION
 END

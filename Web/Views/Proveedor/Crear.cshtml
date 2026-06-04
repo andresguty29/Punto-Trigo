@@ -1,0 +1,30 @@
+﻿@model Abstracciones.Modelos.Proveedor.Proveedor.ProveedorRequest
+
+<h1>Agregar Proveedor</h1>
+
+<form asp-action="Crear" method="post">
+
+    <div class="mb-3">
+        <label asp-for="Nombre_Proveedor" class="form-label"></label>
+        <input asp-for="Nombre_Proveedor" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Telefono_Proveedor" class="form-label"></label>
+        <input asp-for="Telefono_Proveedor" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Correo_Proveedor" class="form-label"></label>
+        <input asp-for="Correo_Proveedor" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Guardar
+    </button>
+
+    <a asp-action="Index" class="btn btn-secondary">
+        Volver
+    </a>
+
+</form>

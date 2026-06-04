@@ -1,0 +1,34 @@
+﻿@model IEnumerable<Abstracciones.Modelos.Trabajador.Trabajador.TrabajadorResponse>
+
+<h1>Trabajadores</h1>
+
+<p>
+    <a asp-action="Crear" class="btn btn-primary">Agregar Trabajador</a>
+</p>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Cédula</th>
+            <th>Nombre completo</th>
+            <th>Id Puesto</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var trabajador in Model)
+        {
+            <tr>
+                <td>@trabajador.Cedula</td>
+                <td>@trabajador.Nombre_Completo</td>
+                <td>@trabajador.Id_Puesto</td>
+                <td>@trabajador.Id_Estado</td>
+                <td>
+                    <a asp-action="Editar" asp-route-id="@trabajador.Id_Trabajador" class="btn btn-warning btn-sm">Editar</a>
+                    <a asp-action="Eliminar" asp-route-id="@trabajador.Id_Trabajador" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

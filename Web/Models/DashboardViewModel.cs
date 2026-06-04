@@ -1,4 +1,4 @@
-namespace API.Models;
+﻿namespace Web.Models;
 
 public class DashboardViewModel
 {

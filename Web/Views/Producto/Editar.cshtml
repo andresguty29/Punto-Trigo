@@ -1,0 +1,25 @@
+﻿@model Abstracciones.Modelos.Producto.Producto.ProductoRequest
+
+<h1>Editar Producto</h1>
+
+<form asp-action="Editar" method="post">
+    <input type="hidden" asp-for="Id_Producto" />
+
+    <div class="mb-3">
+        <label asp-for="Nombre_Producto" class="form-label"></label>
+        <input asp-for="Nombre_Producto" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Precio_Venta" class="form-label"></label>
+        <input asp-for="Precio_Venta" class="form-control" type="number" step="0.01" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Stock_Actual" class="form-label"></label>
+        <input asp-for="Stock_Actual" class="form-control" type="number" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    <a asp-action="Index" class="btn btn-secondary">Volver</a>
+</form>

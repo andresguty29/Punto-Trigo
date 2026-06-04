@@ -1,0 +1,28 @@
+﻿@model IEnumerable<Abstracciones.Modelos.Puesto.Puesto.PuestoResponse>
+
+<h1>Puestos</h1>
+
+<a asp-action="Crear" class="btn btn-primary mb-3">Agregar puesto</a>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Nombre del puesto</th>
+            <th>Estado</th>
+            <th style="width: 200px;">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var puesto in Model)
+        {
+            <tr>
+                <td>@puesto.Nombre_Puesto</td>
+                <td>@puesto.Id_Estado</td>
+                <td>
+                    <a asp-action="Editar" asp-route-id="@puesto.Id_Puesto" class="btn btn-warning btn-sm">Editar</a>
+                    <a asp-action="Eliminar" asp-route-id="@puesto.Id_Puesto" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
