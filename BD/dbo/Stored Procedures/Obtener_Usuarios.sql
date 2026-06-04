@@ -1,14 +1,14 @@
-﻿CREATE OR ALTER PROCEDURE Obtener_Usuarios
+﻿CREATE PROCEDURE Obtener_Usuarios
 AS
 BEGIN
     SET NOCOUNT ON;
 
     SELECT
-        CONVERT(UNIQUEIDENTIFIER, '00000000-0000-0000-0000-' + RIGHT('000000000000' + CONVERT(VARCHAR(8), CONVERT(VARBINARY(4), ID_USUARIO), 2), 12)) AS Id_Usuario,
-        [NOMBRE_USUARIO] AS Nombre_Usuario,
-        [CONTRASENA] AS Contrasena,
-        CONVERT(UNIQUEIDENTIFIER, '00000000-0000-0000-0000-' + RIGHT('000000000000' + CONVERT(VARCHAR(8), CONVERT(VARBINARY(4), ID_USUARIO), 2), 12)) AS Id_Trabajador,
-        [ID_ESTADO] AS Id_Estado
-    FROM [dbo].[USUARIO_TB]
-    WHERE [ID_ESTADO] = 1;
+        [Id_Usuario],
+        [Nombre_Usuario],
+        [Contrasena],
+        [Id_Trabajador],
+        [Id_Estado]
+    FROM [dbo].[Usuario_TB]
+    WHERE [Id_Estado] = 1;
 END

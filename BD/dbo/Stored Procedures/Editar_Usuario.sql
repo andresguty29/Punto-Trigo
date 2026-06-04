@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE Editar_Usuario
+﻿CREATE PROCEDURE Editar_Usuario
     @Id_Usuario UNIQUEIDENTIFIER,
     @Nombre_Usuario VARCHAR(MAX),
     @Contrasena VARCHAR(MAX),
@@ -6,15 +6,15 @@ CREATE OR ALTER PROCEDURE Editar_Usuario
 AS
 BEGIN
     SET NOCOUNT ON;
-    DECLARE @IdInt INT = CONVERT(INT, CONVERT(VARBINARY(4), RIGHT(CONVERT(VARCHAR(36), @Id_Usuario), 8), 2));
 
     BEGIN TRANSACTION;
 
-        UPDATE [dbo].[USUARIO_TB]
+        UPDATE [dbo].[Usuario_TB]
         SET
-            [NOMBRE_USUARIO] = @Nombre_Usuario,
-            [CONTRASENA] = @Contrasena
-        WHERE [ID_USUARIO] = @IdInt;
+            [Nombre_Usuario] = @Nombre_Usuario,
+            [Contrasena] = @Contrasena,
+            [Id_Trabajador] = @Id_Trabajador
+        WHERE [Id_Usuario] = @Id_Usuario;
 
         SELECT @Id_Usuario AS Id_Usuario;
 

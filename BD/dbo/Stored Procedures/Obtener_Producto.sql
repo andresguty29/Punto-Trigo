@@ -1,17 +1,16 @@
 ﻿
-CREATE OR ALTER PROCEDURE Obtener_Producto
+CREATE PROCEDURE Obtener_Producto
 	@Id_Producto UNIQUEIDENTIFIER
 AS
 BEGIN
 	SET NOCOUNT ON;
-	DECLARE @IdInt INT = CONVERT(INT, CONVERT(VARBINARY(4), RIGHT(CONVERT(VARCHAR(36), @Id_Producto), 8), 2));
 
 	SELECT
-		CONVERT(UNIQUEIDENTIFIER, '00000000-0000-0000-0000-' + RIGHT('000000000000' + CONVERT(VARCHAR(8), CONVERT(VARBINARY(4), ID_PRODUCTO), 2), 12)) AS Id_Producto,
-		ID_ESTADO AS Estado,
-		NOMBRE_PRODUCTO AS Nombre_Producto,
-		PRECIO_VENTA AS Precio_Venta,
-		STOCK_ACTUAL AS Stock_Actual
-	FROM dbo.PRODUCTO_TB
-	WHERE ID_PRODUCTO = @IdInt
+		Id_Producto,
+		Estado,
+		Nombre_Producto,
+		Precio_Venta,
+		Stock_Actual
+	FROM dbo.Producto_TB
+	WHERE Id_Producto = @Id_Producto
 END

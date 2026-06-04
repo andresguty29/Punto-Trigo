@@ -1,11 +1,4 @@
 <Solution>
-  <Configurations>
-    <Configuration Name="Debug|Any CPU" />
-    <Configuration Name="Release|Any CPU" />
-  </Configurations>
-  <Properties>
-    <Property Name="StartupProject">API\API.csproj</Property>
-  </Properties>
   <Project Path="Abstracciones/Abstracciones.csproj" />
   <Project Path="API/API.csproj" />
   <Project Path="BD/BD.sqlproj" Id="fb8dce75-d102-452e-8b80-7fb7bfe2db56">
@@ -14,4 +7,8 @@
   </Project>
   <Project Path="DA/DA.csproj" />
   <Project Path="Flujo/Flujo.csproj" />
+  <Project Path="Web/Web.csproj" Id="40668353-e4b0-4a7c-ae1c-374410a9546d" />
+  <Properties>
+    <Property Name="StartupProject">API\API.csproj</Property>
+  </Properties>
 </Solution>

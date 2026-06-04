@@ -1,14 +1,13 @@
-CREATE OR ALTER PROCEDURE Obtener_Puesto
+﻿CREATE PROCEDURE Obtener_Puesto
     @Id_Puesto UNIQUEIDENTIFIER
 AS
 BEGIN
     SET NOCOUNT ON;
-    DECLARE @IdInt INT = CONVERT(INT, CONVERT(VARBINARY(4), RIGHT(CONVERT(VARCHAR(36), @Id_Puesto), 8), 2));
 
     SELECT
-        CONVERT(UNIQUEIDENTIFIER, '00000000-0000-0000-0000-' + RIGHT('000000000000' + CONVERT(VARCHAR(8), CONVERT(VARBINARY(4), ID_PUESTO), 2), 12)) AS Id_Puesto,
-        [NOMBRE_PUESTO] AS Nombre_Puesto,
-        1 AS Id_Estado
-    FROM [dbo].[PUESTO_TB]
-    WHERE [ID_PUESTO] = @IdInt;
+        [Id_Puesto],
+        [Nombre_Puesto],
+        [Id_Estado]
+    FROM [dbo].[Puesto_TB]
+    WHERE [Id_Puesto] = @Id_Puesto;
 END

@@ -1,14 +1,14 @@
-CREATE OR ALTER PROCEDURE Eliminar_Puesto
+﻿CREATE PROCEDURE Eliminar_Puesto
     @Id_Puesto UNIQUEIDENTIFIER
 AS
 BEGIN
     SET NOCOUNT ON;
-    DECLARE @IdInt INT = CONVERT(INT, CONVERT(VARBINARY(4), RIGHT(CONVERT(VARCHAR(36), @Id_Puesto), 8), 2));
 
     BEGIN TRANSACTION;
 
-        DELETE FROM [dbo].[PUESTO_TB]
-        WHERE [ID_PUESTO] = @IdInt;
+        UPDATE [dbo].[Puesto_TB]
+        SET [Id_Estado] = 2
+        WHERE [Id_Puesto] = @Id_Puesto;
 
         SELECT @Id_Puesto AS Id_Puesto;
 

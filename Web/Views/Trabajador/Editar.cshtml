@@ -1,0 +1,27 @@
+﻿@model Abstracciones.Modelos.Trabajador.Trabajador.TrabajadorRequest
+
+<h1>Editar Trabajador</h1>
+
+<form asp-action="Editar" method="post">
+    <input type="hidden" asp-for="Id_Trabajador" />
+
+    <div class="mb-3">
+        <label asp-for="Cedula" class="form-label"></label>
+        <input asp-for="Cedula" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Nombre_Completo" class="form-label"></label>
+        <input asp-for="Nombre_Completo" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Id_Puesto" class="form-label">Puesto</label>
+        <select asp-for="Id_Puesto" asp-items="ViewBag.Puestos" class="form-control">
+            <option value="">Seleccione un puesto</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    <a asp-action="Index" class="btn btn-secondary">Volver</a>
+</form>

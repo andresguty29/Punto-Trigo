@@ -1,14 +1,14 @@
 ﻿
-CREATE OR ALTER PROCEDURE Obtener_Productos
+CREATE PROCEDURE Obtener_Productos
 AS
 BEGIN
 	SET NOCOUNT ON;
 
 	SELECT
-		CONVERT(UNIQUEIDENTIFIER, '00000000-0000-0000-0000-' + RIGHT('000000000000' + CONVERT(VARCHAR(8), CONVERT(VARBINARY(4), ID_PRODUCTO), 2), 12)) AS Id_Producto,
-		ID_ESTADO AS Estado,
-		NOMBRE_PRODUCTO AS Nombre_Producto,
-		PRECIO_VENTA AS Precio_Venta,
-		STOCK_ACTUAL AS Stock_Actual
-	FROM dbo.PRODUCTO_TB
+		Id_Producto,
+		Estado,
+		Nombre_Producto,
+		Precio_Venta,
+		Stock_Actual
+	FROM dbo.Producto_TB
 END

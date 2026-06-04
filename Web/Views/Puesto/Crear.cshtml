@@ -1,0 +1,13 @@
+﻿@model Abstracciones.Modelos.Puesto.Puesto.PuestoRequest
+
+<h1>Agregar puesto</h1>
+
+<form asp-action="Crear" method="post">
+    <div class="mb-3">
+        <label class="form-label">Nombre del puesto</label>
+        <input asp-for="Nombre_Puesto" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a asp-action="Index" class="btn btn-secondary">Volver</a>
+</form>
