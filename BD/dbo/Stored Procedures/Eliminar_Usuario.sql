@@ -1,0 +1,17 @@
+CREATE OR ALTER PROCEDURE Eliminar_Usuario
+    @Id_Usuario UNIQUEIDENTIFIER
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DECLARE @IdInt INT = CONVERT(INT, CONVERT(VARBINARY(4), RIGHT(CONVERT(VARCHAR(36), @Id_Usuario), 8), 2));
+
+    BEGIN TRANSACTION;
+
+        UPDATE [dbo].[USUARIO_TB]
+        SET [ID_ESTADO] = 2
+        WHERE [ID_USUARIO] = @IdInt;
+
+        SELECT @Id_Usuario AS Id_Usuario;
+
+    COMMIT TRANSACTION;
+END

@@ -1,0 +1,17 @@
+CREATE OR ALTER PROCEDURE Eliminar_Trabajador
+    @Id_Trabajador UNIQUEIDENTIFIER
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DECLARE @IdInt INT = CONVERT(INT, CONVERT(VARBINARY(4), RIGHT(CONVERT(VARCHAR(36), @Id_Trabajador), 8), 2));
+
+    BEGIN TRANSACTION;
+
+        UPDATE [dbo].[TRABAJADOR_TB]
+        SET [ID_ESTADO] = 2
+        WHERE [ID_TRABAJADOR] = @IdInt;
+
+        SELECT @Id_Trabajador AS Id_Trabajador;
+
+    COMMIT TRANSACTION;
+END
