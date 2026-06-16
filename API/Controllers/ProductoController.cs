@@ -37,6 +37,13 @@ namespace API.Controllers
             var resultado = await _productoFlujo.Eliminar(Id);
             return NoContent();
         }
+
+        [HttpPatch("{Id}/activar")]
+        public async Task<IActionResult> Activar(Guid Id)
+        {
+            await _productoFlujo.Activar(Id);
+            return NoContent();
+        }
         [HttpGet]
         public async Task<IActionResult> Obtener()
         {

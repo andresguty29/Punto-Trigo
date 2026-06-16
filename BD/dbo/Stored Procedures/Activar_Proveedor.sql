@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE Eliminar_Proveedor
+CREATE PROCEDURE Activar_Proveedor
 	@Id_Proveedor UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -8,7 +7,7 @@ BEGIN
 	BEGIN TRANSACTION
 
 		UPDATE dbo.Proveedor_TB
-		SET Id_Estado = 2
+		SET Id_Estado = 1
 		WHERE Id_Proveedor = @Id_Proveedor
 
 	COMMIT TRANSACTION

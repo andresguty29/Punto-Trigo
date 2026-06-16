@@ -10,10 +10,10 @@ namespace Abstracciones.Modelos.Producto
     {
         public class ProductoBase
         {
+            public Guid? Id_Proveedor { get; set; }
             public string? Nombre_Producto { get; set; }
             public decimal Precio_Venta { get; set; }
-            public int Stock_Actual {  get; set; }
-
+            public int Stock_Actual { get; set; }
         }
         public class ProductoRequest : ProductoBase
         {
@@ -22,7 +22,8 @@ namespace Abstracciones.Modelos.Producto
         public class ProductoResponse : ProductoBase
         {
             public Guid Id_Producto { get; set; }
-            public int Estado { get; set; }
+            public int Id_Estado { get; set; }
+            public string? Nombre_Proveedor { get; set; }
         }
     }
 }

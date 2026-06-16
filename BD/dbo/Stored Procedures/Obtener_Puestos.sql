@@ -8,5 +8,5 @@ BEGIN
         [Nombre_Puesto],
         [Id_Estado]
     FROM [dbo].[Puesto_TB]
-    WHERE [Id_Estado] = 1;
+    
 END

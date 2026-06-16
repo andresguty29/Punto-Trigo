@@ -38,5 +38,9 @@ namespace Flujo
             return _puestoDA.Obtener(Id);
         }
 
+        public Task<Guid> Activar(Guid Id)
+        {
+            return _puestoDA.Activar(Id);
+        }
     }
 }

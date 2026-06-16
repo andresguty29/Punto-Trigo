@@ -24,7 +24,7 @@ namespace Abstracciones.Modelos.Proveedor
         public class ProveedorResponse : ProveedorBase
         {
             public Guid Id_Proveedor { get; set; }
-            public int Estado { get; set;  }
+            public int Id_Estado { get; set; }
 
         }
     }

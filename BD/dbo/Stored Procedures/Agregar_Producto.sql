@@ -1,9 +1,10 @@
 ﻿
-CREATE PROCEDURE Agregar_Producto 
-	@Id_Producto UNIQUEIDENTIFIER,
+CREATE PROCEDURE Agregar_Producto
+	@Id_Producto     UNIQUEIDENTIFIER,
+	@Id_Proveedor    UNIQUEIDENTIFIER = NULL,
 	@Nombre_Producto VARCHAR(MAX),
-	@Precio_Venta DECIMAL(18,0),
-	@Stock_Actual INT
+	@Precio_Venta    DECIMAL(18,2),
+	@Stock_Actual    INT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -13,7 +14,8 @@ BEGIN
 		INSERT INTO [dbo].[Producto_TB]
 		(
 			[Id_Producto],
-			[Estado],
+			[Id_Estado],
+			[Id_Proveedor],
 			[Nombre_Producto],
 			[Precio_Venta],
 			[Stock_Actual]
@@ -21,7 +23,8 @@ BEGIN
 		VALUES
 		(
 			@Id_Producto,
-			1, 
+			1,
+			@Id_Proveedor,
 			@Nombre_Producto,
 			@Precio_Venta,
 			@Stock_Actual

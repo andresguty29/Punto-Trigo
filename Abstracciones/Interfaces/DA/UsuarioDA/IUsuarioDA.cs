@@ -14,5 +14,6 @@ namespace Abstracciones.Interfaces.DA.UsuarioDA
         Task<Guid> Agregar(UsuarioRequest usuario);
         Task<Guid> Editar(Guid Id, UsuarioRequest usuario);
         Task<Guid> Eliminar(Guid Id);
+        Task<Guid> Activar(Guid Id);
     }
 }

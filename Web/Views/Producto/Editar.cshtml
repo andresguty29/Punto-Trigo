@@ -1,25 +1,55 @@
-﻿@model Abstracciones.Modelos.Producto.Producto.ProductoRequest
+@model Abstracciones.Modelos.Producto.Producto.ProductoRequest
 
-<h1>Editar Producto</h1>
+@{
+    ViewData["Title"] = "Editar Producto";
 
-<form asp-action="Editar" method="post">
+    if (ViewBag.Modal == true)
+    {
+        Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    }
+
+    bool isModal = ViewBag.Modal == true;
+}
+
+<form asp-action="Editar" asp-route-id="@Model.Id_Producto" asp-route-modal="@isModal" method="post" class="modal-form">
+
     <input type="hidden" asp-for="Id_Producto" />
 
-    <div class="mb-3">
-        <label asp-for="Nombre_Producto" class="form-label"></label>
-        <input asp-for="Nombre_Producto" class="form-control" />
+    <div class="mf-group">
+        <label asp-for="Nombre_Producto" class="mf-label">Nombre del Producto</label>
+        <input asp-for="Nombre_Producto" class="mf-input" />
+        <span asp-validation-for="Nombre_Producto" class="mf-error"></span>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Precio_Venta" class="form-label"></label>
-        <input asp-for="Precio_Venta" class="form-control" type="number" step="0.01" />
+    <div class="mf-group">
+        <label asp-for="Precio_Venta" class="mf-label">Precio de Venta (₡)</label>
+        <input asp-for="Precio_Venta" class="mf-input" type="number" step="0.01" min="0" />
+        <span asp-validation-for="Precio_Venta" class="mf-error"></span>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Stock_Actual" class="form-label"></label>
-        <input asp-for="Stock_Actual" class="form-control" type="number" />
+    <div class="mf-group">
+        <label asp-for="Stock_Actual" class="mf-label">Stock Actual</label>
+        <input asp-for="Stock_Actual" class="mf-input" type="number" min="0" />
+        <span asp-validation-for="Stock_Actual" class="mf-error"></span>
     </div>
 
-    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-    <a asp-action="Index" class="btn btn-secondary">Volver</a>
+    <div class="mf-group">
+        <label asp-for="Id_Proveedor" class="mf-label">Proveedor <span style="font-weight:400;text-transform:none;">(opcional)</span></label>
+        <select asp-for="Id_Proveedor" asp-items="ViewBag.Proveedores" class="mf-select">
+            <option value="">Sin proveedor</option>
+        </select>
+    </div>
+
+    <div class="mf-actions">
+        <button type="submit" class="mf-btn mf-btn-primary">Guardar Cambios</button>
+        @if (!isModal)
+        {
+            <a asp-action="Index" class="mf-btn mf-btn-secondary">Volver</a>
+        }
+    </div>
+
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/dashboard.css" />
+</head>
+<body style="margin:0; background:white;">
+    <div class="modal-form-page">
+        @RenderBody()
+    </div>
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        // Traducir mensajes de validación HTML5 al español
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                el.addEventListener('invalid', e => {
+                    const input = e.target;
+                    input.setCustomValidity('');
+
+                    if (input.validity.valueMissing) {
+                        input.setCustomValidity('Este campo es obligatorio.');
+                    } else if (input.validity.typeMismatch && input.type === 'email') {
+                        input.setCustomValidity('Ingresa un correo electrónico válido (ejemplo: nombre@dominio.com).');
+                    } else if (input.validity.typeMismatch && input.type === 'url') {
+                        input.setCustomValidity('Ingresa una URL válida.');
+                    } else if (input.validity.tooShort) {
+                        input.setCustomValidity(`Mínimo ${input.minLength} caracteres. Actualmente tiene ${input.value.length}.`);
+                    } else if (input.validity.tooLong) {
+                        input.setCustomValidity(`Máximo ${input.maxLength} caracteres.`);
+                    } else if (input.validity.rangeUnderflow) {
+                        input.setCustomValidity(`El valor mínimo permitido es ${input.min}.`);
+                    } else if (input.validity.rangeOverflow) {
+                        input.setCustomValidity(`El valor máximo permitido es ${input.max}.`);
+                    } else if (input.validity.stepMismatch) {
+                        input.setCustomValidity('El valor no corresponde al incremento permitido.');
+                    } else if (input.validity.patternMismatch) {
+                        input.setCustomValidity('El formato ingresado no es válido.');
+                    }
+                });
+
+                el.addEventListener('input', () => el.setCustomValidity(''));
+            });
+        });
+    </script>
+</body>
+</html>

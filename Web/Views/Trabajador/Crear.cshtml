@@ -1,25 +1,48 @@
-﻿@model Abstracciones.Modelos.Trabajador.Trabajador.TrabajadorRequest
+@model Abstracciones.Modelos.Trabajador.Trabajador.TrabajadorRequest
 
-<h1>Agregar Trabajador</h1>
+@{
+    ViewData["Title"] = "Agregar Trabajador";
 
-<form asp-action="Crear" method="post">
-    <div class="mb-3">
-        <label asp-for="Cedula" class="form-label"></label>
-        <input asp-for="Cedula" class="form-control" />
+    if (ViewBag.Modal == true)
+    {
+        Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    }
+
+    bool isModal = ViewBag.Modal == true;
+}
+
+<form asp-action="Crear" asp-route-modal="@isModal" method="post" class="modal-form">
+
+    <div class="mf-group">
+        <label asp-for="Cedula" class="mf-label">Cédula</label>
+        <input asp-for="Cedula" class="mf-input" />
+        <span asp-validation-for="Cedula" class="mf-error"></span>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Nombre_Completo" class="form-label"></label>
-        <input asp-for="Nombre_Completo" class="form-control" />
+    <div class="mf-group">
+        <label asp-for="Nombre_Completo" class="mf-label">Nombre Completo</label>
+        <input asp-for="Nombre_Completo" class="mf-input" />
+        <span asp-validation-for="Nombre_Completo" class="mf-error"></span>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Id_Puesto" class="form-label">Puesto</label>
-        <select asp-for="Id_Puesto" asp-items="ViewBag.Puestos" class="form-control">
+    <div class="mf-group">
+        <label asp-for="Id_Puesto" class="mf-label">Puesto</label>
+        <select asp-for="Id_Puesto" asp-items="ViewBag.Puestos" class="mf-select">
             <option value="">Seleccione un puesto</option>
         </select>
+        <span asp-validation-for="Id_Puesto" class="mf-error"></span>
     </div>
 
-    <button type="submit" class="btn btn-success">Guardar</button>
-    <a asp-action="Index" class="btn btn-secondary">Volver</a>
+    <div class="mf-actions">
+        <button type="submit" class="mf-btn mf-btn-primary">Guardar</button>
+        @if (!isModal)
+        {
+            <a asp-action="Index" class="mf-btn mf-btn-secondary">Volver</a>
+        }
+    </div>
+
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

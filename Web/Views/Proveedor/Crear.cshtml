@@ -1,30 +1,46 @@
-﻿@model Abstracciones.Modelos.Proveedor.Proveedor.ProveedorRequest
+@model Abstracciones.Modelos.Proveedor.Proveedor.ProveedorRequest
 
-<h1>Agregar Proveedor</h1>
+@{
+    ViewData["Title"] = "Agregar Proveedor";
 
-<form asp-action="Crear" method="post">
+    if (ViewBag.Modal == true)
+    {
+        Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    }
 
-    <div class="mb-3">
-        <label asp-for="Nombre_Proveedor" class="form-label"></label>
-        <input asp-for="Nombre_Proveedor" class="form-control" />
+    bool isModal = ViewBag.Modal == true;
+}
+
+<form asp-action="Crear" asp-route-modal="@isModal" method="post" class="modal-form">
+
+    <div class="mf-group">
+        <label asp-for="Nombre_Proveedor" class="mf-label">Nombre del Proveedor</label>
+        <input asp-for="Nombre_Proveedor" class="mf-input" />
+        <span asp-validation-for="Nombre_Proveedor" class="mf-error"></span>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Telefono_Proveedor" class="form-label"></label>
-        <input asp-for="Telefono_Proveedor" class="form-control" />
+    <div class="mf-group">
+        <label asp-for="Telefono_Proveedor" class="mf-label">Teléfono</label>
+        <input asp-for="Telefono_Proveedor" class="mf-input" />
+        <span asp-validation-for="Telefono_Proveedor" class="mf-error"></span>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Correo_Proveedor" class="form-label"></label>
-        <input asp-for="Correo_Proveedor" class="form-control" />
+    <div class="mf-group">
+        <label asp-for="Correo_Proveedor" class="mf-label">Correo Electrónico</label>
+        <input asp-for="Correo_Proveedor" class="mf-input" type="email" />
+        <span asp-validation-for="Correo_Proveedor" class="mf-error"></span>
     </div>
 
-    <button type="submit" class="btn btn-success">
-        Guardar
-    </button>
-
-    <a asp-action="Index" class="btn btn-secondary">
-        Volver
-    </a>
+    <div class="mf-actions">
+        <button type="submit" class="mf-btn mf-btn-primary">Guardar</button>
+        @if (!isModal)
+        {
+            <a asp-action="Index" class="mf-btn mf-btn-secondary">Volver</a>
+        }
+    </div>
 
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

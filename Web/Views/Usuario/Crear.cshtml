@@ -1,43 +1,44 @@
-﻿@model Abstracciones.Modelos.Usuario.Usuario.UsuarioRequest
+@model Abstracciones.Modelos.Usuario.Usuario.UsuarioRequest
 
-<h1>Agregar Usuario</h1>
+@{
+    ViewData["Title"] = "Agregar Usuario";
 
-<form asp-action="Crear" method="post">
+    if (ViewBag.Modal == true)
+    {
+        Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    }
 
-    <div class="mb-3">
-        <label asp-for="Nombre_Usuario" class="form-label"></label>
-        <input asp-for="Nombre_Usuario" class="form-control" />
+    bool isModal = ViewBag.Modal == true;
+}
+
+<form asp-action="Crear" asp-route-modal="@isModal" method="post" class="modal-form">
+
+    <div class="mf-group">
+        <label asp-for="Nombre_Usuario" class="mf-label">Nombre de Usuario</label>
+        <input asp-for="Nombre_Usuario" class="mf-input" />
+        <span asp-validation-for="Nombre_Usuario" class="mf-error"></span>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Contrasena" class="form-label"></label>
-        <input asp-for="Contrasena"
-               type="password"
-               class="form-control" />
+    <div class="mf-group">
+        <label asp-for="Contrasena" class="mf-label">Contraseña</label>
+        <input asp-for="Contrasena" type="password" class="mf-input" />
+        <span asp-validation-for="Contrasena" class="mf-error"></span>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Id_Trabajador" class="form-label">
-            Trabajador
-        </label>
-
-        <select asp-for="Id_Trabajador"
-                asp-items="ViewBag.Trabajadores"
-                class="form-control">
-
-            <option value="">
-                Seleccione un trabajador
-            </option>
-
+    <div class="mf-group">
+        <label asp-for="Id_Trabajador" class="mf-label">Trabajador</label>
+        <select asp-for="Id_Trabajador" asp-items="ViewBag.Trabajadores" class="mf-select">
+            <option value="">Seleccione un trabajador</option>
         </select>
+        <span asp-validation-for="Id_Trabajador" class="mf-error"></span>
     </div>
 
-    <button type="submit" class="btn btn-success">
-        Guardar
-    </button>
-
-    <a asp-action="Index" class="btn btn-secondary">
-        Volver
-    </a>
+    <div class="mf-actions">
+        <button type="submit" class="mf-btn mf-btn-primary">Guardar</button>
+    </div>
 
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

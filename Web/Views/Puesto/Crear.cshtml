@@ -1,13 +1,34 @@
-﻿@model Abstracciones.Modelos.Puesto.Puesto.PuestoRequest
+@model Abstracciones.Modelos.Puesto.Puesto.PuestoRequest
 
-<h1>Agregar puesto</h1>
+@{
+    ViewData["Title"] = "Agregar Puesto";
 
-<form asp-action="Crear" method="post">
-    <div class="mb-3">
-        <label class="form-label">Nombre del puesto</label>
-        <input asp-for="Nombre_Puesto" class="form-control" />
+    if (ViewBag.Modal == true)
+    {
+        Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    }
+
+    bool isModal = ViewBag.Modal == true;
+}
+
+<form asp-action="Crear" asp-route-modal="@isModal" method="post" class="modal-form">
+
+    <div class="mf-group">
+        <label asp-for="Nombre_Puesto" class="mf-label">Nombre del Puesto</label>
+        <input asp-for="Nombre_Puesto" class="mf-input" />
+        <span asp-validation-for="Nombre_Puesto" class="mf-error"></span>
     </div>
 
-    <button type="submit" class="btn btn-primary">Guardar</button>
-    <a asp-action="Index" class="btn btn-secondary">Volver</a>
+    <div class="mf-actions">
+        <button type="submit" class="mf-btn mf-btn-primary">Guardar</button>
+        @if (!isModal)
+        {
+            <a asp-action="Index" class="mf-btn mf-btn-secondary">Volver</a>
+        }
+    </div>
+
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

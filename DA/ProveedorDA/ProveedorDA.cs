@@ -80,6 +80,13 @@ namespace DA.ProveedorDA
             return resultadoConsulta.FirstOrDefault();
         }
 
+        public async Task<Guid> Activar(Guid Id)
+        {
+            await verificarProveedorExiste(Id);
+            var resultado = await _sqlConnection.ExecuteScalarAsync<Guid>("Activar_Proveedor", new { Id_Proveedor = Id });
+            return resultado;
+        }
+
         private async Task verificarProveedorExiste(Guid Id)
         {
             ProveedorResponse? resultadoConsultaProveedor = await Obtener(Id);

@@ -1,9 +1,10 @@
 ﻿
 CREATE PROCEDURE Editar_Producto
-	@Id_Producto UNIQUEIDENTIFIER,
+	@Id_Producto     UNIQUEIDENTIFIER,
+	@Id_Proveedor    UNIQUEIDENTIFIER = NULL,
 	@Nombre_Producto VARCHAR(MAX),
-	@Precio_Venta DECIMAL(18,0),
-	@Stock_Actual INT
+	@Precio_Venta    DECIMAL(18,2),
+	@Stock_Actual    INT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -12,9 +13,10 @@ BEGIN
 
 		UPDATE dbo.Producto_TB
 		SET
+			Id_Proveedor    = @Id_Proveedor,
 			Nombre_Producto = @Nombre_Producto,
-			Precio_Venta = @Precio_Venta,
-			Stock_Actual = @Stock_Actual
+			Precio_Venta    = @Precio_Venta,
+			Stock_Actual    = @Stock_Actual
 		WHERE Id_Producto = @Id_Producto
 
 	COMMIT TRANSACTION
