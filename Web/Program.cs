@@ -10,6 +10,7 @@ var apiBase = builder.Configuration["ApiSettings:BaseUrl"]
 void AddCrud<T>(IServiceCollection services) where T : class =>
     services.AddHttpClient<T>(c => c.BaseAddress = new Uri(apiBase));
 
+AddCrud<InventarioService>(builder.Services);
 AddCrud<UsuarioService>(builder.Services);
 AddCrud<TrabajadorService>(builder.Services);
 AddCrud<PuestoService>(builder.Services);

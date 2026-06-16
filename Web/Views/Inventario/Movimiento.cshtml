@@ -1,0 +1,72 @@
+@model Abstracciones.Modelos.Inventario.Movimiento.MovimientoRequest
+
+@{
+    ViewData["Title"] = "Registrar Movimiento";
+
+    if (ViewBag.Modal == true)
+    {
+        Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    }
+
+    bool isModal = ViewBag.Modal == true;
+}
+
+<form asp-action="Movimiento" asp-route-id="@Model.Id_Inventario" asp-route-modal="@isModal" method="post" class="modal-form">
+
+    <input type="hidden" asp-for="Id_Inventario" />
+
+    @if (!string.IsNullOrEmpty(ViewBag.NombreItem as string))
+    {
+        <div class="mf-group">
+            <span class="mf-label">Item</span>
+            <p style="margin:4px 0 0; font-weight:600; color:var(--ink-900);">@ViewBag.NombreItem</p>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(ViewBag.ErrorMovimiento as string))
+    {
+        <div class="mf-error-banner">@ViewBag.ErrorMovimiento</div>
+    }
+
+    <div class="mf-group">
+        <label asp-for="Tipo" class="mf-label">Tipo de movimiento</label>
+        <select asp-for="Tipo" class="mf-select" required>
+            <option value="">Seleccione un tipo</option>
+            <option value="Entrada">Entrada — suma al stock</option>
+            <option value="Salida">Salida — resta del stock</option>
+            <option value="Ajuste">Ajuste — reemplaza el stock</option>
+        </select>
+        <span asp-validation-for="Tipo" class="mf-error"></span>
+    </div>
+
+    <div class="mf-group">
+        <label asp-for="Cantidad" class="mf-label">Cantidad</label>
+        <input asp-for="Cantidad" class="mf-input" type="number" step="0.01" min="0.01" required />
+        <span asp-validation-for="Cantidad" class="mf-error"></span>
+    </div>
+
+    <div class="mf-group">
+        <label asp-for="Motivo" class="mf-label">Motivo <span style="font-weight:400;text-transform:none;">(opcional)</span></label>
+        <input asp-for="Motivo" class="mf-input" placeholder="Ej: Compra semanal, uso en producción..." />
+    </div>
+
+    <div class="mf-group">
+        <label asp-for="Id_Proveedor" class="mf-label">Proveedor <span style="font-weight:400;text-transform:none;">(opcional, solo entradas)</span></label>
+        <select asp-for="Id_Proveedor" asp-items="ViewBag.Proveedores" class="mf-select">
+            <option value="">Sin proveedor</option>
+        </select>
+    </div>
+
+    <div class="mf-actions">
+        <button type="submit" class="mf-btn mf-btn-primary">Registrar</button>
+        @if (!isModal)
+        {
+            <a asp-action="Index" class="mf-btn mf-btn-secondary">Volver</a>
+        }
+    </div>
+
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

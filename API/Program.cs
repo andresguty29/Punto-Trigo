@@ -1,14 +1,17 @@
 using Abstracciones.Interfaces.DA;
+using Abstracciones.Interfaces.DA.InventarioDA;
 using Abstracciones.Interfaces.DA.ProductoDA;
 using Abstracciones.Interfaces.DA.ProveedorDA;
 using Abstracciones.Interfaces.DA.PuestoDA;
 using Abstracciones.Interfaces.DA.TrabajadorDA;
 using Abstracciones.Interfaces.DA.UsuarioDA;
+using Abstracciones.Interfaces.Flujo.Inventario;
 using Abstracciones.Interfaces.Flujo.Producto;
 using Abstracciones.Interfaces.Flujo.Proveedor;
 using Abstracciones.Interfaces.Flujo.Puesto;
 using Abstracciones.Interfaces.Flujo.Trabajador;
 using Abstracciones.Interfaces.Flujo.Usuario;
+using DA.InventarioDA;
 using DA.ProductoDA;
 using DA.ProveedorDA;
 using DA.PuestoDA;
@@ -34,6 +37,8 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IInventarioFlujo, InventarioFlujo>();
+builder.Services.AddScoped<IInventarioDA, InventarioDA>();
 builder.Services.AddScoped<IProductoFlujo, ProductoFlujo>();
 builder.Services.AddScoped<IProductoDA, ProductoDA>();
 builder.Services.AddScoped<IProveedorFlujo, ProveedorFlujo>();
