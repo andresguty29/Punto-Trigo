@@ -75,6 +75,21 @@ public class HomeController : Controller
                 },
                 new DashboardModuleViewModel
                 {
+                    Key = "inventario",
+                    Name = "Inventario",
+                    Tag = "Almacén",
+                    Description = "Control de ingredientes y materiales utilizados en la producción.",
+                    Accent = "#4A6C2F",
+                    Table = new DashboardTableViewModel
+                    {
+                        Title = "Items de inventario",
+                        Columns = ["Nombre", "Unidad", "Stock actual", "Stock mínimo", "Proveedor", "Estado"],
+                        EmptyMessage = "Sin items registrados.",
+                        SourceUrl = "https://localhost:44378/api/Inventario"
+                    }
+                },
+                new DashboardModuleViewModel
+                {
                     Key = "proveedores",
                     Name = "Proveedores",
                     Tag = "Abastecimiento",

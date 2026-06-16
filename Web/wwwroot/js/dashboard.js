@@ -1,3 +1,63 @@
+// ── NotificationManager ────────────────────────────
+const NotificationManager = (() => {
+    const ICONS = { warning: '⚠', error: '✕', info: 'ℹ' };
+    let items = [];
+
+    function render() {
+        const list  = document.getElementById('notifList');
+        const badge = document.getElementById('notifBadge');
+
+        if (items.length === 0) {
+            list.innerHTML = '<li class="notif-empty">Sin notificaciones</li>';
+            badge.hidden = true;
+            return;
+        }
+
+        list.innerHTML = items.map((n, i) => `
+            <li class="notif-item ${n.type}" data-index="${i}">
+                <span class="notif-item-icon">${ICONS[n.type] ?? '•'}</span>
+                <div class="notif-item-body">
+                    <div class="notif-item-title">${n.title}</div>
+                    <div class="notif-item-msg">${n.message}</div>
+                </div>
+            </li>
+        `).join('');
+
+        badge.textContent = items.length;
+        badge.hidden = false;
+    }
+
+    function add(type, title, message, source = null) {
+        items.push({ type, title, message, source });
+        render();
+    }
+
+    function clearSource(source) {
+        items = items.filter(n => n.source !== source);
+        render();
+    }
+
+    function clearAll() {
+        items = [];
+        render();
+    }
+
+    // Toggle dropdown
+    document.getElementById('notifBell').addEventListener('click', e => {
+        e.stopPropagation();
+        document.getElementById('notifDropdown').classList.toggle('open');
+    });
+
+    document.addEventListener('click', e => {
+        if (!document.getElementById('notifWrapper').contains(e.target))
+            document.getElementById('notifDropdown').classList.remove('open');
+    });
+
+    document.getElementById('notifClearAll').addEventListener('click', clearAll);
+
+    return { add, clearSource, clearAll };
+})();
+
 let currentRows = [];
 let filteredRows = [];
 let selectedStatus = 'activo';
@@ -18,7 +78,8 @@ const crudRoutes = {
     planilla: '/Trabajador',
     puestos: '/Puesto',
     proveedores: '/Proveedor',
-    productos: '/Producto'
+    productos: '/Producto',
+    inventario: '/Inventario'
 };
 
 const els = {
@@ -157,9 +218,59 @@ function mapApiRows(module, data) {
                     estadoTexto(item.id_Estado)
                 ]
             }));
+        case 'inventario':
+            return data.map(item => ({
+                id: item.id_Inventario,
+                cells: [
+                    item.nombre ?? '-',
+                    item.unidad ?? '-',
+                    String(item.stock_Actual ?? 0),
+                    String(item.stock_Minimo ?? 0),
+                    item.nombre_Proveedor ?? 'Sin proveedor',
+                    estadoTexto(item.id_Estado)
+                ]
+            }));
         default:
             return (module.table.rows ?? []).map(cells => ({ id: null, cells }));
     }
+}
+
+function renderStockAlerts(data) {
+    const existing = document.getElementById('stockAlertPanel');
+    if (existing) existing.remove();
+
+    const bajoMinimo = data.filter(i => (i.stock_Actual ?? 0) <= (i.stock_Minimo ?? 0) && i.stock_Minimo > 0);
+
+    bajoMinimo.forEach(i => {
+        NotificationManager.add(
+            'warning',
+            `Stock bajo: ${i.nombre}`,
+            `Actual: ${i.stock_Actual} ${i.unidad ?? ''} — Mínimo: ${i.stock_Minimo}`,
+            'stock'
+        );
+    });
+
+    if (bajoMinimo.length === 0) return;
+
+    const rows = bajoMinimo.map(i => `
+        <div class="stock-alert-row">
+            <span class="stock-alert-name">${i.nombre ?? '-'}</span>
+            <span class="stock-alert-values">
+                <span class="chip-stock">${i.stock_Actual} ${i.unidad ?? ''}</span>
+                <span class="chip-min">mín. ${i.stock_Minimo}</span>
+            </span>
+        </div>
+    `).join('');
+
+    const panel = document.createElement('div');
+    panel.id = 'stockAlertPanel';
+    panel.className = 'stock-alert-panel';
+    panel.innerHTML = `
+        <div class="stock-alert-title">⚠ Stock bajo mínimo</div>
+        <div class="stock-alert-body">${rows}</div>
+    `;
+
+    document.getElementById('moduleHeader').appendChild(panel);
 }
 
 async function fillTable(module) {
@@ -171,6 +282,8 @@ async function fillTable(module) {
         return;
     }
 
+    document.getElementById('stockAlertPanel')?.remove();
+    if (module.key === 'inventario') NotificationManager.clearSource('stock');
     els.tableStatus.textContent = 'Cargando...';
 
     try {
@@ -186,6 +299,9 @@ async function fillTable(module) {
 
         const data = await res.json();
         els.tableStatus.textContent = 'Actualizado';
+
+        if (module.key === 'inventario') renderStockAlerts(data);
+
         renderTable(module, mapApiRows(module, data));
 
     } catch {
@@ -232,9 +348,11 @@ function renderPagedTable(module) {
         }).join('');
 
         const activo = row.cells.some(c => String(c).toLowerCase() === 'activo');
+        const esInventario = module.key === 'inventario';
         const actionsCell = baseUrl && row.id ? `
             <td>
                 <button class="row-btn row-btn-edit" data-id="${row.id}" data-module="${module.key}">Editar</button>
+                ${esInventario ? `<button class="row-btn row-btn-movimiento" data-id="${row.id}" data-module="${module.key}">Movimiento</button>` : ''}
                 ${activo
                     ? `<button class="row-btn row-btn-delete" data-id="${row.id}" data-module="${module.key}" data-activo="true">Desactivar</button>`
                     : `<button class="row-btn row-btn-activate" data-id="${row.id}" data-module="${module.key}" data-activo="false">Activar</button>`
@@ -279,6 +397,12 @@ function renderPagedTable(module) {
     });
     document.getElementById('nextPage')?.addEventListener('click', () => {
         if (currentPage < totalPages) { currentPage++; renderPagedTable(module); }
+    });
+
+    els.tableWrap.querySelectorAll('.row-btn-movimiento').forEach(btn => {
+        btn.addEventListener('click', () => {
+            openModal('Registrar Movimiento', `${crudRoutes[btn.dataset.module]}/Movimiento/${btn.dataset.id}?modal=true`);
+        });
     });
 
     els.tableWrap.querySelectorAll('.row-btn-edit').forEach(btn => {

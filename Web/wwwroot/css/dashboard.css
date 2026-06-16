@@ -91,6 +91,147 @@ body {
     font-size: .9rem;
 }
 
+/* ── Campanita de notificaciones ──────────────────── */
+.notif-wrapper {
+    position: relative;
+}
+
+.notif-bell {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(255,255,255,.8);
+    padding: 4px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: color .2s;
+}
+
+.notif-bell:hover {
+    color: white;
+    background: rgba(255,255,255,.1);
+}
+
+.notif-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--brand-accent-red);
+    color: white;
+    font-size: .65rem;
+    font-weight: 700;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    border: 2px solid var(--brand-primary);
+}
+
+.notif-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 300px;
+    background: white;
+    border: 1px solid var(--brand-border);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.15);
+    z-index: 999;
+    display: none;
+    overflow: hidden;
+}
+
+.notif-dropdown.open {
+    display: block;
+}
+
+.notif-dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--brand-border);
+    font-size: .85rem;
+    font-weight: 700;
+    color: var(--ink-900);
+}
+
+.notif-clear-all {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: .78rem;
+    color: var(--ink-500);
+    padding: 2px 6px;
+    border-radius: 6px;
+}
+
+.notif-clear-all:hover {
+    background: var(--brand-border);
+    color: var(--ink-900);
+}
+
+.notif-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.notif-empty {
+    padding: 20px 16px;
+    text-align: center;
+    color: var(--ink-500);
+    font-size: .85rem;
+}
+
+.notif-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--brand-border);
+    align-items: flex-start;
+}
+
+.notif-item:last-child {
+    border-bottom: none;
+}
+
+.notif-item-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.notif-item-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.notif-item-title {
+    font-size: .83rem;
+    font-weight: 700;
+    color: var(--ink-900);
+    margin-bottom: 2px;
+}
+
+.notif-item-msg {
+    font-size: .78rem;
+    color: var(--ink-500);
+    line-height: 1.4;
+}
+
+.notif-item.warning .notif-item-icon { color: #92600a; }
+.notif-item.error   .notif-item-icon { color: var(--brand-accent-red); }
+.notif-item.info    .notif-item-icon { color: var(--brand-primary); }
+
 .topbar-avatar {
     width: 34px;
     height: 34px;
@@ -160,6 +301,10 @@ body {
     border-left: 5px solid var(--accent, var(--brand-primary));
     box-shadow: 0 2px 10px rgba(12, 23, 38, .07);
     border: 1px solid var(--brand-border);
+}
+
+.module-header:has(.stock-alert-panel) {
+    padding-right: 290px;
 }
 
 .mh-title {
@@ -485,6 +630,18 @@ body {
     padding-top: 4px;
 }
 
+.mf-error-banner {
+    background: rgba(196,30,30,.08);
+    border: 1px solid rgba(196,30,30,.3);
+    border-left: 4px solid var(--brand-accent-red);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--brand-accent-red);
+    font-size: .85rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
 .mf-btn {
     border: none;
     padding: 10px 20px;
@@ -658,4 +815,83 @@ body {
 .row-btn-activate:hover {
     background: #1a6e42;
     color: white;
+}
+
+.row-btn-movimiento {
+    background: rgba(11,61,110,.1);
+    color: var(--brand-primary);
+    border: 1px solid rgba(11,61,110,.25);
+}
+
+.row-btn-movimiento:hover {
+    background: var(--brand-primary);
+    color: white;
+}
+
+/* ── Panel de alertas de stock mínimo ─────────────── */
+#moduleHeader {
+    position: relative;
+}
+
+.stock-alert-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #fff8f0;
+    border: 1px solid #f0c070;
+    border-left: 3px solid var(--brand-accent-gold);
+    border-radius: 10px;
+    padding: 10px 14px;
+    min-width: 200px;
+    max-width: 260px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+.stock-alert-title {
+    font-size: .75rem;
+    font-weight: 700;
+    color: #92600a;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 8px;
+}
+
+.stock-alert-body {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.stock-alert-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    font-size: .8rem;
+}
+
+.stock-alert-name {
+    color: var(--ink-900);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+}
+
+.stock-alert-values {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.chip-stock {
+    font-weight: 700;
+    color: var(--brand-accent-red);
+}
+
+.chip-min {
+    color: var(--ink-500);
+    font-size: .73rem;
 }
