@@ -23,6 +23,7 @@ namespace DA.ProductoDA
             var resultadoConsulta = await _sqlConnection.ExecuteScalarAsync<Guid>(query, new
             {
                 Id_Producto = Guid.NewGuid(),
+                Id_Proveedor = producto.Id_Proveedor,
                 Nombre_Producto = producto.Nombre_Producto,
                 Precio_Venta = producto.Precio_Venta,
                 Stock_Actual = producto.Stock_Actual,
@@ -38,6 +39,7 @@ namespace DA.ProductoDA
             var resultadoConsulta = await _sqlConnection.ExecuteScalarAsync<Guid>(query, new
             {
                 Id_Producto = Id,
+                Id_Proveedor = producto.Id_Proveedor,
                 Nombre_Producto = producto.Nombre_Producto,
                 Precio_Venta = producto.Precio_Venta,
                 Stock_Actual = producto.Stock_Actual,
@@ -72,6 +74,13 @@ namespace DA.ProductoDA
                 Id_Producto = Id
             });
             return resultadoConsulta.FirstOrDefault();
+        }
+
+        public async Task<Guid> Activar(Guid Id)
+        {
+            await verificarProductoExiste(Id);
+            var resultado = await _sqlConnection.ExecuteScalarAsync<Guid>("Activar_Producto", new { Id_Producto = Id });
+            return resultado;
         }
 
         private async Task verificarProductoExiste(Guid Id)

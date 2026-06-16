@@ -18,6 +18,7 @@
         {
             public Guid Id_Usuario { get; set; }
             public int Id_Estado { get; set; }
+            public string? Nombre_Trabajador { get; set; }
         }
     }
 }

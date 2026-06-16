@@ -23,7 +23,7 @@
                 <td>@producto.Nombre_Producto</td>
                 <td>@producto.Precio_Venta</td>
                 <td>@producto.Stock_Actual</td>
-                <td>@producto.Estado</td>
+                <td>@(producto.Id_Estado == 1 ? "Activo" : "Inactivo")</td>
                 <td>
                     <a asp-action="Editar" asp-route-id="@producto.Id_Producto" class="btn btn-warning btn-sm">Editar</a>
                     <a asp-action="Eliminar" asp-route-id="@producto.Id_Producto" class="btn btn-danger btn-sm">Eliminar</a>

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Web.Services;
 using static Abstracciones.Modelos.Puesto.Puesto;
 
@@ -19,23 +19,37 @@ namespace Web.Controllers
             return View(puestos);
         }
 
-        public IActionResult Crear()
+        [HttpGet]
+        public IActionResult Crear(bool modal = false)
         {
+            ViewBag.Modal = modal;
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Crear(PuestoRequest puesto)
+        public async Task<IActionResult> Crear(PuestoRequest puesto, bool modal = false)
         {
             var resultado = await _puestoService.Agregar(puesto);
 
             if (!resultado)
+            {
+                ViewBag.Modal = modal;
                 return View(puesto);
+            }
+
+            if (modal)
+            {
+                return Content(@"
+            <script>
+                window.parent.postMessage('crud-success', '*');
+            </script>", "text/html");
+            }
 
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Editar(Guid id)
+        [HttpGet]
+        public async Task<IActionResult> Editar(Guid id, bool modal = false)
         {
             var puesto = await _puestoService.Obtener(id);
 
@@ -48,16 +62,28 @@ namespace Web.Controllers
                 Nombre_Puesto = puesto.Nombre_Puesto
             };
 
+            ViewBag.Modal = modal;
             return View(modelo);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Editar(Guid id, PuestoRequest puesto)
+        public async Task<IActionResult> Editar(Guid id, PuestoRequest puesto, bool modal = false)
         {
             var resultado = await _puestoService.Editar(id, puesto);
 
             if (!resultado)
+            {
+                ViewBag.Modal = modal;
                 return View(puesto);
+            }
+
+            if (modal)
+            {
+                return Content(@"
+            <script>
+                window.parent.postMessage('crud-success', '*');
+            </script>", "text/html");
+            }
 
             return RedirectToAction(nameof(Index));
         }
@@ -65,6 +91,12 @@ namespace Web.Controllers
         public async Task<IActionResult> Eliminar(Guid id)
         {
             await _puestoService.Eliminar(id);
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Activar(Guid id)
+        {
+            await _puestoService.Activar(id);
             return RedirectToAction(nameof(Index));
         }
     }

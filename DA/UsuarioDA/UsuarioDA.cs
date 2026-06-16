@@ -84,6 +84,13 @@ namespace DA.UsuarioDA
             return resultadoConsulta.FirstOrDefault();
         }
 
+        public async Task<Guid> Activar(Guid Id)
+        {
+            await verificarUsuarioExiste(Id);
+            var resultado = await _sqlConnection.ExecuteScalarAsync<Guid>("Activar_Usuario", new { Id_Usuario = Id });
+            return resultado;
+        }
+
         private async Task verificarUsuarioExiste(Guid Id)
         {
             UsuarioResponse? resultadoConsultaUsuario = await Obtener(Id);

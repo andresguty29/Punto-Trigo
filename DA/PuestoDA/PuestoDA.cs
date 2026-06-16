@@ -80,6 +80,13 @@ namespace DA.PuestoDA
             return resultadoConsulta.FirstOrDefault();
         }
 
+        public async Task<Guid> Activar(Guid Id)
+        {
+            await verificarPuestoExiste(Id);
+            var resultado = await _sqlConnection.ExecuteScalarAsync<Guid>("Activar_Puesto", new { Id_Puesto = Id });
+            return resultado;
+        }
+
         private async Task verificarPuestoExiste(Guid Id)
         {
             PuestoResponse? resultadoConsultaPuesto = await Obtener(Id);

@@ -1,15 +1,17 @@
-﻿CREATE PROCEDURE Obtener_Usuario
+CREATE PROCEDURE Obtener_Usuario
     @Id_Usuario UNIQUEIDENTIFIER
 AS
 BEGIN
     SET NOCOUNT ON;
 
     SELECT
-        [Id_Usuario],
-        [Nombre_Usuario],
-        [Contrasena],
-        [Id_Trabajador],
-        [Id_Estado]
-    FROM [dbo].[Usuario_TB]
-    WHERE [Id_Usuario] = @Id_Usuario;
+        u.[Id_Usuario],
+        u.[Nombre_Usuario],
+        u.[Contrasena],
+        u.[Id_Trabajador],
+        t.[Nombre_Completo] AS Nombre_Trabajador,
+        u.[Id_Estado]
+    FROM [dbo].[Usuario_TB] u
+    LEFT JOIN [dbo].[Trabajador_TB] t ON u.[Id_Trabajador] = t.[Id_Trabajador]
+    WHERE u.[Id_Usuario] = @Id_Usuario;
 END

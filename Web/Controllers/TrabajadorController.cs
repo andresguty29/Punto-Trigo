@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Web.Services;
 using static Abstracciones.Modelos.Trabajador.Trabajador;
@@ -22,27 +22,39 @@ namespace Web.Controllers
             return View(trabajadores);
         }
 
-        public async Task<IActionResult> Crear()
+        [HttpGet]
+        public async Task<IActionResult> Crear(bool modal = false)
         {
             await CargarPuestos();
+            ViewBag.Modal = modal;
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Crear(TrabajadorRequest trabajador)
+        public async Task<IActionResult> Crear(TrabajadorRequest trabajador, bool modal = false)
         {
             var resultado = await _trabajadorService.Agregar(trabajador);
 
             if (!resultado)
             {
                 await CargarPuestos();
+                ViewBag.Modal = modal;
                 return View(trabajador);
+            }
+
+            if (modal)
+            {
+                return Content(@"
+            <script>
+                window.parent.postMessage('crud-success', '*');
+            </script>", "text/html");
             }
 
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Editar(Guid id)
+        [HttpGet]
+        public async Task<IActionResult> Editar(Guid id, bool modal = false)
         {
             var trabajador = await _trabajadorService.Obtener(id);
 
@@ -58,19 +70,28 @@ namespace Web.Controllers
             };
 
             await CargarPuestos();
-
+            ViewBag.Modal = modal;
             return View(modelo);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Editar(Guid id, TrabajadorRequest trabajador)
+        public async Task<IActionResult> Editar(Guid id, TrabajadorRequest trabajador, bool modal = false)
         {
             var resultado = await _trabajadorService.Editar(id, trabajador);
 
             if (!resultado)
             {
                 await CargarPuestos();
+                ViewBag.Modal = modal;
                 return View(trabajador);
+            }
+
+            if (modal)
+            {
+                return Content(@"
+            <script>
+                window.parent.postMessage('crud-success', '*');
+            </script>", "text/html");
             }
 
             return RedirectToAction(nameof(Index));
@@ -79,6 +100,12 @@ namespace Web.Controllers
         public async Task<IActionResult> Eliminar(Guid id)
         {
             await _trabajadorService.Eliminar(id);
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Activar(Guid id)
+        {
+            await _trabajadorService.Activar(id);
             return RedirectToAction(nameof(Index));
         }
 

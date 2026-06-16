@@ -9,5 +9,6 @@ namespace Abstracciones.Interfaces.Flujo.Proveedor
         Task<Guid> Agregar(ProveedorRequest proveedor);
         Task<Guid> Editar(Guid Id, ProveedorRequest proveedor);
         Task<Guid> Eliminar(Guid Id);
+        Task<Guid> Activar(Guid Id);
     }
 }

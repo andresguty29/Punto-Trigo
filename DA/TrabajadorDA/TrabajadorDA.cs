@@ -84,6 +84,13 @@ namespace DA.TrabajadorDA
             return resultadoConsulta.FirstOrDefault();
         }
 
+        public async Task<Guid> Activar(Guid Id)
+        {
+            await verificarTrabajadorExiste(Id);
+            var resultado = await _sqlConnection.ExecuteScalarAsync<Guid>("Activar_Trabajador", new { Id_Trabajador = Id });
+            return resultado;
+        }
+
         private async Task verificarTrabajadorExiste(Guid Id)
         {
             TrabajadorResponse? resultadoConsultaTrabajador = await Obtener(Id);

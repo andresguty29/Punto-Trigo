@@ -14,5 +14,6 @@ namespace Abstracciones.Interfaces.Flujo.Puesto
         Task<Guid> Agregar(PuestoRequest puesto);
         Task<Guid> Editar(Guid Id, PuestoRequest puesto);
         Task<Guid> Eliminar(Guid Id);
+        Task<Guid> Activar(Guid Id);
     }
 }

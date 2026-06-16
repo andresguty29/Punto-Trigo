@@ -93,6 +93,11 @@
     <Build Include="dbo\Stored Procedures\Agregar_Puesto.sql" />
     <Build Include="dbo\Stored Procedures\Agregar_Proveedor.sql" />
     <Build Include="dbo\Stored Procedures\Agregar_Producto.sql" />
+    <Build Include="dbo\Stored Procedures\Activar_Producto.sql" />
+    <Build Include="dbo\Stored Procedures\Activar_Proveedor.sql" />
+    <Build Include="dbo\Stored Procedures\Activar_Puesto.sql" />
+    <Build Include="dbo\Stored Procedures\Activar_Trabajador.sql" />
+    <Build Include="dbo\Stored Procedures\Activar_Usuario.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="BD.refactorlog" />

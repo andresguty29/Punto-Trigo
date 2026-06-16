@@ -14,7 +14,7 @@ BEGIN
 		INSERT INTO [dbo].[Proveedor_TB]
 		(
 			[Id_Proveedor],
-			[Estado],
+			[Id_Estado],
 			[Nombre_Proveedor],
 			[Telefono_Proveedor],
 			[Correo_Proveedor]

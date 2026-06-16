@@ -24,6 +24,7 @@ namespace Abstracciones.Modelos.Trabajador
         {
             public Guid Id_Trabajador { get; set; }
             public int Id_Estado { get; set; }
+            public string? Nombre_Puesto { get; set; }
         }
     }
 }

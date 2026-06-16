@@ -1,14 +1,16 @@
-﻿CREATE PROCEDURE Obtener_Usuarios
+CREATE PROCEDURE Obtener_Usuarios
 AS
 BEGIN
     SET NOCOUNT ON;
 
     SELECT
-        [Id_Usuario],
-        [Nombre_Usuario],
-        [Contrasena],
-        [Id_Trabajador],
-        [Id_Estado]
-    FROM [dbo].[Usuario_TB]
-    WHERE [Id_Estado] = 1;
+        u.[Id_Usuario],
+        u.[Nombre_Usuario],
+        u.[Contrasena],
+        u.[Id_Trabajador],
+        t.[Nombre_Completo] AS Nombre_Trabajador,
+        u.[Id_Estado]
+    FROM [dbo].[Usuario_TB] u
+    LEFT JOIN [dbo].[Trabajador_TB] t ON u.[Id_Trabajador] = t.[Id_Trabajador]
+
 END

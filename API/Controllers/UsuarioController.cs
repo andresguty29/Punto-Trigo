@@ -40,6 +40,13 @@ namespace API.Controllers
             return NoContent();
         }
 
+        [HttpPatch("{Id}/activar")]
+        public async Task<IActionResult> Activar(Guid Id)
+        {
+            await _usuarioFlujo.Activar(Id);
+            return NoContent();
+        }
+
         [HttpGet]
         public async Task<IActionResult> Obtener()
         {

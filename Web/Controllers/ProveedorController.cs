@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Web.Services;
 using static Abstracciones.Modelos.Proveedor.Proveedor;
 
@@ -19,23 +19,37 @@ namespace Web.Controllers
             return View(proveedores);
         }
 
-        public IActionResult Crear()
+        [HttpGet]
+        public IActionResult Crear(bool modal = false)
         {
+            ViewBag.Modal = modal;
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Crear(ProveedorRequest proveedor)
+        public async Task<IActionResult> Crear(ProveedorRequest proveedor, bool modal = false)
         {
             var resultado = await _proveedorService.Agregar(proveedor);
 
             if (!resultado)
+            {
+                ViewBag.Modal = modal;
                 return View(proveedor);
+            }
+
+            if (modal)
+            {
+                return Content(@"
+            <script>
+                window.parent.postMessage('crud-success', '*');
+            </script>", "text/html");
+            }
 
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Editar(Guid id)
+        [HttpGet]
+        public async Task<IActionResult> Editar(Guid id, bool modal = false)
         {
             var proveedor = await _proveedorService.Obtener(id);
 
@@ -50,16 +64,28 @@ namespace Web.Controllers
                 Correo_Proveedor = proveedor.Correo_Proveedor
             };
 
+            ViewBag.Modal = modal;
             return View(modelo);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Editar(Guid id, ProveedorRequest proveedor)
+        public async Task<IActionResult> Editar(Guid id, ProveedorRequest proveedor, bool modal = false)
         {
             var resultado = await _proveedorService.Editar(id, proveedor);
 
             if (!resultado)
+            {
+                ViewBag.Modal = modal;
                 return View(proveedor);
+            }
+
+            if (modal)
+            {
+                return Content(@"
+            <script>
+                window.parent.postMessage('crud-success', '*');
+            </script>", "text/html");
+            }
 
             return RedirectToAction(nameof(Index));
         }
@@ -67,6 +93,12 @@ namespace Web.Controllers
         public async Task<IActionResult> Eliminar(Guid id)
         {
             await _proveedorService.Eliminar(id);
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Activar(Guid id)
+        {
+            await _proveedorService.Activar(id);
             return RedirectToAction(nameof(Index));
         }
     }

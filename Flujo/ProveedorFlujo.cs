@@ -37,5 +37,10 @@ namespace Flujo
         {
             return _proveedorDA.Obtener(Id);
         }
+
+        public Task<Guid> Activar(Guid Id)
+        {
+            return _proveedorDA.Activar(Id);
+        }
     }
 }

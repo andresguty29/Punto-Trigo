@@ -14,5 +14,6 @@ namespace Abstracciones.Interfaces.DA.TrabajadorDA
         Task<Guid> Agregar(TrabajadorRequest trabajador);
         Task<Guid> Editar(Guid Id, TrabajadorRequest trabajador);
         Task<Guid> Eliminar(Guid Id);
+        Task<Guid> Activar(Guid Id);
     }
 }

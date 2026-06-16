@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE Eliminar_Producto
+CREATE PROCEDURE Activar_Producto
 	@Id_Producto UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -8,7 +7,7 @@ BEGIN
 	BEGIN TRANSACTION
 
 		UPDATE dbo.Producto_TB
-		SET Id_Estado = 2
+		SET Id_Estado = 1
 		WHERE Id_Producto = @Id_Producto
 
 	COMMIT TRANSACTION

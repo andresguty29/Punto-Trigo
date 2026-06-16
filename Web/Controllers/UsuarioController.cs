@@ -21,28 +21,42 @@ namespace Web.Controllers
             var usuarios = await _usuarioService.Obtener();
             return View(usuarios);
         }
-
-        public async Task<IActionResult> Crear()
+        [HttpGet]
+        public async Task<IActionResult> Crear(bool modal = false)
         {
             await CargarTrabajadores();
+
+            ViewBag.Modal = modal;
+
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Crear(UsuarioRequest usuario)
+        public async Task<IActionResult> Crear(UsuarioRequest usuario, bool modal = false)
         {
             var resultado = await _usuarioService.Agregar(usuario);
 
             if (!resultado)
             {
                 await CargarTrabajadores();
+                ViewBag.Modal = modal;
                 return View(usuario);
+            }
+
+            if (modal)
+            {
+                return Content(@"
+            <script>
+                window.parent.postMessage('crud-success', '*');
+            </script>",
+                    "text/html");
             }
 
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Editar(Guid id)
+        [HttpGet]
+        public async Task<IActionResult> Editar(Guid id, bool modal = false)
         {
             var usuario = await _usuarioService.Obtener(id);
 
@@ -58,19 +72,30 @@ namespace Web.Controllers
             };
 
             await CargarTrabajadores();
+            ViewBag.Modal = modal;
 
             return View(modelo);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Editar(Guid id, UsuarioRequest usuario)
+        public async Task<IActionResult> Editar(Guid id, UsuarioRequest usuario, bool modal = false)
         {
             var resultado = await _usuarioService.Editar(id, usuario);
 
             if (!resultado)
             {
                 await CargarTrabajadores();
+                ViewBag.Modal = modal;
                 return View(usuario);
+            }
+
+            if (modal)
+            {
+                return Content(@"
+            <script>
+                window.parent.postMessage('crud-success', '*');
+            </script>",
+                    "text/html");
             }
 
             return RedirectToAction(nameof(Index));
@@ -79,6 +104,12 @@ namespace Web.Controllers
         public async Task<IActionResult> Eliminar(Guid id)
         {
             await _usuarioService.Eliminar(id);
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Activar(Guid id)
+        {
+            await _usuarioService.Activar(id);
             return RedirectToAction(nameof(Index));
         }
 
