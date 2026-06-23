@@ -1,5 +1,6 @@
 ﻿using Abstracciones.Interfaces.DA.TrabajadorDA;
 using Abstracciones.Interfaces.Flujo.Trabajador;
+using Microsoft.Data.SqlClient;
 using static Abstracciones.Modelos.Trabajador.Trabajador;
 
 namespace Flujo
@@ -13,14 +14,28 @@ namespace Flujo
             _trabajadorDA = trabajadorDA;
         }
 
-        public Task<Guid> Agregar(TrabajadorRequest trabajador)
+        public async Task<Guid> Agregar(TrabajadorRequest trabajador)
         {
-            return _trabajadorDA.Agregar(trabajador);
+            try
+            {
+                return await _trabajadorDA.Agregar(trabajador);
+            }
+            catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601)
+            {
+                throw new InvalidOperationException("Ya existe un trabajador con esa cédula.");
+            }
         }
 
-        public Task<Guid> Editar(Guid Id, TrabajadorRequest trabajador)
+        public async Task<Guid> Editar(Guid Id, TrabajadorRequest trabajador)
         {
-            return _trabajadorDA.Editar(Id, trabajador);
+            try
+            {
+                return await _trabajadorDA.Editar(Id, trabajador);
+            }
+            catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601)
+            {
+                throw new InvalidOperationException("Ya existe un trabajador con esa cédula.");
+            }
         }
 
         public Task<Guid> Eliminar(Guid Id)

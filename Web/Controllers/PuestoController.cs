@@ -29,11 +29,12 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Crear(PuestoRequest puesto, bool modal = false)
         {
-            var resultado = await _puestoService.Agregar(puesto);
+            var (ok, error) = await _puestoService.Agregar(puesto);
 
-            if (!resultado)
+            if (!ok)
             {
                 ViewBag.Modal = modal;
+                ViewBag.ErrorApi = error;
                 return View(puesto);
             }
 
@@ -69,11 +70,12 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Editar(Guid id, PuestoRequest puesto, bool modal = false)
         {
-            var resultado = await _puestoService.Editar(id, puesto);
+            var (ok, error) = await _puestoService.Editar(id, puesto);
 
-            if (!resultado)
+            if (!ok)
             {
                 ViewBag.Modal = modal;
+                ViewBag.ErrorApi = error;
                 return View(puesto);
             }
 

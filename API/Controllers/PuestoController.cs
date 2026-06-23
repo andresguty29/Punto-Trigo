@@ -22,15 +22,29 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> Agregar(PuestoRequest puesto)
         {
-            var resultado = await _puestoFlujo.Agregar(puesto);
-            return CreatedAtAction(nameof(Obtener), new { Id = resultado }, null);
+            try
+            {
+                var resultado = await _puestoFlujo.Agregar(puesto);
+                return CreatedAtAction(nameof(Obtener), new { Id = resultado }, null);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { mensaje = ex.Message });
+            }
         }
 
         [HttpPut("{Id}")]
         public async Task<IActionResult> Editar(Guid Id, PuestoRequest puesto)
         {
-            var resultado = await _puestoFlujo.Editar(Id, puesto);
-            return Ok(resultado);
+            try
+            {
+                var resultado = await _puestoFlujo.Editar(Id, puesto);
+                return Ok(resultado);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { mensaje = ex.Message });
+            }
         }
 
         [HttpDelete("{Id}")]

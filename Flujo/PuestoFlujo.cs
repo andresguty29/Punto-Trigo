@@ -1,5 +1,6 @@
 ﻿using Abstracciones.Interfaces.DA.PuestoDA;
 using Abstracciones.Interfaces.Flujo.Puesto;
+using Microsoft.Data.SqlClient;
 using static Abstracciones.Modelos.Puesto.Puesto;
 
 namespace Flujo
@@ -13,14 +14,28 @@ namespace Flujo
             _puestoDA = puestoDA;
         }
 
-        public Task<Guid> Agregar(PuestoRequest puesto)
+        public async Task<Guid> Agregar(PuestoRequest puesto)
         {
-            return _puestoDA.Agregar(puesto);
+            try
+            {
+                return await _puestoDA.Agregar(puesto);
+            }
+            catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601)
+            {
+                throw new InvalidOperationException("Ya existe un puesto con ese nombre.");
+            }
         }
 
-        public Task<Guid> Editar(Guid Id, PuestoRequest puesto)
+        public async Task<Guid> Editar(Guid Id, PuestoRequest puesto)
         {
-            return _puestoDA.Editar(Id, puesto);
+            try
+            {
+                return await _puestoDA.Editar(Id, puesto);
+            }
+            catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601)
+            {
+                throw new InvalidOperationException("Ya existe un puesto con ese nombre.");
+            }
         }
 
         public Task<Guid> Eliminar(Guid Id)

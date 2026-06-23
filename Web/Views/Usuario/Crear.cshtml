@@ -11,23 +11,39 @@
     bool isModal = ViewBag.Modal == true;
 }
 
+@if (ViewBag.ErrorApi != null)
+{
+    <div class="mf-error-banner">@ViewBag.ErrorApi</div>
+}
+
 <form asp-action="Crear" asp-route-modal="@isModal" method="post" class="modal-form">
 
     <div class="mf-group">
-        <label asp-for="Nombre_Usuario" class="mf-label">Nombre de Usuario</label>
-        <input asp-for="Nombre_Usuario" class="mf-input" />
+        <label asp-for="Nombre_Usuario" class="mf-label">Nombre de usuario</label>
+        <input asp-for="Nombre_Usuario" class="mf-input" placeholder="Ej: jperez" required />
         <span asp-validation-for="Nombre_Usuario" class="mf-error"></span>
     </div>
 
     <div class="mf-group">
         <label asp-for="Contrasena" class="mf-label">Contraseña</label>
-        <input asp-for="Contrasena" type="password" class="mf-input" />
+        <input asp-for="Contrasena" type="password" class="mf-input" required minlength="6" />
         <span asp-validation-for="Contrasena" class="mf-error"></span>
     </div>
 
     <div class="mf-group">
+        <label asp-for="Rol" class="mf-label">Rol</label>
+        <select asp-for="Rol" class="mf-select" required>
+            <option value="">Seleccione un rol</option>
+            <option value="Admin">Admin</option>
+            <option value="Cajas">Cajas</option>
+            <option value="Panadero">Panadero</option>
+        </select>
+        <span asp-validation-for="Rol" class="mf-error"></span>
+    </div>
+
+    <div class="mf-group">
         <label asp-for="Id_Trabajador" class="mf-label">Trabajador</label>
-        <select asp-for="Id_Trabajador" asp-items="ViewBag.Trabajadores" class="mf-select">
+        <select asp-for="Id_Trabajador" asp-items="ViewBag.Trabajadores" class="mf-select" required>
             <option value="">Seleccione un trabajador</option>
         </select>
         <span asp-validation-for="Id_Trabajador" class="mf-error"></span>
@@ -35,6 +51,10 @@
 
     <div class="mf-actions">
         <button type="submit" class="mf-btn mf-btn-primary">Guardar</button>
+        @if (!isModal)
+        {
+            <a asp-action="Index" class="mf-btn mf-btn-secondary">Volver</a>
+        }
     </div>
 
 </form>

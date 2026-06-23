@@ -29,11 +29,12 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Crear(ProveedorRequest proveedor, bool modal = false)
         {
-            var resultado = await _proveedorService.Agregar(proveedor);
+            var (ok, error) = await _proveedorService.Agregar(proveedor);
 
-            if (!resultado)
+            if (!ok)
             {
                 ViewBag.Modal = modal;
+                ViewBag.ErrorApi = error;
                 return View(proveedor);
             }
 
@@ -71,11 +72,12 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Editar(Guid id, ProveedorRequest proveedor, bool modal = false)
         {
-            var resultado = await _proveedorService.Editar(id, proveedor);
+            var (ok, error) = await _proveedorService.Editar(id, proveedor);
 
-            if (!resultado)
+            if (!ok)
             {
                 ViewBag.Modal = modal;
+                ViewBag.ErrorApi = error;
                 return View(proveedor);
             }
 

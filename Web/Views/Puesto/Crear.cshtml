@@ -11,6 +11,11 @@
     bool isModal = ViewBag.Modal == true;
 }
 
+@if (ViewBag.ErrorApi != null)
+{
+    <div class="mf-error-banner">@ViewBag.ErrorApi</div>
+}
+
 <form asp-action="Crear" asp-route-modal="@isModal" method="post" class="modal-form">
 
     <div class="mf-group">

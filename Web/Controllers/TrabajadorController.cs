@@ -33,12 +33,13 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Crear(TrabajadorRequest trabajador, bool modal = false)
         {
-            var resultado = await _trabajadorService.Agregar(trabajador);
+            var (ok, error) = await _trabajadorService.Agregar(trabajador);
 
-            if (!resultado)
+            if (!ok)
             {
                 await CargarPuestos();
                 ViewBag.Modal = modal;
+                ViewBag.ErrorApi = error;
                 return View(trabajador);
             }
 
@@ -77,12 +78,13 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Editar(Guid id, TrabajadorRequest trabajador, bool modal = false)
         {
-            var resultado = await _trabajadorService.Editar(id, trabajador);
+            var (ok, error) = await _trabajadorService.Editar(id, trabajador);
 
-            if (!resultado)
+            if (!ok)
             {
                 await CargarPuestos();
                 ViewBag.Modal = modal;
+                ViewBag.ErrorApi = error;
                 return View(trabajador);
             }
 
@@ -113,11 +115,13 @@ namespace Web.Controllers
         {
             var puestos = await _puestoService.Obtener();
 
-            ViewBag.Puestos = puestos.Select(p => new SelectListItem
-            {
-                Value = p.Id_Puesto.ToString(),
-                Text = p.Nombre_Puesto
-            }).ToList();
+            ViewBag.Puestos = puestos
+                .Where(p => p.Id_Estado == 1)
+                .Select(p => new SelectListItem
+                {
+                    Value = p.Id_Puesto.ToString(),
+                    Text = p.Nombre_Puesto
+                }).ToList();
         }
     }
 }

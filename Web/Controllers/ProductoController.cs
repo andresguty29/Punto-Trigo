@@ -33,12 +33,13 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Crear(ProductoRequest producto, bool modal = false)
         {
-            var resultado = await _productoService.Agregar(producto);
+            var (ok, error) = await _productoService.Agregar(producto);
 
-            if (!resultado)
+            if (!ok)
             {
                 await CargarProveedores();
                 ViewBag.Modal = modal;
+                ViewBag.ErrorApi = error;
                 return View(producto);
             }
 
@@ -78,12 +79,13 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Editar(Guid id, ProductoRequest producto, bool modal = false)
         {
-            var resultado = await _productoService.Editar(id, producto);
+            var (ok, error) = await _productoService.Editar(id, producto);
 
-            if (!resultado)
+            if (!ok)
             {
                 await CargarProveedores();
                 ViewBag.Modal = modal;
+                ViewBag.ErrorApi = error;
                 return View(producto);
             }
 
@@ -114,11 +116,13 @@ namespace Web.Controllers
         {
             var proveedores = await _proveedorService.Obtener();
 
-            ViewBag.Proveedores = proveedores.Select(p => new SelectListItem
-            {
-                Value = p.Id_Proveedor.ToString(),
-                Text = p.Nombre_Proveedor
-            }).ToList();
+            ViewBag.Proveedores = proveedores
+                .Where(p => p.Id_Estado == 1)
+                .Select(p => new SelectListItem
+                {
+                    Value = p.Id_Proveedor.ToString(),
+                    Text = p.Nombre_Proveedor
+                }).ToList();
         }
     }
 }

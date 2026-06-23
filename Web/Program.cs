@@ -1,8 +1,20 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath       = "/Login";
+        options.AccessDeniedPath = "/Login";
+        options.ExpireTimeSpan  = TimeSpan.FromHours(8);
+        options.SlidingExpiration = true;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
+    });
 
 var apiBase = builder.Configuration["ApiSettings:BaseUrl"]
     ?? throw new InvalidOperationException("Falta ApiSettings:BaseUrl en appsettings.json");
@@ -28,6 +40,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
