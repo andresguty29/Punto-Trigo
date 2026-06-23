@@ -1,0 +1,42 @@
+@{
+    ViewData["Title"] = "Cambiar contraseña";
+
+    if (ViewBag.Modal == true)
+    {
+        Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    }
+
+    bool isModal = ViewBag.Modal == true;
+}
+
+<form asp-action="CambiarContrasena" asp-route-modal="@isModal" method="post" class="modal-form">
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="mf-error-banner">@ViewBag.Error</div>
+    }
+
+    <div class="mf-group">
+        <label class="mf-label">Contraseña actual</label>
+        <input name="ContrasenaActual" class="mf-input" type="password" required />
+    </div>
+
+    <div class="mf-group">
+        <label class="mf-label">Nueva contraseña</label>
+        <input name="ContrasenaNueva" class="mf-input" type="password" required minlength="6" />
+    </div>
+
+    <div class="mf-group">
+        <label class="mf-label">Confirmar nueva contraseña</label>
+        <input name="ConfirmarContrasena" class="mf-input" type="password" required minlength="6" />
+    </div>
+
+    <div class="mf-actions">
+        <button type="submit" class="mf-btn mf-btn-primary">Guardar</button>
+        @if (!isModal)
+        {
+            <a asp-action="Index" asp-controller="Home" class="mf-btn mf-btn-secondary">Cancelar</a>
+        }
+    </div>
+
+</form>

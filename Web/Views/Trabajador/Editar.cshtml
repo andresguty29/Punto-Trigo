@@ -11,6 +11,11 @@
     bool isModal = ViewBag.Modal == true;
 }
 
+@if (ViewBag.ErrorApi != null)
+{
+    <div class="mf-error-banner">@ViewBag.ErrorApi</div>
+}
+
 <form asp-action="Editar" asp-route-id="@Model.Id_Trabajador" asp-route-modal="@isModal" method="post" class="modal-form">
 
     <input type="hidden" asp-for="Id_Trabajador" />

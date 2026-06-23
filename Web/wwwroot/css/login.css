@@ -1,0 +1,172 @@
+:root {
+    --brand-primary:     #0B3D6E;
+    --brand-accent-red:  #C41E1E;
+    --brand-accent-gold: #D4920A;
+    --brand-light:       #FDF8F0;
+    --brand-border:      #E8E0D4;
+    --ink-900:           #1C2536;
+    --ink-500:           #6B7280;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0B3D6E 0%, #0d2d52 60%, #1a1a2e 100%);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+/* ── Shell ──────────────────────────────────────── */
+.login-shell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    width: 100%;
+    max-width: 400px;
+    padding: 24px 16px;
+}
+
+/* ── Brand ──────────────────────────────────────── */
+.login-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    text-align: center;
+}
+
+.login-logo {
+    width: 52px;
+    height: 52px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,.3));
+}
+
+.login-title {
+    font-size: 1.7rem;
+    font-weight: 800;
+    letter-spacing: -.02em;
+    color: white;
+}
+
+.login-subtitle {
+    font-size: .85rem;
+    color: rgba(255,255,255,.6);
+}
+
+/* ── Card ──────────────────────────────────────── */
+.login-card {
+    background: white;
+    border-radius: 18px;
+    padding: 36px 32px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+}
+
+.login-card-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--ink-900);
+    margin-bottom: 24px;
+}
+
+/* ── Error ──────────────────────────────────────── */
+.login-error {
+    background: rgba(196,30,30,.08);
+    border: 1px solid rgba(196,30,30,.3);
+    border-left: 4px solid var(--brand-accent-red);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--brand-accent-red);
+    font-size: .85rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* ── Form ──────────────────────────────────────── */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.lf-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.lf-label {
+    font-size: .82rem;
+    font-weight: 600;
+    color: var(--ink-900);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+}
+
+.lf-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.lf-input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--brand-border);
+    border-radius: 10px;
+    font-size: .95rem;
+    color: var(--ink-900);
+    background: var(--brand-light);
+    transition: border-color .2s, box-shadow .2s;
+    outline: none;
+}
+
+.lf-input-wrap .lf-input {
+    padding-right: 44px;
+}
+
+.lf-input:focus {
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(11,61,110,.12);
+    background: white;
+}
+
+.lf-toggle-pass {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--ink-500);
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    border-radius: 6px;
+    transition: color .2s;
+}
+
+.lf-toggle-pass:hover { color: var(--ink-900); }
+
+/* ── Botón ──────────────────────────────────────── */
+.lf-btn {
+    margin-top: 6px;
+    padding: 13px;
+    background: var(--brand-primary);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .2s, transform .1s;
+    letter-spacing: .02em;
+}
+
+.lf-btn:hover  { background: #0a3360; }
+.lf-btn:active { transform: scale(.98); }

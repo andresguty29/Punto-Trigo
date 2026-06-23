@@ -490,3 +490,14 @@ window.addEventListener('message', async e => {
 });
 
 renderModule(state.selected);
+
+// ── Avatar dropdown ────────────────────────────────
+document.getElementById('avatarBtn')?.addEventListener('click', e => {
+    e.stopPropagation();
+    document.getElementById('avatarDropdown').classList.toggle('open');
+});
+
+document.addEventListener('click', e => {
+    if (!document.getElementById('avatarWrapper')?.contains(e.target))
+        document.getElementById('avatarDropdown')?.classList.remove('open');
+});

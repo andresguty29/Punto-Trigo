@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Web.Services;
 using static Abstracciones.Modelos.Usuario.Usuario;
@@ -21,25 +21,25 @@ namespace Web.Controllers
             var usuarios = await _usuarioService.Obtener();
             return View(usuarios);
         }
+
         [HttpGet]
         public async Task<IActionResult> Crear(bool modal = false)
         {
             await CargarTrabajadores();
-
             ViewBag.Modal = modal;
-
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Crear(UsuarioRequest usuario, bool modal = false)
         {
-            var resultado = await _usuarioService.Agregar(usuario);
+            var (ok, error) = await _usuarioService.Agregar(usuario);
 
-            if (!resultado)
+            if (!ok)
             {
                 await CargarTrabajadores();
                 ViewBag.Modal = modal;
+                ViewBag.ErrorApi = error;
                 return View(usuario);
             }
 
@@ -65,10 +65,11 @@ namespace Web.Controllers
 
             var modelo = new UsuarioRequest
             {
-                Id_Usuario = usuario.Id_Usuario,
+                Id_Usuario     = usuario.Id_Usuario,
                 Nombre_Usuario = usuario.Nombre_Usuario,
-                Contrasena = usuario.Contrasena,
-                Id_Trabajador = usuario.Id_Trabajador
+                Contrasena     = null,
+                Id_Trabajador  = usuario.Id_Trabajador,
+                Rol            = usuario.Rol
             };
 
             await CargarTrabajadores();
@@ -80,12 +81,13 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Editar(Guid id, UsuarioRequest usuario, bool modal = false)
         {
-            var resultado = await _usuarioService.Editar(id, usuario);
+            var (ok, error) = await _usuarioService.Editar(id, usuario);
 
-            if (!resultado)
+            if (!ok)
             {
                 await CargarTrabajadores();
                 ViewBag.Modal = modal;
+                ViewBag.ErrorApi = error;
                 return View(usuario);
             }
 
@@ -117,11 +119,13 @@ namespace Web.Controllers
         {
             var trabajadores = await _trabajadorService.Obtener();
 
-            ViewBag.Trabajadores = trabajadores.Select(t => new SelectListItem
-            {
-                Value = t.Id_Trabajador.ToString(),
-                Text = t.Nombre_Completo
-            }).ToList();
+            ViewBag.Trabajadores = trabajadores
+                .Where(t => t.Id_Estado == 1)
+                .Select(t => new SelectListItem
+                {
+                    Value = t.Id_Trabajador.ToString(),
+                    Text = t.Nombre_Completo
+                }).ToList();
         }
     }
 }

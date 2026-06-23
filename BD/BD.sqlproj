@@ -108,6 +108,8 @@
     <Build Include="dbo\Stored Procedures\Registrar_Movimiento.sql" />
     <Build Include="dbo\Tables\MovimientoInventario_TB.sql" />
     <Build Include="dbo\Tables\Inventario_TB.sql" />
+    <Build Include="dbo\Stored Procedures\CambiarContrasena_Usuario.sql" />
+    <Build Include="dbo\Stored Procedures\Login_Usuario.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="BD.refactorlog" />

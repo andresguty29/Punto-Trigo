@@ -1,4 +1,4 @@
-﻿using Abstracciones.Interfaces.DA;
+using Abstracciones.Interfaces.DA;
 using Abstracciones.Interfaces.DA.UsuarioDA;
 using Dapper;
 using Microsoft.Data.SqlClient;
@@ -8,8 +8,8 @@ namespace DA.UsuarioDA
 {
     public class UsuarioDA : IUsuarioDA
     {
-        private IRepositorioDapper _repositorioDapper;
-        private SqlConnection _sqlConnection;
+        private readonly IRepositorioDapper _repositorioDapper;
+        private readonly SqlConnection _sqlConnection;
 
         public UsuarioDA(IRepositorioDapper repositorioDapper)
         {
@@ -17,87 +17,75 @@ namespace DA.UsuarioDA
             _sqlConnection = _repositorioDapper.ObtenerRepositorio();
         }
 
+        public async Task<IEnumerable<UsuarioResponse>> Obtener()
+        {
+            return await _sqlConnection.QueryAsync<UsuarioResponse>("Obtener_Usuarios");
+        }
+
+        public async Task<UsuarioResponse?> Obtener(Guid Id)
+        {
+            var resultado = await _sqlConnection.QueryAsync<UsuarioResponse>(
+                "Obtener_Usuario", new { Id_Usuario = Id });
+            return resultado.FirstOrDefault();
+        }
+
+        public async Task<UsuarioResponse?> ObtenerPorNombre(string nombreUsuario)
+        {
+            var resultado = await _sqlConnection.QueryAsync<UsuarioResponse>(
+                "Login_Usuario", new { Nombre_Usuario = nombreUsuario });
+            return resultado.FirstOrDefault();
+        }
+
         public async Task<Guid> Agregar(UsuarioRequest usuario)
         {
-            string query = @"Agregar_Usuario";
-
-            var resultadoConsulta = await _sqlConnection.ExecuteScalarAsync<Guid>(query, new
+            return await _sqlConnection.ExecuteScalarAsync<Guid>("Agregar_Usuario", new
             {
-                Id_Usuario = Guid.NewGuid(),
-                Nombre_Usuario = usuario.Nombre_Usuario,
-                Contrasena = usuario.Contrasena,
-                Id_Trabajador = usuario.Id_Trabajador
+                Id_Usuario     = Guid.NewGuid(),
+                usuario.Nombre_Usuario,
+                usuario.Contrasena,
+                usuario.Id_Trabajador,
+                usuario.Rol
             });
-
-            return resultadoConsulta;
         }
 
         public async Task<Guid> Editar(Guid Id, UsuarioRequest usuario)
         {
             await verificarUsuarioExiste(Id);
-
-            string query = @"Editar_Usuario";
-
-            var resultadoConsulta = await _sqlConnection.ExecuteScalarAsync<Guid>(query, new
+            return await _sqlConnection.ExecuteScalarAsync<Guid>("Editar_Usuario", new
             {
                 Id_Usuario = Id,
-                Nombre_Usuario = usuario.Nombre_Usuario,
-                Contrasena = usuario.Contrasena,
-                Id_Trabajador = usuario.Id_Trabajador
+                usuario.Nombre_Usuario,
+                usuario.Contrasena,
+                usuario.Id_Trabajador,
+                usuario.Rol
             });
-
-            return resultadoConsulta;
         }
 
         public async Task<Guid> Eliminar(Guid Id)
         {
             await verificarUsuarioExiste(Id);
-
-            string query = @"Eliminar_Usuario";
-
-            var resultadoConsulta = await _sqlConnection.ExecuteScalarAsync<Guid>(query, new
-            {
-                Id_Usuario = Id
-            });
-
-            return resultadoConsulta;
-        }
-
-        public async Task<IEnumerable<UsuarioResponse>> Obtener()
-        {
-            string query = @"Obtener_Usuarios";
-
-            var resultadoConsulta = await _sqlConnection.QueryAsync<UsuarioResponse>(query);
-
-            return resultadoConsulta;
-        }
-
-        public async Task<UsuarioResponse> Obtener(Guid Id)
-        {
-            string query = @"Obtener_Usuario";
-
-            var resultadoConsulta = await _sqlConnection.QueryAsync<UsuarioResponse>(query, new
-            {
-                Id_Usuario = Id
-            });
-
-            return resultadoConsulta.FirstOrDefault();
+            return await _sqlConnection.ExecuteScalarAsync<Guid>(
+                "Eliminar_Usuario", new { Id_Usuario = Id });
         }
 
         public async Task<Guid> Activar(Guid Id)
         {
             await verificarUsuarioExiste(Id);
-            var resultado = await _sqlConnection.ExecuteScalarAsync<Guid>("Activar_Usuario", new { Id_Usuario = Id });
-            return resultado;
+            return await _sqlConnection.ExecuteScalarAsync<Guid>(
+                "Activar_Usuario", new { Id_Usuario = Id });
+        }
+
+        public async Task<Guid> CambiarContrasena(Guid Id, string contrasenaHash)
+        {
+            return await _sqlConnection.ExecuteScalarAsync<Guid>(
+                "CambiarContrasena_Usuario", new { Id_Usuario = Id, Contrasena = contrasenaHash });
         }
 
         private async Task verificarUsuarioExiste(Guid Id)
         {
-            UsuarioResponse? resultadoConsultaUsuario = await Obtener(Id);
-
-            if (resultadoConsultaUsuario == null)
-                throw new Exception("No se encontró el usuario");
+            var usuario = await Obtener(Id);
+            if (usuario == null)
+                throw new Exception("No se encontró el usuario.");
         }
-
     }
 }

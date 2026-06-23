@@ -1,5 +1,5 @@
-CREATE PROCEDURE Obtener_Usuario
-    @Id_Usuario UNIQUEIDENTIFIER
+CREATE PROCEDURE Login_Usuario
+    @Nombre_Usuario NVARCHAR(100)
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -14,5 +14,6 @@ BEGIN
         u.[Id_Estado]
     FROM [dbo].[Usuario_TB] u
     LEFT JOIN [dbo].[Trabajador_TB] t ON u.[Id_Trabajador] = t.[Id_Trabajador]
-    WHERE u.[Id_Usuario] = @Id_Usuario;
+    WHERE u.[Nombre_Usuario] = @Nombre_Usuario
+      AND u.[Id_Estado] = 1;
 END

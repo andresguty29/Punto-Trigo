@@ -29,16 +29,30 @@ namespace Web.Services
             return await _httpClient.GetFromJsonAsync<TResponse>($"api/{Ruta}/{id}");
         }
 
-        public async Task<bool> Agregar(TRequest entidad)
+        public async Task<(bool ok, string? error)> Agregar(TRequest entidad)
         {
             var respuesta = await _httpClient.PostAsJsonAsync($"api/{Ruta}", entidad);
-            return respuesta.IsSuccessStatusCode;
+            if (respuesta.IsSuccessStatusCode) return (true, null);
+            var error = await LeerMensajeError(respuesta);
+            return (false, error);
         }
 
-        public async Task<bool> Editar(Guid id, TRequest entidad)
+        public async Task<(bool ok, string? error)> Editar(Guid id, TRequest entidad)
         {
             var respuesta = await _httpClient.PutAsJsonAsync($"api/{Ruta}/{id}", entidad);
-            return respuesta.IsSuccessStatusCode;
+            if (respuesta.IsSuccessStatusCode) return (true, null);
+            var error = await LeerMensajeError(respuesta);
+            return (false, error);
+        }
+
+        private static async Task<string?> LeerMensajeError(HttpResponseMessage respuesta)
+        {
+            try
+            {
+                var body = await respuesta.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                return body?.GetValueOrDefault("mensaje");
+            }
+            catch { return null; }
         }
 
         public async Task<bool> Eliminar(Guid id)
