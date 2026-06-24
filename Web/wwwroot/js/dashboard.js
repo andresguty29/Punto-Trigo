@@ -79,7 +79,8 @@ const crudRoutes = {
     puestos: '/Puesto',
     proveedores: '/Proveedor',
     productos: '/Producto',
-    inventario: '/Inventario'
+    inventario: '/Inventario',
+    produccion: '/Produccion'
 };
 
 const els = {
@@ -250,6 +251,16 @@ function mapApiRows(module, data) {
                     String(item.stock_Minimo ?? 0),
                     item.nombre_Proveedor ?? 'Sin proveedor',
                     estadoTexto(item.id_Estado)
+                ]
+            }));
+        case 'produccion':
+            return data.map(item => ({
+                id: item.id_Asignacion,
+                cells: [
+                    item.nombre_Trabajador ?? '-',
+                    item.nombre_Producto ?? '-',
+                    String(item.cantidad_Diaria ?? 0),
+                    'Activo'
                 ]
             }));
         default:

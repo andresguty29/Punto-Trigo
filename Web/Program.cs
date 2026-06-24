@@ -28,6 +28,7 @@ AddCrud<TrabajadorService>(builder.Services);
 AddCrud<PuestoService>(builder.Services);
 AddCrud<ProveedorService>(builder.Services);
 AddCrud<ProductoService>(builder.Services);
+AddCrud<ProduccionService>(builder.Services);
 
 var app = builder.Build();
 
