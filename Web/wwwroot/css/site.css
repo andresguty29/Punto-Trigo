@@ -1,5 +1,18 @@
+:root {
+  --pt-white: #ffffff;
+  --pt-blue-950: #072346;
+  --pt-blue-900: #0b2f59;
+  --pt-blue-800: #12447d;
+  --pt-blue-100: #e9f1fb;
+  --pt-gold-500: #cd9f42;
+  --pt-gold-120: #f8f1e2;
+  --pt-border: #d9e5f4;
+}
+
 html {
-  font-size: 14px;
+  font-size: 15px;
+  position: relative;
+  min-height: 100%;
 }
 
 @media (min-width: 768px) {
@@ -8,15 +21,62 @@ html {
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
 body {
-  margin-bottom: 60px;
+  margin: 0;
+  color: var(--pt-blue-900);
+  font-family: "Plus Jakarta Sans", "Trebuchet MS", "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at 12% 12%, rgba(205, 159, 66, .18), rgba(205, 159, 66, 0) 32%),
+    linear-gradient(160deg, #f8fbff 0%, #eef5fd 60%, #fbf7ee 100%);
+}
+
+.pt-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.pt-navbar {
+  min-height: 60px;
+  background: linear-gradient(120deg, var(--pt-blue-950), var(--pt-blue-800));
+  border-bottom: 3px solid var(--pt-gold-500);
+  box-shadow: 0 4px 16px rgba(7, 35, 70, .2);
+}
+
+.pt-navbar .navbar-brand,
+.pt-navbar .nav-link {
+  color: var(--pt-white) !important;
+  font-weight: 600;
+}
+
+.pt-navbar .nav-link:hover {
+  color: var(--pt-gold-500) !important;
+}
+
+.pt-main {
+  flex: 1;
+  width: min(1120px, 94vw);
+  margin: 24px auto;
+  padding: 18px;
+  border: 1px solid var(--pt-border);
+  border-radius: 14px;
+  background: var(--pt-white);
+  box-shadow: 0 10px 24px rgba(7, 35, 70, .08);
+}
+
+.pt-footer {
+  border-top: 1px solid var(--pt-border);
+  background: #f7fbff;
+  color: var(--pt-blue-900);
+  text-align: center;
+  padding: 12px;
+  font-size: .88rem;
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(18, 68, 125, .2);
 }

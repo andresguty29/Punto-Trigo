@@ -396,3 +396,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+BD/dbo/Scripts/Seed_Admin_Usuario.sql
