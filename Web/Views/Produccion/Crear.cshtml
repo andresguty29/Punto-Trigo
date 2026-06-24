@@ -1,0 +1,55 @@
+@model Abstracciones.Modelos.Produccion.Produccion.AsignacionRequest
+
+@{
+    ViewData["Title"] = "Asignar Produccion";
+
+    if (ViewBag.Modal == true)
+    {
+        Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    }
+
+    bool isModal = ViewBag.Modal == true;
+}
+
+@if (ViewBag.ErrorApi != null)
+{
+    <div class="mf-error-banner">@ViewBag.ErrorApi</div>
+}
+
+<form asp-action="Crear" asp-route-modal="@isModal" method="post" class="modal-form">
+
+    <div class="mf-group">
+        <label asp-for="Id_Trabajador" class="mf-label">Empleado de produccion</label>
+        <select asp-for="Id_Trabajador" asp-items="ViewBag.Trabajadores" class="mf-select" required>
+            <option value="">Seleccione un empleado</option>
+        </select>
+        <span asp-validation-for="Id_Trabajador" class="mf-error"></span>
+    </div>
+
+    <div class="mf-group">
+        <label asp-for="Id_Producto" class="mf-label">Producto asignado</label>
+        <select asp-for="Id_Producto" asp-items="ViewBag.Productos" class="mf-select" required>
+            <option value="">Seleccione un producto</option>
+        </select>
+        <span asp-validation-for="Id_Producto" class="mf-error"></span>
+    </div>
+
+    <div class="mf-group">
+        <label asp-for="Cantidad_Diaria" class="mf-label">Cantidad diaria</label>
+        <input asp-for="Cantidad_Diaria" class="mf-input" type="number" step="0.01" min="0.01" required />
+        <span asp-validation-for="Cantidad_Diaria" class="mf-error"></span>
+    </div>
+
+    <div class="mf-actions">
+        <button type="submit" class="mf-btn mf-btn-primary">Guardar</button>
+        @if (!isModal)
+        {
+            <a asp-controller="Home" asp-action="Index" class="mf-btn mf-btn-secondary">Volver</a>
+        }
+    </div>
+
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
