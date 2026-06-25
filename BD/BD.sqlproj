@@ -59,6 +59,7 @@
     <Folder Include="dbo\" />
     <Folder Include="dbo\Tables\" />
     <Folder Include="dbo\Stored Procedures\" />
+    <Folder Include="Snapshots" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Proveedor_TB.sql" />
@@ -125,6 +126,23 @@
     <Build Include="dbo\Tables\AsignacionMaterial_TB.sql" />
     <Build Include="dbo\Stored Procedures\Obtener_Trabajadores_Panaderos.sql" />
     <Build Include="dbo\Stored Procedures\Marcar_Produccion_Realizada.sql" />
+    <Build Include="dbo\Tables\Incapacidad_TB.sql" />
+    <Build Include="dbo\Tables\Vacaciones_TB.sql" />
+    <Build Include="dbo\Tables\SaldoVacaciones_TB.sql" />
+    <Build Include="dbo\Tables\FechasCriticas_TB.sql" />
+    <Build Include="dbo\Stored Procedures\Verificar_FechasCriticas_Rango.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Vacaciones_Trabajador.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Vacaciones_Calendario.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Saldo_Vacaciones.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Incapacidades_Trabajador.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Incapacidades_Calendario.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_FechasCriticas.sql" />
+    <Build Include="dbo\Stored Procedures\Eliminar_Vacaciones.sql" />
+    <Build Include="dbo\Stored Procedures\Eliminar_Incapacidad.sql" />
+    <Build Include="dbo\Stored Procedures\Agregar_Vacaciones.sql" />
+    <Build Include="dbo\Stored Procedures\Agregar_Incapacidad.sql" />
+    <Build Include="dbo\Stored Procedures\Agregar_FechaCritica.sql" />
+    <Build Include="dbo\Stored Procedures\Actualizar_Saldo_Vacaciones.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="BD.refactorlog" />
