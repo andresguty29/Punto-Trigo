@@ -1,6 +1,6 @@
 // ── NotificationManager ────────────────────────────
 const NotificationManager = (() => {
-    const ICONS = { warning: '⚠', error: '✕', info: 'ℹ' };
+    const ICONS = { warning: '!', error: '!', info: 'i' };
     let items = [];
 
     function render() {
@@ -79,7 +79,8 @@ const crudRoutes = {
     puestos: '/Puesto',
     proveedores: '/Proveedor',
     productos: '/Producto',
-    inventario: '/Inventario'
+    inventario: '/Inventario',
+    produccion: '/Produccion'
 };
 
 const els = {
@@ -92,6 +93,28 @@ const els = {
     tableWrap:     document.getElementById('tableWrap'),
     createButton:  document.getElementById('createButton')
 };
+
+const sidebarUi = {
+    shell: document.querySelector('.page-shell'),
+    toggle: document.getElementById('sidebarToggle'),
+    backdrop: document.getElementById('sidebarBackdrop')
+};
+
+const SIDEBAR_HIDDEN_KEY = 'pt.sidebar.hidden';
+let sidebarHidden = localStorage.getItem(SIDEBAR_HIDDEN_KEY) === '1';
+
+function persistSidebarState() {
+    localStorage.setItem(SIDEBAR_HIDDEN_KEY, sidebarHidden ? '1' : '0');
+}
+
+function applySidebarState() {
+    sidebarUi.shell?.classList.toggle('sidebar-hidden', sidebarHidden);
+
+    if (sidebarUi.toggle) {
+        sidebarUi.toggle.setAttribute('aria-pressed', String(!sidebarHidden));
+        sidebarUi.toggle.title = sidebarHidden ? 'Mostrar menu' : 'Ocultar menu';
+    }
+}
 
 // ── Toast ──────────────────────────────────────────────
 let toastTimer;
@@ -230,6 +253,16 @@ function mapApiRows(module, data) {
                     estadoTexto(item.id_Estado)
                 ]
             }));
+        case 'produccion':
+            return data.map(item => ({
+                id: item.id_Asignacion,
+                cells: [
+                    item.nombre_Trabajador ?? '-',
+                    item.nombre_Producto ?? '-',
+                    String(item.cantidad_Diaria ?? 0),
+                    'Activo'
+                ]
+            }));
         default:
             return (module.table.rows ?? []).map(cells => ({ id: null, cells }));
     }
@@ -266,7 +299,7 @@ function renderStockAlerts(data) {
     panel.id = 'stockAlertPanel';
     panel.className = 'stock-alert-panel';
     panel.innerHTML = `
-        <div class="stock-alert-title">⚠ Stock bajo mínimo</div>
+        <div class="stock-alert-title">Stock bajo minimo</div>
         <div class="stock-alert-body">${rows}</div>
     `;
 
@@ -352,10 +385,11 @@ function renderPagedTable(module) {
         const actionsCell = baseUrl && row.id ? `
             <td>
                 <button class="row-btn row-btn-edit" data-id="${row.id}" data-module="${module.key}">Editar</button>
-                ${esInventario ? `<button class="row-btn row-btn-movimiento" data-id="${row.id}" data-module="${module.key}">Movimiento</button>` : ''}
+                ${esInventario ? `<button class="row-btn row-btn-movimiento" data-id="${row.id}" data-module="${module.key}">Registrar movimiento</button>` : ''}
+                ${esInventario ? `<button class="row-btn row-btn-historial" data-id="${row.id}" data-module="${module.key}">Ver historial</button>` : ''}
                 ${activo
-                    ? `<button class="row-btn row-btn-delete" data-id="${row.id}" data-module="${module.key}" data-activo="true">Desactivar</button>`
-                    : `<button class="row-btn row-btn-activate" data-id="${row.id}" data-module="${module.key}" data-activo="false">Activar</button>`
+                    ? `<button class="row-btn row-btn-delete" data-id="${row.id}" data-module="${module.key}" data-activo="true">Desactivar registro</button>`
+                    : `<button class="row-btn row-btn-activate" data-id="${row.id}" data-module="${module.key}" data-activo="false">Reactivar registro</button>`
                 }
             </td>` : '';
 
@@ -402,6 +436,12 @@ function renderPagedTable(module) {
     els.tableWrap.querySelectorAll('.row-btn-movimiento').forEach(btn => {
         btn.addEventListener('click', () => {
             openModal('Registrar Movimiento', `${crudRoutes[btn.dataset.module]}/Movimiento/${btn.dataset.id}?modal=true`);
+        });
+    });
+
+    els.tableWrap.querySelectorAll('.row-btn-historial').forEach(btn => {
+        btn.addEventListener('click', () => {
+            openModal('Historial de Movimientos', `${crudRoutes[btn.dataset.module]}/Historial/${btn.dataset.id}?modal=true`);
         });
     });
 
@@ -472,7 +512,21 @@ async function renderModule(key) {
 // ── Eventos globales ───────────────────────────────────
 els.sidebar.addEventListener('click', e => {
     const btn = e.target.closest('[data-module]');
-    if (btn) renderModule(btn.dataset.module);
+    if (!btn) return;
+
+    renderModule(btn.dataset.module);
+});
+
+sidebarUi.toggle?.addEventListener('click', () => {
+    sidebarHidden = !sidebarHidden;
+    persistSidebarState();
+    applySidebarState();
+});
+
+sidebarUi.backdrop?.addEventListener('click', () => {
+    sidebarHidden = true;
+    persistSidebarState();
+    applySidebarState();
 });
 
 document.getElementById('closeCrudModal')?.addEventListener('click', closeModal);
@@ -489,6 +543,7 @@ window.addEventListener('message', async e => {
     }
 });
 
+applySidebarState();
 renderModule(state.selected);
 
 // ── Avatar dropdown ────────────────────────────────

@@ -158,6 +158,20 @@ namespace Web.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Historial(Guid id, bool modal = false)
+        {
+            var item = await _inventarioService.Obtener(id);
+            if (item == null) return NotFound();
+
+            var movimientos = await _inventarioService.ObtenerMovimientos(id);
+
+            ViewBag.Modal = modal;
+            ViewBag.NombreItem = item.Nombre;
+
+            return View(movimientos);
+        }
+
         private async Task CargarProveedores()
         {
             var proveedores = await _proveedorService.Obtener();

@@ -110,6 +110,15 @@
     <Build Include="dbo\Tables\Inventario_TB.sql" />
     <Build Include="dbo\Stored Procedures\CambiarContrasena_Usuario.sql" />
     <Build Include="dbo\Stored Procedures\Login_Usuario.sql" />
+    <Build Include="dbo\Tables\ProductoTrabajador_TB.sql" />
+    <Build Include="dbo\Stored Procedures\Agregar_Asignacion_Produccion.sql" />
+    <Build Include="dbo\Stored Procedures\Editar_Asignacion_Produccion.sql" />
+    <Build Include="dbo\Stored Procedures\Eliminar_Asignacion_Produccion.sql" />
+    <Build Include="dbo\Stored Procedures\Activar_Asignacion_Produccion.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Asignaciones_Produccion.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Asignacion_Produccion.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Lista_Produccion_Diaria.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Productos_Asignados_Trabajador.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="BD.refactorlog" />

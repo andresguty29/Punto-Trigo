@@ -1,0 +1,54 @@
+@using static Abstracciones.Modelos.Inventario.Movimiento
+@model IEnumerable<MovimientoResponse>
+
+@{
+    ViewData["Title"] = "Historial de Movimientos";
+
+    if (ViewBag.Modal == true)
+    {
+        Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    }
+
+    var nombreItem = ViewBag.NombreItem as string ?? "Item";
+    var movimientos = Model?.ToList() ?? new List<MovimientoResponse>();
+}
+
+<div class="modal-form">
+    <div class="mf-group">
+        <span class="mf-label">Item</span>
+        <p style="margin:4px 0 0; font-weight:600; color:var(--pt-blue-900);">@nombreItem</p>
+    </div>
+
+    @if (!movimientos.Any())
+    {
+        <div class="empty-state" style="margin-top:6px;">No hay movimientos registrados para este item.</div>
+    }
+    else
+    {
+        <div style="overflow:auto; margin-top:6px;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Tipo</th>
+                        <th>Cantidad</th>
+                        <th>Motivo</th>
+                        <th>Proveedor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var mov in movimientos)
+                {
+                    <tr>
+                        <td>@mov.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@mov.Tipo</td>
+                        <td>@mov.Cantidad</td>
+                        <td>@(string.IsNullOrWhiteSpace(mov.Motivo) ? "-" : mov.Motivo)</td>
+                        <td>@(string.IsNullOrWhiteSpace(mov.Nombre_Proveedor) ? "-" : mov.Nombre_Proveedor)</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

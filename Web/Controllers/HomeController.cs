@@ -102,6 +102,22 @@ public class HomeController : Controller
             },
             new()
             {
+                Key = "produccion",
+                Roles = ["Admin"],
+                Name = "Produccion",
+                Tag = "Plan diario",
+                Description = "Lista diaria de tareas por empleado con productos asignados y cantidades de produccion.",
+                Accent = "#8A6A2B",
+                Table = new()
+                {
+                    Title = "Lista diaria de produccion",
+                    Columns = ["Empleado", "Producto", "Cantidad diaria", "Estado"],
+                    EmptyMessage = "Sin tareas diarias registradas.",
+                    SourceUrl = "https://localhost:44378/api/Produccion/lista-diaria"
+                }
+            },
+            new()
+            {
                 Key = "proveedores",
                 Roles = ["Admin"],
                 Name = "Proveedores",
