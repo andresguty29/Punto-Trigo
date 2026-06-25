@@ -11,6 +11,7 @@ BEGIN
         a.Id_Producto,
         p.Nombre_Producto,
         a.Cantidad_Diaria,
+        a.Realizado,
         CAST(GETDATE() AS DATE) AS Fecha_Lista
     FROM dbo.ProductoTrabajador_TB a
     INNER JOIN dbo.Trabajador_TB t ON a.Id_Trabajador = t.Id_Trabajador
@@ -18,6 +19,7 @@ BEGIN
     WHERE a.Id_Estado = 1
       AND t.Id_Estado = 1
       AND p.Id_Estado = 1
+      AND CAST(a.Fecha_Asignacion AS DATE) = CAST(GETDATE() AS DATE)
       AND (@Id_Trabajador IS NULL OR a.Id_Trabajador = @Id_Trabajador)
     ORDER BY t.Nombre_Completo, p.Nombre_Producto;
 END

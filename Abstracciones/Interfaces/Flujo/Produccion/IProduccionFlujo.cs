@@ -12,5 +12,7 @@ namespace Abstracciones.Interfaces.Flujo.Produccion
         Task<Guid> ActivarAsignacion(Guid Id_Asignacion);
         Task<IEnumerable<ListaProduccionResponse>> ObtenerListaDiaria(Guid? Id_Trabajador);
         Task<IEnumerable<ProductoAsignadoResponse>> ObtenerProductosAsignados(Guid Id_Trabajador);
+        Task<IEnumerable<MaterialAsignacionResponse>> ObtenerMateriales(Guid Id_Asignacion);
+        Task<Guid> MarcarRealizada(Guid Id_Asignacion);
     }
 }

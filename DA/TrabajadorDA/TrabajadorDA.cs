@@ -91,6 +91,11 @@ namespace DA.TrabajadorDA
             return resultado;
         }
 
+        public async Task<IEnumerable<TrabajadorResponse>> ObtenerPanaderos()
+        {
+            return await _sqlConnection.QueryAsync<TrabajadorResponse>("Obtener_Trabajadores_Panaderos");
+        }
+
         private async Task verificarTrabajadorExiste(Guid Id)
         {
             TrabajadorResponse? resultadoConsultaTrabajador = await Obtener(Id);

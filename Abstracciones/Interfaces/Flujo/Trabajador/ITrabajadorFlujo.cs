@@ -15,5 +15,6 @@ namespace Abstracciones.Interfaces.Flujo.Trabajador
         Task<Guid> Editar(Guid Id, TrabajadorRequest trabajador);
         Task<Guid> Eliminar(Guid Id);
         Task<Guid> Activar(Guid Id);
+        Task<IEnumerable<TrabajadorResponse>> ObtenerPanaderos();
     }
 }

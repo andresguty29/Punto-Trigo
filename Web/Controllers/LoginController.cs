@@ -41,7 +41,8 @@ namespace Web.Controllers
                 new(ClaimTypes.NameIdentifier, usuario.Id_Usuario.ToString()),
                 new(ClaimTypes.Name,           usuario.Nombre_Usuario ?? ""),
                 new(ClaimTypes.Role,           usuario.Rol ?? ""),
-                new("NombreTrabajador",        usuario.Nombre_Trabajador ?? "")
+                new("NombreTrabajador",        usuario.Nombre_Trabajador ?? ""),
+                new("Id_Trabajador",           usuario.Id_Trabajador.ToString())
             };
 
             var identity  = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

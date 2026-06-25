@@ -83,6 +83,7 @@ namespace Flujo
             {
                 Id_Usuario      = usuario.Id_Usuario,
                 Nombre_Usuario  = usuario.Nombre_Usuario,
+                Id_Trabajador   = usuario.Id_Trabajador,
                 Nombre_Trabajador = usuario.Nombre_Trabajador,
                 Rol             = usuario.Rol
             };

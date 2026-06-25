@@ -17,6 +17,7 @@ public class HomeController : Controller
             .ToUpper();
 
         var rol = User.FindFirstValue(ClaimTypes.Role) ?? "";
+        var idTrabajador = User.FindFirstValue("Id_Trabajador") ?? "";
 
         var todosModulos = new List<DashboardModuleViewModel>
         {
@@ -111,10 +112,20 @@ public class HomeController : Controller
                 Table = new()
                 {
                     Title = "Lista diaria de produccion",
-                    Columns = ["Empleado", "Producto", "Cantidad diaria", "Estado"],
+                    Columns = ["Empleado", "Producto", "Cantidad diaria", "Realizado", "Estado"],
                     EmptyMessage = "Sin tareas diarias registradas.",
                     SourceUrl = "https://localhost:44378/api/Produccion/lista-diaria"
                 }
+            },
+            new()
+            {
+                Key = "mi_produccion",
+                Roles = ["Panadero"],
+                Name = "Mi Produccion",
+                Tag = "Plan diario",
+                Description = "Tu lista de produccion asignada para hoy, con materiales y receta para imprimir.",
+                Accent = "#8A6A2B",
+                Table = new()
             },
             new()
             {
@@ -142,6 +153,8 @@ public class HomeController : Controller
         {
             Today        = DateTime.Now,
             UserInitials = initials,
+            CurrentRole  = rol,
+            IdTrabajador = idTrabajador,
             Modules      = modulosDelRol
         };
 

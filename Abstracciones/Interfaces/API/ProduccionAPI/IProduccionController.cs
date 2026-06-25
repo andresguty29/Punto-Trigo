@@ -13,5 +13,7 @@ namespace Abstracciones.Interfaces.API.ProduccionAPI
         Task<IActionResult> ActivarAsignacion(Guid Id);
         Task<IActionResult> ObtenerListaDiaria(Guid? Id_Trabajador);
         Task<IActionResult> ObtenerProductosAsignados(Guid Id_Trabajador);
+        Task<IActionResult> ObtenerMateriales(Guid Id_Asignacion);
+        Task<IActionResult> MarcarRealizada(Guid Id_Asignacion);
     }
 }

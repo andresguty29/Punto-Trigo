@@ -21,9 +21,9 @@
     <input type="hidden" asp-for="Id_Asignacion" />
 
     <div class="mf-group">
-        <label asp-for="Id_Trabajador" class="mf-label">Empleado de produccion</label>
+        <label asp-for="Id_Trabajador" class="mf-label">Panadero asignado</label>
         <select asp-for="Id_Trabajador" asp-items="ViewBag.Trabajadores" class="mf-select" required>
-            <option value="">Seleccione un empleado</option>
+            <option value="">Seleccione un panadero</option>
         </select>
         <span asp-validation-for="Id_Trabajador" class="mf-error"></span>
     </div>
@@ -38,9 +38,11 @@
 
     <div class="mf-group">
         <label asp-for="Cantidad_Diaria" class="mf-label">Cantidad diaria</label>
-        <input asp-for="Cantidad_Diaria" class="mf-input" type="number" step="0.01" min="0.01" required />
+        <input asp-for="Cantidad_Diaria" class="mf-input" type="number" step="1" min="1" required />
         <span asp-validation-for="Cantidad_Diaria" class="mf-error"></span>
     </div>
+
+    <partial name="_MaterialesFields" model="Model.Materiales" />
 
     <div class="mf-actions">
         <button type="submit" class="mf-btn mf-btn-primary">Guardar Cambios</button>

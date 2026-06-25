@@ -45,6 +45,7 @@ namespace Abstracciones.Modelos.Usuario
         {
             public Guid Id_Usuario { get; set; }
             public string? Nombre_Usuario { get; set; }
+            public Guid Id_Trabajador { get; set; }
             public string? Nombre_Trabajador { get; set; }
             public string? Rol { get; set; }
         }
