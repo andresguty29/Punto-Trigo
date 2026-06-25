@@ -71,5 +71,19 @@ namespace Web.Services
             var response = await _httpClient.PatchAsync($"api/Produccion/asignaciones/{id}/activar", null);
             return response.IsSuccessStatusCode;
         }
+
+        public async Task<IEnumerable<MaterialAsignacionResponse>> ObtenerMateriales(Guid idAsignacion)
+        {
+            var response = await _httpClient.GetAsync($"api/Produccion/asignaciones/{idAsignacion}/materiales");
+            if (response.StatusCode == HttpStatusCode.NoContent) return [];
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<IEnumerable<MaterialAsignacionResponse>>() ?? [];
+        }
+
+        public async Task<bool> MarcarRealizada(Guid idAsignacion)
+        {
+            var response = await _httpClient.PatchAsync($"api/Produccion/asignaciones/{idAsignacion}/realizar", null);
+            return response.IsSuccessStatusCode;
+        }
     }
 }

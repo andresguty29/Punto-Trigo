@@ -57,5 +57,10 @@ namespace Flujo
         {
             return _trabajadorDA.Activar(Id);
         }
+
+        public Task<IEnumerable<TrabajadorResponse>> ObtenerPanaderos()
+        {
+            return _trabajadorDA.ObtenerPanaderos();
+        }
     }
 }

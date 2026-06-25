@@ -119,6 +119,12 @@
     <Build Include="dbo\Stored Procedures\Obtener_Asignacion_Produccion.sql" />
     <Build Include="dbo\Stored Procedures\Obtener_Lista_Produccion_Diaria.sql" />
     <Build Include="dbo\Stored Procedures\Obtener_Productos_Asignados_Trabajador.sql" />
+    <Build Include="dbo\Stored Procedures\Agregar_Material_Asignacion.sql" />
+    <Build Include="dbo\Stored Procedures\Eliminar_Materiales_Por_Asignacion.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Materiales_Asignacion.sql" />
+    <Build Include="dbo\Tables\AsignacionMaterial_TB.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Trabajadores_Panaderos.sql" />
+    <Build Include="dbo\Stored Procedures\Marcar_Produccion_Realizada.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="BD.refactorlog" />

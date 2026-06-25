@@ -10,6 +10,7 @@ namespace Abstracciones.Interfaces.API.TrabajadorAPI
         Task<IActionResult> Agregar(TrabajadorRequest trabajador);
         Task<IActionResult> Editar(Guid Id, TrabajadorRequest trabajador);
         Task<IActionResult> Eliminar(Guid Id);
+        Task<IActionResult> ObtenerPanaderos();
 
     }
 }

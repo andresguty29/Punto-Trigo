@@ -1,0 +1,65 @@
+@model Abstracciones.Modelos.Produccion.Produccion.AsignacionResponse
+
+@{
+    Layout = null;
+    var materiales = (IEnumerable<Abstracciones.Modelos.Produccion.Produccion.MaterialAsignacionResponse>)ViewBag.Materiales;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Receta - @Model.Nombre_Producto</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 30px; color: #222; }
+        h1 { margin-bottom: 4px; }
+        .subtitulo { color: #555; margin-bottom: 24px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+        th, td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; }
+        th { background: #f2f2f2; }
+        .meta { margin-bottom: 18px; }
+        .meta span { display: inline-block; margin-right: 24px; font-weight: bold; }
+        @@media print {
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body onload="window.print()">
+    <h1>Receta de producción</h1>
+    <div class="subtitulo">Punto Trigo — Panadería</div>
+
+    <div class="meta">
+        <span>Producto: @Model.Nombre_Producto</span>
+        <span>Empleado: @Model.Nombre_Trabajador</span>
+        <span>Cantidad diaria: @Model.Cantidad_Diaria</span>
+        <span>Fecha: @Model.Fecha_Asignacion.ToString("dd/MM/yyyy")</span>
+    </div>
+
+    <h3>Materiales necesarios</h3>
+    @if (materiales.Any())
+    {
+        <table>
+            <thead>
+                <tr><th>Material</th><th>Cantidad</th><th>Unidad</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var m in materiales)
+                {
+                    <tr>
+                        <td>@m.Nombre_Inventario</td>
+                        <td>@m.Cantidad</td>
+                        <td>@m.Unidad</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Sin materiales registrados.</p>
+    }
+
+    <p class="no-print">
+        <button onclick="window.print()">Imprimir</button>
+    </p>
+</body>
+</html>

@@ -2,7 +2,12 @@
 @model Web.Models.DashboardViewModel
 @{
     Layout = null;
-    var payload = JsonSerializer.Serialize(Model.Modules, new JsonSerializerOptions
+    var payload = JsonSerializer.Serialize(new
+    {
+        modules = Model.Modules,
+        role = Model.CurrentRole,
+        idTrabajador = Model.IdTrabajador
+    }, new JsonSerializerOptions
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     });

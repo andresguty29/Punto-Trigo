@@ -64,9 +64,12 @@ let selectedStatus = 'activo';
 let currentPage = 1;
 const pageSize = 10;
 
-const modules = JSON.parse(
+const dashboardData = JSON.parse(
     document.getElementById("dashboard-data").textContent
 );
+const modules = dashboardData.modules;
+const currentRole = dashboardData.role;
+const currentIdTrabajador = dashboardData.idTrabajador;
 
 const state = {
     selected: modules[0]?.key ?? null,
@@ -180,7 +183,7 @@ function moduleByKey(key) {
 
 function badgeClass(value) {
     const v = String(value).toLowerCase();
-    if (['activo', 'conectado', 'online'].some(x => v.includes(x))) return 'badge badge-ok';
+    if (['activo', 'conectado', 'online', 'realizado'].some(x => v.includes(x))) return 'badge badge-ok';
     if (['pendiente', 'sin'].some(x => v.includes(x)))              return 'badge badge-warn';
     if (['inactivo', 'anulado', 'error'].some(x => v.includes(x)))  return 'badge badge-danger';
     return '';
@@ -242,6 +245,19 @@ function mapApiRows(module, data) {
                 ]
             }));
         case 'inventario':
+            if (currentRole === 'Panadero') {
+                return data
+                    .filter(item => item.id_Estado === 1)
+                    .map(item => ({
+                        id: item.id_Inventario,
+                        cells: [
+                            item.nombre ?? '-',
+                            item.unidad ?? '-',
+                            String(item.stock_Actual ?? 0),
+                            String(item.stock_Minimo ?? 0)
+                        ]
+                    }));
+            }
             return data.map(item => ({
                 id: item.id_Inventario,
                 cells: [
@@ -260,6 +276,7 @@ function mapApiRows(module, data) {
                     item.nombre_Trabajador ?? '-',
                     item.nombre_Producto ?? '-',
                     String(item.cantidad_Diaria ?? 0),
+                    item.realizado ? 'Realizado' : 'Pendiente',
                     'Activo'
                 ]
             }));
@@ -333,7 +350,7 @@ async function fillTable(module) {
         const data = await res.json();
         els.tableStatus.textContent = 'Actualizado';
 
-        if (module.key === 'inventario') renderStockAlerts(data);
+        if (module.key === 'inventario' && currentRole === 'Admin') renderStockAlerts(data);
 
         renderTable(module, mapApiRows(module, data));
 
@@ -350,8 +367,10 @@ function renderTable(module, rows) {
     renderPagedTable(module);
 }
 
-function applyStatusFilter() {
-    filteredRows = selectedStatus === 'todos'
+function applyStatusFilter(module) {
+    const soloLectura = module && module.key === 'inventario' && currentRole === 'Panadero';
+
+    filteredRows = (soloLectura || selectedStatus === 'todos')
         ? currentRows
         : currentRows.filter(row =>
             row.cells.some(cell => String(cell).toLowerCase() === selectedStatus)
@@ -359,17 +378,20 @@ function applyStatusFilter() {
 }
 
 function renderPagedTable(module) {
-    applyStatusFilter();
+    applyStatusFilter(module);
 
     const start      = (currentPage - 1) * pageSize;
     const pageRows   = filteredRows.slice(start, start + pageSize);
     const totalPages = Math.max(1, Math.ceil(filteredRows.length / pageSize));
-    const baseUrl    = crudRoutes[module.key];
+    const soloLectura = module.key === 'inventario' && currentRole === 'Panadero';
+    const baseUrl    = soloLectura ? null : crudRoutes[module.key];
 
     // columnas de puestos no incluye ID en la vista
     const columns = module.key === 'puestos'
         ? ['Puesto', 'Estado']
-        : module.table.columns;
+        : soloLectura
+            ? ['Nombre', 'Unidad', 'Stock actual', 'Stock mínimo']
+            : module.table.columns;
 
     const head = columns.map(c => `<th>${c}</th>`).join('');
     const actionsHead = baseUrl ? '<th>Acciones</th>' : '';
@@ -382,11 +404,13 @@ function renderPagedTable(module) {
 
         const activo = row.cells.some(c => String(c).toLowerCase() === 'activo');
         const esInventario = module.key === 'inventario';
+        const esProduccion = module.key === 'produccion';
         const actionsCell = baseUrl && row.id ? `
             <td>
                 <button class="row-btn row-btn-edit" data-id="${row.id}" data-module="${module.key}">Editar</button>
                 ${esInventario ? `<button class="row-btn row-btn-movimiento" data-id="${row.id}" data-module="${module.key}">Registrar movimiento</button>` : ''}
                 ${esInventario ? `<button class="row-btn row-btn-historial" data-id="${row.id}" data-module="${module.key}">Ver historial</button>` : ''}
+                ${esProduccion ? `<button class="row-btn row-btn-imprimir" data-id="${row.id}">Imprimir receta</button>` : ''}
                 ${activo
                     ? `<button class="row-btn row-btn-delete" data-id="${row.id}" data-module="${module.key}" data-activo="true">Desactivar registro</button>`
                     : `<button class="row-btn row-btn-activate" data-id="${row.id}" data-module="${module.key}" data-activo="false">Reactivar registro</button>`
@@ -397,13 +421,14 @@ function renderPagedTable(module) {
     }).join('');
 
     els.tableWrap.innerHTML = `
+        ${soloLectura ? '' : `
         <div class="table-tools">
             <select id="statusFilter">
                 <option value="todos">Todos</option>
                 <option value="activo">Activos</option>
                 <option value="inactivo">Inactivos</option>
             </select>
-        </div>
+        </div>`}
 
         ${filteredRows.length
             ? `<table class="data-table">
@@ -420,8 +445,9 @@ function renderPagedTable(module) {
         </div>
     `;
 
-    document.getElementById('statusFilter').value = selectedStatus;
-    document.getElementById('statusFilter')?.addEventListener('change', e => {
+    const statusFilterEl = document.getElementById('statusFilter');
+    if (statusFilterEl) statusFilterEl.value = selectedStatus;
+    statusFilterEl?.addEventListener('change', e => {
         selectedStatus = e.target.value;
         currentPage = 1;
         renderPagedTable(module);
@@ -442,6 +468,12 @@ function renderPagedTable(module) {
     els.tableWrap.querySelectorAll('.row-btn-historial').forEach(btn => {
         btn.addEventListener('click', () => {
             openModal('Historial de Movimientos', `${crudRoutes[btn.dataset.module]}/Historial/${btn.dataset.id}?modal=true`);
+        });
+    });
+
+    els.tableWrap.querySelectorAll('.row-btn-imprimir').forEach(btn => {
+        btn.addEventListener('click', () => {
+            window.open(`/Produccion/Imprimir/${btn.dataset.id}`, '_blank');
         });
     });
 
@@ -493,7 +525,8 @@ async function renderModule(key) {
         btn.classList.toggle('active', btn.dataset.module === module.key);
     });
 
-    const baseUrl = crudRoutes[module.key];
+    const soloLectura = module.key === 'inventario' && currentRole === 'Panadero';
+    const baseUrl = soloLectura ? null : crudRoutes[module.key];
     if (baseUrl && els.createButton) {
         els.createButton.textContent = 'Agregar';
         els.createButton.onclick = () => openModal(`Agregar ${module.name}`, `${baseUrl}/Crear?modal=true`);
@@ -513,6 +546,11 @@ async function renderModule(key) {
 els.sidebar.addEventListener('click', e => {
     const btn = e.target.closest('[data-module]');
     if (!btn) return;
+
+    if (btn.dataset.module === 'mi_produccion') {
+        window.location.href = '/Produccion/MiLista';
+        return;
+    }
 
     renderModule(btn.dataset.module);
 });
@@ -543,8 +581,31 @@ window.addEventListener('message', async e => {
     }
 });
 
+async function cargarNotificacionesPanadero() {
+    if (currentRole !== 'Panadero' || !currentIdTrabajador) return;
+
+    try {
+        const res = await fetch(`https://localhost:44378/api/Produccion/lista-diaria?Id_Trabajador=${currentIdTrabajador}`);
+        if (res.status === 204) return;
+        if (!res.ok) return;
+
+        const data = await res.json();
+        const pendientes = data.filter(item => !item.realizado);
+
+        if (pendientes.length > 0) {
+            NotificationManager.add(
+                'info',
+                'Producción pendiente',
+                `Tienes ${pendientes.length} producción(es) por realizar hoy.`,
+                'produccion'
+            );
+        }
+    } catch { /* sin notificacion si falla */ }
+}
+
 applySidebarState();
 renderModule(state.selected);
+cargarNotificacionesPanadero();
 
 // ── Avatar dropdown ────────────────────────────────
 document.getElementById('avatarBtn')?.addEventListener('click', e => {

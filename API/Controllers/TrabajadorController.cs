@@ -83,5 +83,16 @@ namespace API.Controllers
             return Ok(resultado);
         }
 
+        [HttpGet("panaderos")]
+        public async Task<IActionResult> ObtenerPanaderos()
+        {
+            var resultado = await _trabajadorFlujo.ObtenerPanaderos();
+
+            if (!resultado.Any())
+                return NoContent();
+
+            return Ok(resultado);
+        }
+
     }
 }

@@ -1,24 +1,31 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Security.Claims;
 using Web.Services;
 using static Abstracciones.Modelos.Produccion.Produccion;
+using static Abstracciones.Modelos.Inventario.Movimiento;
 
 namespace Web.Controllers
 {
+    [Authorize]
     public class ProduccionController : Controller
     {
         private readonly ProduccionService _produccionService;
         private readonly TrabajadorService _trabajadorService;
         private readonly ProductoService _productoService;
+        private readonly InventarioService _inventarioService;
 
         public ProduccionController(
             ProduccionService produccionService,
             TrabajadorService trabajadorService,
-            ProductoService productoService)
+            ProductoService productoService,
+            InventarioService inventarioService)
         {
             _produccionService = produccionService;
             _trabajadorService = trabajadorService;
             _productoService = productoService;
+            _inventarioService = inventarioService;
         }
 
         [HttpGet]
@@ -61,6 +68,8 @@ namespace Web.Controllers
             var asignacion = await _produccionService.ObtenerAsignacion(id);
             if (asignacion == null) return NotFound();
 
+            var materiales = await _produccionService.ObtenerMateriales(id);
+
             await CargarCombos();
             ViewBag.Modal = modal;
 
@@ -69,7 +78,12 @@ namespace Web.Controllers
                 Id_Asignacion = asignacion.Id_Asignacion,
                 Id_Trabajador = asignacion.Id_Trabajador,
                 Id_Producto = asignacion.Id_Producto,
-                Cantidad_Diaria = asignacion.Cantidad_Diaria
+                Cantidad_Diaria = asignacion.Cantidad_Diaria,
+                Materiales = materiales.Select(m => new MaterialAsignacionRequest
+                {
+                    Id_Inventario = m.Id_Inventario,
+                    Cantidad = m.Cantidad
+                }).ToList()
             });
         }
 
@@ -111,13 +125,78 @@ namespace Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> MiLista()
+        {
+            var idClaim = User.FindFirst("Id_Trabajador")?.Value;
+            if (!Guid.TryParse(idClaim, out Guid idTrabajador))
+                return Unauthorized();
+
+            var lista = await _produccionService.ObtenerListaDiaria(idTrabajador);
+
+            var listaConMateriales = new List<(ListaProduccionResponse Asignacion, IEnumerable<MaterialAsignacionResponse> Materiales)>();
+            foreach (var item in lista)
+            {
+                var materiales = await _produccionService.ObtenerMateriales(item.Id_Asignacion);
+                listaConMateriales.Add((item, materiales));
+            }
+
+            return View(listaConMateriales);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Realizar(Guid id)
+        {
+            var asignacion = await _produccionService.ObtenerAsignacion(id);
+            if (asignacion == null) return NotFound();
+
+            var materiales = await _produccionService.ObtenerMateriales(id);
+
+            try
+            {
+                foreach (var material in materiales)
+                {
+                    await _inventarioService.RegistrarMovimiento(new MovimientoRequest
+                    {
+                        Id_Inventario = material.Id_Inventario,
+                        Tipo = "Salida",
+                        Cantidad = material.Cantidad,
+                        Motivo = $"Produccion: {asignacion.Nombre_Producto}"
+                    });
+                }
+
+                await _produccionService.MarcarRealizada(id);
+                TempData["ProduccionOk"] = "Produccion marcada como realizada. Se descontaron los materiales del inventario.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ProduccionError"] = ex.Message.Contains("Stock insuficiente")
+                    ? "No se pudo completar: no hay suficiente stock de uno o mas materiales."
+                    : "No se pudo marcar la produccion como realizada. Intenta de nuevo.";
+            }
+
+            return RedirectToAction(nameof(MiLista));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Imprimir(Guid id)
+        {
+            var asignacion = await _produccionService.ObtenerAsignacion(id);
+            if (asignacion == null) return NotFound();
+
+            var materiales = await _produccionService.ObtenerMateriales(id);
+
+            ViewBag.Materiales = materiales;
+            return View(asignacion);
+        }
+
         private async Task CargarCombos()
         {
-            var trabajadores = await _trabajadorService.Obtener();
+            var panaderos = await _trabajadorService.ObtenerPanaderos();
             var productos = await _productoService.Obtener();
+            var inventario = await _inventarioService.Obtener();
 
-            ViewBag.Trabajadores = trabajadores
-                .Where(t => t.Id_Estado == 1)
+            ViewBag.Trabajadores = panaderos
                 .OrderBy(t => t.Nombre_Completo)
                 .Select(t => new SelectListItem
                 {
@@ -132,6 +211,15 @@ namespace Web.Controllers
                 {
                     Value = p.Id_Producto.ToString(),
                     Text = p.Nombre_Producto
+                }).ToList();
+
+            ViewBag.Inventario = inventario
+                .Where(i => i.Id_Estado == 1 && i.Stock_Actual > 0)
+                .OrderBy(i => i.Nombre)
+                .Select(i => new SelectListItem
+                {
+                    Value = i.Id_Inventario.ToString(),
+                    Text = $"{i.Nombre} ({i.Unidad})"
                 }).ToList();
         }
     }

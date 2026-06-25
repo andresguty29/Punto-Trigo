@@ -52,5 +52,15 @@ namespace Flujo
         {
             return _produccionDA.ObtenerProductosAsignados(Id_Trabajador);
         }
+
+        public Task<IEnumerable<MaterialAsignacionResponse>> ObtenerMateriales(Guid Id_Asignacion)
+        {
+            return _produccionDA.ObtenerMateriales(Id_Asignacion);
+        }
+
+        public Task<Guid> MarcarRealizada(Guid Id_Asignacion)
+        {
+            return _produccionDA.MarcarRealizada(Id_Asignacion);
+        }
     }
 }

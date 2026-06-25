@@ -4,6 +4,8 @@ public class DashboardViewModel
 {
     public DateTime Today { get; init; }
     public string UserInitials { get; init; } = "PT";
+    public string CurrentRole { get; init; } = "";
+    public string IdTrabajador { get; init; } = "";
     public IReadOnlyList<DashboardModuleViewModel> Modules { get; init; } = [];
 }
 

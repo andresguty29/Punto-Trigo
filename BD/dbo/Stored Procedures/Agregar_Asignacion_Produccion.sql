@@ -2,7 +2,7 @@ CREATE PROCEDURE Agregar_Asignacion_Produccion
     @Id_Asignacion   UNIQUEIDENTIFIER,
     @Id_Trabajador   UNIQUEIDENTIFIER,
     @Id_Producto     UNIQUEIDENTIFIER,
-    @Cantidad_Diaria DECIMAL(10,2)
+    @Cantidad_Diaria INT
 AS
 BEGIN
     SET NOCOUNT ON;

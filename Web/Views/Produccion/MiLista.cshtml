@@ -1,0 +1,93 @@
+@model List<(Abstracciones.Modelos.Produccion.Produccion.ListaProduccionResponse Asignacion, IEnumerable<Abstracciones.Modelos.Produccion.Produccion.MaterialAsignacionResponse> Materiales)>
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Mi Produccion";
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mi Producción - Punto Trigo</title>
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
+    <link rel="stylesheet" href="~/css/dashboard.css" />
+    <style>
+        .mi-produccion-wrap { max-width: 900px; margin: 0 auto; padding: 32px 20px; }
+        .mi-produccion-header { display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px; }
+        .receta-card { background:#fff; border-radius:10px; padding:20px; margin-bottom:18px; box-shadow:0 1px 4px rgba(0,0,0,.1); }
+        .receta-card.completada { opacity: .7; }
+        .receta-card h3 { margin:0 0 6px; }
+        .receta-cantidad { color:#555; margin-bottom:12px; }
+        .receta-materiales { list-style:none; padding:0; margin:0 0 14px; }
+        .receta-materiales li { padding:4px 0; border-bottom:1px solid #eee; }
+        .receta-vacio { color:#888; font-style:italic; }
+        .receta-acciones { display:flex; gap:10px; align-items:center; }
+        .badge-completado { background:#4A6C2F; color:#fff; padding:4px 10px; border-radius:6px; font-size:.85em; }
+        .mp-banner { padding:12px 16px; border-radius:8px; margin-bottom:18px; }
+        .mp-banner-ok { background:#E4F2E0; color:#2F5320; }
+        .mp-banner-error { background:#FBE3E3; color:#8A1F1F; }
+    </style>
+</head>
+<body>
+    <div class="mi-produccion-wrap">
+        <div class="mi-produccion-header">
+            <h1>Mi producción de hoy</h1>
+            <a class="mf-btn mf-btn-secondary" asp-controller="Home" asp-action="Index">Volver al panel</a>
+        </div>
+
+        @if (TempData["ProduccionOk"] != null)
+        {
+            <div class="mp-banner mp-banner-ok">@TempData["ProduccionOk"]</div>
+        }
+        @if (TempData["ProduccionError"] != null)
+        {
+            <div class="mp-banner mp-banner-error">@TempData["ProduccionError"]</div>
+        }
+
+        @if (!Model.Any())
+        {
+            <p class="receta-vacio">No tienes asignaciones de producción para hoy.</p>
+        }
+        else
+        {
+            foreach (var (asignacion, materiales) in Model)
+            {
+                <div class="receta-card @(asignacion.Realizado ? "completada" : "")">
+                    <h3>@asignacion.Nombre_Producto</h3>
+                    <div class="receta-cantidad">Cantidad diaria: <strong>@asignacion.Cantidad_Diaria</strong></div>
+
+                    @if (materiales.Any())
+                    {
+                        <ul class="receta-materiales">
+                            @foreach (var m in materiales)
+                            {
+                                <li>@m.Nombre_Inventario — @m.Cantidad @m.Unidad</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="receta-vacio">Sin materiales registrados.</p>
+                    }
+
+                    <div class="receta-acciones">
+                        <a class="mf-btn mf-btn-secondary" target="_blank" asp-action="Imprimir" asp-route-id="@asignacion.Id_Asignacion">Imprimir receta</a>
+
+                        @if (asignacion.Realizado)
+                        {
+                            <span class="badge-completado">Completado</span>
+                        }
+                        else
+                        {
+                            <form asp-action="Realizar" asp-route-id="@asignacion.Id_Asignacion" method="post" style="margin:0;">
+                                <button type="submit" class="mf-btn mf-btn-primary">Realicé esta producción</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</body>
+</html>

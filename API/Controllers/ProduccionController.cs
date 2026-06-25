@@ -77,5 +77,20 @@ namespace API.Controllers
             if (!resultado.Any()) return NoContent();
             return Ok(resultado);
         }
+
+        [HttpGet("asignaciones/{Id_Asignacion}/materiales")]
+        public async Task<IActionResult> ObtenerMateriales(Guid Id_Asignacion)
+        {
+            var resultado = await _produccionFlujo.ObtenerMateriales(Id_Asignacion);
+            if (!resultado.Any()) return NoContent();
+            return Ok(resultado);
+        }
+
+        [HttpPatch("asignaciones/{Id_Asignacion}/realizar")]
+        public async Task<IActionResult> MarcarRealizada(Guid Id_Asignacion)
+        {
+            await _produccionFlujo.MarcarRealizada(Id_Asignacion);
+            return NoContent();
+        }
     }
 }
