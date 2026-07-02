@@ -12,9 +12,10 @@ BEGIN
         FROM dbo.ProductoTrabajador_TB
         WHERE Id_Trabajador = @Id_Trabajador
           AND Id_Producto = @Id_Producto
+          AND CAST(Fecha_Asignacion AS DATE) = CAST(GETDATE() AS DATE)
     )
     BEGIN
-        RAISERROR('El producto ya esta vinculado a este empleado.', 16, 1);
+        RAISERROR('El producto ya esta vinculado a este empleado el dia de hoy.', 16, 1);
         RETURN;
     END
 

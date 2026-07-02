@@ -22,6 +22,7 @@ namespace Abstracciones.Modelos.Producto
         public class ProductoRequest : ProductoBase
         {
             public Guid Id_Producto { get; set; }
+            public string? Imagen_Path { get; set; }
         }
 
         public class ProductoResponse : ProductoBase
@@ -29,6 +30,7 @@ namespace Abstracciones.Modelos.Producto
             public Guid Id_Producto { get; set; }
             public int Id_Estado { get; set; }
             public string? Nombre_Proveedor { get; set; }
+            public string? Imagen_Path { get; set; }
         }
     }
 }

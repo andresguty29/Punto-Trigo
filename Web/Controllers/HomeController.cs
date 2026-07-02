@@ -80,7 +80,7 @@ public class HomeController : Controller
                 Table = new()
                 {
                     Title = "Catálogo de productos",
-                    Columns = ["Nombre", "Proveedor", "Precio", "Stock", "Estado"],
+                    Columns = ["Imagen", "Nombre", "Proveedor", "Precio", "Stock", "Estado"],
                     EmptyMessage = "Sin productos registrados.",
                     SourceUrl = "https://localhost:44378/api/Producto"
                 }

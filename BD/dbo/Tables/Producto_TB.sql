@@ -5,6 +5,7 @@
     [Nombre_Producto] VARCHAR (MAX)    NOT NULL,
     [Precio_Venta]    DECIMAL (18, 2)  NOT NULL,
     [Stock_Actual]    INT              NOT NULL,
+    [Imagen_Path]     VARCHAR (500)    NULL,
     CONSTRAINT [PK_Producto_TB] PRIMARY KEY CLUSTERED ([Id_Producto] ASC),
     CONSTRAINT [FK_Producto_TB_Estados_TB]   FOREIGN KEY ([Id_Estado])    REFERENCES [dbo].[Estados_TB]   ([Id]),
     CONSTRAINT [FK_Producto_TB_Proveedor_TB] FOREIGN KEY ([Id_Proveedor]) REFERENCES [dbo].[Proveedor_TB] ([Id_Proveedor])

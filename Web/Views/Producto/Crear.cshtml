@@ -43,6 +43,15 @@
         </select>
     </div>
 
+    <div class="mf-group">
+        <label class="mf-label">Imagen del producto <span style="font-weight:400;text-transform:none;">(opcional)</span></label>
+        <input type="file" accept=".jpg,.jpeg,.png,.webp" class="mf-input" id="inputArchivo" />
+        <input type="hidden" name="imagenBase64" id="imagenBase64" />
+        <div id="previsualizacion" style="margin-top:8px; display:none;">
+            <img id="imgPrevia" src="" alt="Vista previa" class="producto-thumb-preview" />
+        </div>
+    </div>
+
     <div class="mf-actions">
         <button type="submit" class="mf-btn mf-btn-primary">Guardar</button>
         @if (!isModal)
@@ -55,4 +64,18 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById('inputArchivo').addEventListener('change', function () {
+            const archivo = this.files[0];
+            if (!archivo) return;
+
+            const lector = new FileReader();
+            lector.onload = function (e) {
+                document.getElementById('imagenBase64').value = e.target.result;
+                document.getElementById('imgPrevia').src = e.target.result;
+                document.getElementById('previsualizacion').style.display = 'block';
+            };
+            lector.readAsDataURL(archivo);
+        });
+    </script>
 }

@@ -196,17 +196,24 @@ function estadoTexto(valor) {
 
 function mapApiRows(module, data) {
     switch (module.key) {
-        case 'productos':
-            return data.map(item => ({
-                id: item.id_Producto,
-                cells: [
-                    item.nombre_Producto ?? '-',
-                    item.nombre_Proveedor ?? 'Sin proveedor',
-                    `₡${(item.precio_Venta ?? 0).toLocaleString('es-CR')}`,
-                    String(item.stock_Actual ?? 0),
-                    estadoTexto(item.id_Estado)
-                ]
-            }));
+        case 'productos': {
+            const defaultImg = '/images/productos/no-imagen.svg';
+            return data.map(item => {
+                const src = item.imagen_Path || defaultImg;
+                const imgHtml = `<img src="${src}" class="producto-thumb" alt="${item.nombre_Producto ?? ''}" onerror="this.src='${defaultImg}'">`;
+                return {
+                    id: item.id_Producto,
+                    cells: [
+                        imgHtml,
+                        item.nombre_Producto ?? '-',
+                        item.nombre_Proveedor ?? 'Sin proveedor',
+                        `₡${(item.precio_Venta ?? 0).toLocaleString('es-CR')}`,
+                        String(item.stock_Actual ?? 0),
+                        estadoTexto(item.id_Estado)
+                    ]
+                };
+            });
+        }
         case 'proveedores':
             return data.map(item => ({
                 id: item.id_Proveedor,
@@ -323,6 +330,10 @@ function renderStockAlerts(data) {
     document.getElementById('moduleHeader').appendChild(panel);
 }
 
+function esVistaCajero(module) {
+    return module.key === 'productos' && currentRole === 'Cajas';
+}
+
 async function fillTable(module) {
     els.tableTitle.textContent = module.table.title;
 
@@ -341,6 +352,7 @@ async function fillTable(module) {
 
         if (res.status === 204) {
             els.tableStatus.textContent = 'Sin registros';
+            if (esVistaCajero(module)) { renderProductGrid([]); return; }
             renderTable(module, []);
             return;
         }
@@ -352,12 +364,45 @@ async function fillTable(module) {
 
         if (module.key === 'inventario' && currentRole === 'Admin') renderStockAlerts(data);
 
+        if (esVistaCajero(module)) {
+            renderProductGrid(data.filter(p => p.id_Estado === 1));
+            return;
+        }
+
         renderTable(module, mapApiRows(module, data));
 
     } catch {
         els.tableStatus.textContent = 'Error al cargar datos';
+        if (esVistaCajero(module)) { renderProductGrid([]); return; }
         renderTable(module, []);
     }
+}
+
+function renderProductGrid(productos) {
+    const defaultImg = '/images/productos/no-imagen.svg';
+
+    if (!productos.length) {
+        els.tableWrap.innerHTML = `<div class="empty-state">No hay productos disponibles.</div>`;
+        return;
+    }
+
+    const tarjetas = productos.map(p => {
+        const src = p.imagen_Path || defaultImg;
+        const sinStock = (p.stock_Actual ?? 0) <= 0;
+        return `
+            <div class="pos-card ${sinStock ? 'pos-card-sin-stock' : ''}" data-id="${p.id_Producto}">
+                <div class="pos-card-img-wrap">
+                    <img src="${src}" alt="${p.nombre_Producto ?? ''}" class="pos-card-img" onerror="this.src='${defaultImg}'">
+                </div>
+                <div class="pos-card-info">
+                    <div class="pos-card-nombre">${p.nombre_Producto ?? '-'}</div>
+                    <div class="pos-card-precio">₡${(p.precio_Venta ?? 0).toLocaleString('es-CR')}</div>
+                    <div class="pos-card-stock">${sinStock ? 'Sin stock' : `Stock: ${p.stock_Actual}`}</div>
+                </div>
+            </div>`;
+    }).join('');
+
+    els.tableWrap.innerHTML = `<div class="pos-grid">${tarjetas}</div>`;
 }
 
 function renderTable(module, rows) {
@@ -525,7 +570,7 @@ async function renderModule(key) {
         btn.classList.toggle('active', btn.dataset.module === module.key);
     });
 
-    const soloLectura = module.key === 'inventario' && currentRole === 'Panadero';
+    const soloLectura = (module.key === 'inventario' && currentRole === 'Panadero') || esVistaCajero(module);
     const baseUrl = soloLectura ? null : crudRoutes[module.key];
     if (baseUrl && els.createButton) {
         els.createButton.textContent = 'Agregar';

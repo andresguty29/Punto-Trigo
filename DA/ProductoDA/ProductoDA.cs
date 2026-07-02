@@ -19,14 +19,16 @@ namespace DA.ProductoDA
 
         public async Task<Guid> Agregar(ProductoRequest producto)
         {
+            var id = producto.Id_Producto == Guid.Empty ? Guid.NewGuid() : producto.Id_Producto;
             string query = @"Agregar_Producto";
             var resultadoConsulta = await _sqlConnection.ExecuteScalarAsync<Guid>(query, new
             {
-                Id_Producto = Guid.NewGuid(),
+                Id_Producto = id,
                 Id_Proveedor = producto.Id_Proveedor,
                 Nombre_Producto = producto.Nombre_Producto,
                 Precio_Venta = producto.Precio_Venta,
                 Stock_Actual = producto.Stock_Actual,
+                Imagen_Path = producto.Imagen_Path
             });
             return resultadoConsulta;
         }
@@ -43,6 +45,7 @@ namespace DA.ProductoDA
                 Nombre_Producto = producto.Nombre_Producto,
                 Precio_Venta = producto.Precio_Venta,
                 Stock_Actual = producto.Stock_Actual,
+                Imagen_Path = producto.Imagen_Path
             });
             return resultadoConsulta;
         }
