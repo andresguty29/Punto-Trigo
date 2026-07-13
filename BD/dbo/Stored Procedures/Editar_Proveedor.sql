@@ -1,9 +1,10 @@
 ﻿
 CREATE PROCEDURE Editar_Proveedor
 	@Id_Proveedor UNIQUEIDENTIFIER,
-	@Nombre_Proveedor VARCHAR(MAX),
-	@Telefono_Proveedor VARCHAR(MAX),
-	@Correo_Proveedor VARCHAR(MAX)
+	@Identificacion_Proveedor VARCHAR(20),
+	@Nombre_Proveedor VARCHAR(150),
+	@Telefono_Proveedor VARCHAR(20),
+	@Correo_Proveedor VARCHAR(200)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -12,6 +13,7 @@ BEGIN
 
 		UPDATE dbo.Proveedor_TB
 		SET
+			Identificacion_Proveedor = @Identificacion_Proveedor,
 			Nombre_Proveedor = @Nombre_Proveedor,
 			Telefono_Proveedor = @Telefono_Proveedor,
 			Correo_Proveedor = @Correo_Proveedor

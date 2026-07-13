@@ -29,6 +29,7 @@ namespace DA.ProveedorDA
             var resultadoConsulta = await _sqlConnection.ExecuteScalarAsync<Guid>(query, new
             {
                 Id_Proveedor = Guid.NewGuid(),
+                Identificacion_Proveedor = proveedor.Identificacion_Proveedor,
                 Nombre_Proveedor = proveedor.Nombre_Proveedor,
                 Telefono_Proveedor = proveedor.Telefono_Proveedor,
                 Correo_Proveedor = proveedor.Correo_Proveedor,
@@ -45,6 +46,7 @@ namespace DA.ProveedorDA
             var resultadoConsulta = await _sqlConnection.ExecuteScalarAsync<Guid>(query, new
             {
                 Id_Proveedor = Id,
+                Identificacion_Proveedor = proveedor.Identificacion_Proveedor,
                 Nombre_Proveedor = proveedor.Nombre_Proveedor,
                 Telefono_Proveedor = proveedor.Telefono_Proveedor,
                 Correo_Proveedor = proveedor.Correo_Proveedor,

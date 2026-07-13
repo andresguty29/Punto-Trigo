@@ -60,6 +60,7 @@ namespace Web.Controllers
             var modelo = new ProveedorRequest
             {
                 Id_Proveedor = proveedor.Id_Proveedor,
+                Identificacion_Proveedor = proveedor.Identificacion_Proveedor,
                 Nombre_Proveedor = proveedor.Nombre_Proveedor,
                 Telefono_Proveedor = proveedor.Telefono_Proveedor,
                 Correo_Proveedor = proveedor.Correo_Proveedor

@@ -1,0 +1,123 @@
+@model List<Abstracciones.Modelos.Compra.Compra.DetalleCompraRequest>
+@{
+    var inventarioDisponible = (IEnumerable<Abstracciones.Modelos.Inventario.Inventario.InventarioResponse>)ViewBag.Inventario;
+}
+
+<div class="mf-group">
+    <label class="mf-label">Insumos comprados</label>
+    <small style="display:block; color:var(--pt-ink-soft); margin-bottom:10px;">
+        Selecciona cada insumo y la cantidad comprada. La unidad se completa automáticamente según el catálogo de Inventario.
+        Si el insumo no aparece en la lista, primero debes crearlo en Inventario.
+    </small>
+
+    <div id="detallesRows">
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            <div class="detalle-row">
+                <input type="hidden" name="Detalles.Index" value="@i" />
+
+                <div class="detalle-campo">
+                    <label class="detalle-campo-label">Insumo</label>
+                    <select name="Detalles[@i].Id_Inventario" class="mf-select detalle-select-insumo" required>
+                        <option value="">Seleccione un insumo</option>
+                        @foreach (var item in inventarioDisponible)
+                        {
+                            var seleccionado = item.Id_Inventario.ToString() == Model[i].Id_Inventario.ToString();
+                            <option value="@item.Id_Inventario" data-unidad="@item.Unidad" selected="@(seleccionado ? "selected" : null)">@item.Nombre</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="detalle-campo" style="max-width:130px;">
+                    <label class="detalle-campo-label">Cantidad comprada</label>
+                    <input type="number" name="Detalles[@i].Cantidad" class="mf-input" step="0.01" min="0.01" value="@Model[i].Cantidad" required />
+                </div>
+
+                <div class="detalle-campo" style="max-width:110px;">
+                    <label class="detalle-campo-label">Unidad</label>
+                    <input type="text" name="Detalles[@i].Unidad_Ingresada" class="mf-input detalle-unidad" value="@Model[i].Unidad_Ingresada" readonly required />
+                </div>
+
+                <div class="detalle-campo" style="max-width:150px;">
+                    <label class="detalle-campo-label">Costo unitario ₡ <span style="font-weight:400;">(opcional)</span></label>
+                    <input type="number" name="Detalles[@i].Costo_Unitario" class="mf-input" step="0.01" min="0" value="@Model[i].Costo_Unitario" />
+                </div>
+
+                <button type="button" class="mf-btn mf-btn-secondary btn-quitar-detalle" title="Quitar este insumo de la compra">Quitar</button>
+            </div>
+        }
+    </div>
+
+    <button type="button" id="btnAgregarDetalle" class="mf-btn mf-btn-secondary">+ Agregar insumo</button>
+</div>
+
+<template id="detalleRowTemplate">
+    <div class="detalle-row">
+        <input type="hidden" name="Detalles.Index" value="__INDEX__" />
+
+        <div class="detalle-campo">
+            <label class="detalle-campo-label">Insumo</label>
+            <select name="Detalles[__INDEX__].Id_Inventario" class="mf-select detalle-select-insumo" required>
+                <option value="">Seleccione un insumo</option>
+                @foreach (var item in inventarioDisponible)
+                {
+                    <option value="@item.Id_Inventario" data-unidad="@item.Unidad">@item.Nombre</option>
+                }
+            </select>
+        </div>
+
+        <div class="detalle-campo" style="max-width:130px;">
+            <label class="detalle-campo-label">Cantidad comprada</label>
+            <input type="number" name="Detalles[__INDEX__].Cantidad" class="mf-input" step="0.01" min="0.01" required />
+        </div>
+
+        <div class="detalle-campo" style="max-width:110px;">
+            <label class="detalle-campo-label">Unidad</label>
+            <input type="text" name="Detalles[__INDEX__].Unidad_Ingresada" class="mf-input detalle-unidad" readonly required />
+        </div>
+
+        <div class="detalle-campo" style="max-width:150px;">
+            <label class="detalle-campo-label">Costo unitario ₡ <span style="font-weight:400;">(opcional)</span></label>
+            <input type="number" name="Detalles[__INDEX__].Costo_Unitario" class="mf-input" step="0.01" min="0" />
+        </div>
+
+        <button type="button" class="mf-btn mf-btn-secondary btn-quitar-detalle" title="Quitar este insumo de la compra">Quitar</button>
+    </div>
+</template>
+
+<script>
+    (function () {
+        let detalleIndex = @Model.Count;
+        const rowsContainer = document.getElementById('detallesRows');
+        const template = document.getElementById('detalleRowTemplate');
+
+        function bindFila(fila) {
+            fila.querySelector('.btn-quitar-detalle').onclick = function () {
+                fila.remove();
+            };
+
+            const select = fila.querySelector('.detalle-select-insumo');
+            const unidadInput = fila.querySelector('.detalle-unidad');
+
+            function actualizarUnidad() {
+                const opcion = select.options[select.selectedIndex];
+                unidadInput.value = opcion ? (opcion.dataset.unidad ?? '') : '';
+            }
+
+            select.addEventListener('change', actualizarUnidad);
+            actualizarUnidad();
+        }
+
+        rowsContainer.querySelectorAll('.detalle-row').forEach(bindFila);
+
+        document.getElementById('btnAgregarDetalle').addEventListener('click', function () {
+            const html = template.innerHTML.replaceAll('__INDEX__', detalleIndex);
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = html.trim();
+            const fila = wrapper.firstElementChild;
+            rowsContainer.appendChild(fila);
+            bindFila(fila);
+            detalleIndex++;
+        });
+    })();
+</script>

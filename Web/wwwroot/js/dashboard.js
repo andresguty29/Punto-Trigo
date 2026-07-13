@@ -83,7 +83,8 @@ const crudRoutes = {
     proveedores: '/Proveedor',
     productos: '/Producto',
     inventario: '/Inventario',
-    produccion: '/Produccion'
+    produccion: '/Produccion',
+    clientes: '/Cliente'
 };
 
 const els = {
@@ -162,10 +163,15 @@ function openModal(title, url) {
     frame.src = url;
 
     frame.onload = () => {
-        try {
-            const h = frame.contentDocument?.body?.scrollHeight;
-            if (h) frame.style.height = h + 'px';
-        } catch (_) { frame.style.height = '360px'; }
+        const ajustarAltura = () => {
+            try {
+                const h = frame.contentDocument?.body?.scrollHeight;
+                if (h) frame.style.height = h + 'px';
+            } catch (_) { frame.style.height = '360px'; }
+        };
+        ajustarAltura();
+        setTimeout(ajustarAltura, 150);
+        setTimeout(ajustarAltura, 400);
     };
 
     document.getElementById('crudModal').classList.add('show');
@@ -218,6 +224,7 @@ function mapApiRows(module, data) {
             return data.map(item => ({
                 id: item.id_Proveedor,
                 cells: [
+                    item.identificacion_Proveedor ?? '-',
                     item.nombre_Proveedor ?? '-',
                     item.telefono_Proveedor ?? '-',
                     item.correo_Proveedor ?? '-',
@@ -248,6 +255,17 @@ function mapApiRows(module, data) {
                 id: item.id_Puesto,
                 cells: [
                     item.nombre_Puesto ?? '-',
+                    estadoTexto(item.id_Estado)
+                ]
+            }));
+        case 'clientes':
+            return data.map(item => ({
+                id: item.id_Cliente,
+                cells: [
+                    item.cedula ?? '-',
+                    item.nombre_Completo ?? '-',
+                    item.correo_Cliente ?? '-',
+                    item.telefono_Cliente ?? '-',
                     estadoTexto(item.id_Estado)
                 ]
             }));
@@ -334,7 +352,17 @@ function esVistaCajero(module) {
     return module.key === 'productos' && currentRole === 'Cajas';
 }
 
+function renderIframeModule(url) {
+    els.tableStatus.textContent = '';
+    els.tableWrap.innerHTML = `<iframe src="${url}" class="module-embed-frame"></iframe>`;
+}
+
 async function fillTable(module) {
+    if (module.key === 'compras') {
+        renderIframeModule('/Compra/Historial');
+        return;
+    }
+
     els.tableTitle.textContent = module.table.title;
 
     if (!module.table.sourceUrl) {
@@ -570,7 +598,7 @@ async function renderModule(key) {
         btn.classList.toggle('active', btn.dataset.module === module.key);
     });
 
-    const soloLectura = (module.key === 'inventario' && currentRole === 'Panadero') || esVistaCajero(module);
+    const soloLectura = (module.key === 'inventario' && currentRole === 'Panadero') || esVistaCajero(module) || module.key === 'compras';
     const baseUrl = soloLectura ? null : crudRoutes[module.key];
     if (baseUrl && els.createButton) {
         els.createButton.textContent = 'Agregar';

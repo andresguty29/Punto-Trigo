@@ -1,26 +1,41 @@
 ﻿using Abstracciones.Interfaces.DA.ProveedorDA;
 using Abstracciones.Interfaces.Flujo.Proveedor;
 using Abstracciones.Modelos.Proveedor;
+using Microsoft.Data.SqlClient;
 
 namespace Flujo
 {
     public class ProveedorFlujo : IProveedorFlujo
     {
         private IProveedorDA _proveedorDA;
-    
+
         public ProveedorFlujo(IProveedorDA proveedorDA)
         {
             _proveedorDA = proveedorDA;
         }
 
-        public Task<Guid> Agregar(Proveedor.ProveedorRequest proveedor)
+        public async Task<Guid> Agregar(Proveedor.ProveedorRequest proveedor)
         {
-            return _proveedorDA.Agregar(proveedor);
+            try
+            {
+                return await _proveedorDA.Agregar(proveedor);
+            }
+            catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601)
+            {
+                throw new InvalidOperationException("Ya existe un proveedor con esa identificación.");
+            }
         }
 
-        public Task<Guid> Editar(Guid Id, Proveedor.ProveedorRequest proveedor)
+        public async Task<Guid> Editar(Guid Id, Proveedor.ProveedorRequest proveedor)
         {
-            return _proveedorDA.Editar(Id, proveedor);
+            try
+            {
+                return await _proveedorDA.Editar(Id, proveedor);
+            }
+            catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601)
+            {
+                throw new InvalidOperationException("Ya existe un proveedor con esa identificación.");
+            }
         }
 
         public Task<Guid> Eliminar(Guid Id)

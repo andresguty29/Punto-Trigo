@@ -665,8 +665,9 @@ body {
 
 .modal-box {
     width: min(560px, 92vw);
+    max-height: 90vh;
     border-radius: 16px;
-    overflow: hidden;
+    overflow-y: auto;
     background: var(--pt-white);
     border: 1px solid var(--pt-border);
     box-shadow: var(--pt-shadow-md);
@@ -1100,4 +1101,52 @@ body {
 .pos-card-stock {
     font-size: 0.82rem;
     color: var(--pt-ink-soft);
+}
+
+/* ── Modulo embebido (Compras) ──────────────────────── */
+.module-embed-frame {
+    width: 100%;
+    min-height: 70vh;
+    border: none;
+    border-radius: 10px;
+    background: var(--pt-white);
+}
+
+/* ── Filas de insumos en formulario de Compra ───────── */
+.detalle-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: var(--pt-blue-050);
+    border: 1px solid var(--pt-border);
+    border-radius: 10px;
+}
+
+.detalle-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1 1 160px;
+}
+
+.detalle-campo-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--pt-ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.detalle-unidad {
+    background: var(--pt-blue-100);
+    color: var(--pt-ink);
+    cursor: not-allowed;
+}
+
+.detalle-row .btn-quitar-detalle {
+    align-self: flex-end;
+    height: 38px;
 }
