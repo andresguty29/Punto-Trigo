@@ -1,0 +1,85 @@
+@model IEnumerable<Abstracciones.Modelos.Tiquete.Tiquete.TiqueteResponse>
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Historial de Tiquetes";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/dashboard.css" />
+</head>
+<body style="margin:0; background:var(--pt-blue-050,#f5f9ff);">
+    <div style="padding:24px;">
+        <h1 style="margin-top:0;">Historial de Tiquetes</h1>
+        <p style="color:var(--pt-ink-soft);">
+            Los tiquetes electrónicos se emiten desde la vista de Productos (rol Cajas) al cobrar una venta.
+            Hacienda está <strong>simulado</strong> mientras no se cuente con certificado digital y credenciales ATV.
+        </p>
+
+        @if (!Model.Any())
+        {
+            <div class="empty-state">Aún no se han emitido tiquetes.</div>
+        }
+        else
+        {
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Consecutivo</th>
+                        <th>Cliente</th>
+                        <th>Cajero</th>
+                        <th>Monto</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var tiquete in Model)
+                    {
+                        <tr>
+                            <td>@tiquete.Fecha_Emision.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@tiquete.Consecutivo</td>
+                            <td>@tiquete.Nombre_Cliente</td>
+                            <td>@(tiquete.Nombre_Trabajador ?? "-")</td>
+                            <td>₡@tiquete.Monto_Total.ToString("N2")</td>
+                            <td>
+                                @{
+                                    var claseBadge = tiquete.Estado switch
+                                    {
+                                        "Emitido" => "badge-ok",
+                                        "PendienteEnvio" => "badge-warn",
+                                        _ => "badge-danger"
+                                    };
+                                    var textoEstado = tiquete.Estado switch
+                                    {
+                                        "Emitido" => "Emitido",
+                                        "PendienteEnvio" => "Pendiente de envío",
+                                        _ => tiquete.Estado
+                                    };
+                                }
+                                <span class="badge @claseBadge">@textoEstado</span>
+                            </td>
+                            <td>
+                                <a href="/Tiquete/Detalle/@tiquete.Id_Tiquete" target="_blank" class="mf-btn mf-btn-secondary">Ver detalle</a>
+                                @if (tiquete.Estado == "PendienteEnvio")
+                                {
+                                    <form method="post" action="/Tiquete/Reintentar/@tiquete.Id_Tiquete" style="display:inline;">
+                                        <button type="submit" class="mf-btn mf-btn-primary">Reintentar envío</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</body>
+</html>

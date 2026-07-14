@@ -128,6 +128,48 @@
         </div>
     </div>
 
+    <button type="button" id="cartFloatButton" class="cart-float-btn" style="display:none;">
+        🛒 <span id="cartFloatCount">0</span> — <span id="cartFloatTotal">₡0</span>
+    </button>
+
+    <div class="modal-overlay" id="cartModal">
+        <div class="modal-box cart-modal-box">
+            <div class="modal-header-custom">
+                <h3>Carrito de venta</h3>
+                <button type="button" id="closeCartModal" class="modal-close">×</button>
+            </div>
+            <div class="cart-modal-body">
+                <div id="cartItemsList"></div>
+
+                <div class="cart-total-row">
+                    <span>Total</span>
+                    <strong id="cartTotalMonto">₡0</strong>
+                </div>
+
+                <div class="mf-group">
+                    <label class="mf-label">Cédula del cliente <span style="font-weight:400;text-transform:none;">(opcional — vacío = Receptor Genérico)</span></label>
+                    <div style="display:flex; gap:8px;">
+                        <input type="text" id="cartCedulaInput" class="mf-input" placeholder="Cédula" />
+                        <button type="button" id="cartBuscarClienteBtn" class="mf-btn mf-btn-secondary">Buscar</button>
+                    </div>
+                    <div id="cartClienteResultado" style="margin-top:6px; font-size:0.85rem;"></div>
+                </div>
+
+                <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem; color:var(--pt-ink-soft); margin-top:8px;">
+                    <input type="checkbox" id="cartSimularFallo" />
+                    Simular fallo de Hacienda (solo para pruebas)
+                </label>
+
+                <div id="cartErrorBanner" class="mf-error-banner" style="display:none;"></div>
+                <div id="cartResultadoBox" style="display:none;"></div>
+            </div>
+            <div class="cart-modal-footer">
+                <button type="button" id="cartVaciarBtn" class="mf-btn mf-btn-secondary">Vaciar carrito</button>
+                <button type="button" id="cartConfirmarBtn" class="mf-btn mf-btn-primary">Confirmar cobro</button>
+            </div>
+        </div>
+    </div>
+
     <div id="toast" class="toast" role="alert" aria-live="polite"></div>
 
     <div class="confirm-overlay" id="confirmOverlay">

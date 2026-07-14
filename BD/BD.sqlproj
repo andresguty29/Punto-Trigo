@@ -141,6 +141,14 @@
     <Build Include="dbo\Stored Procedures\Obtener_Compras.sql" />
     <Build Include="dbo\Stored Procedures\Obtener_Compra.sql" />
     <Build Include="dbo\Stored Procedures\Obtener_Detalle_Compra.sql" />
+    <Build Include="dbo\Stored Procedures\Agregar_Detalle_Tiquete.sql" />
+    <Build Include="dbo\Stored Procedures\Agregar_Tiquete.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Detalle_Tiquete.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Tiquete.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Tiquetes.sql" />
+    <Build Include="dbo\Stored Procedures\Reintentar_Envio_Tiquete.sql" />
+    <Build Include="dbo\Tables\DetalleTiquete_TB.sql" />
+    <Build Include="dbo\Tables\Tiquete_TB.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="BD.refactorlog" />

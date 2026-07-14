@@ -155,6 +155,16 @@ public class HomeController : Controller
             },
             new()
             {
+                Key = "tiquetes",
+                Roles = ["Admin", "Cajas"],
+                Name = "Tiquetes",
+                Tag = "Ventas",
+                Description = "Historial de tiquetes electronicos emitidos (Hacienda simulado).",
+                Accent = "#1D5EA8",
+                Table = new()
+            },
+            new()
+            {
                 Key = "clientes",
                 Roles = ["Admin"],
                 Name = "Clientes",
