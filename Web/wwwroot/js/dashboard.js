@@ -83,7 +83,8 @@ const crudRoutes = {
     proveedores: '/Proveedor',
     productos: '/Producto',
     inventario: '/Inventario',
-    produccion: '/Produccion'
+    produccion: '/Produccion',
+    clientes: '/Cliente'
 };
 
 const els = {
@@ -162,10 +163,15 @@ function openModal(title, url) {
     frame.src = url;
 
     frame.onload = () => {
-        try {
-            const h = frame.contentDocument?.body?.scrollHeight;
-            if (h) frame.style.height = h + 'px';
-        } catch (_) { frame.style.height = '360px'; }
+        const ajustarAltura = () => {
+            try {
+                const h = frame.contentDocument?.body?.scrollHeight;
+                if (h) frame.style.height = h + 'px';
+            } catch (_) { frame.style.height = '360px'; }
+        };
+        ajustarAltura();
+        setTimeout(ajustarAltura, 150);
+        setTimeout(ajustarAltura, 400);
     };
 
     document.getElementById('crudModal').classList.add('show');
@@ -196,21 +202,29 @@ function estadoTexto(valor) {
 
 function mapApiRows(module, data) {
     switch (module.key) {
-        case 'productos':
-            return data.map(item => ({
-                id: item.id_Producto,
-                cells: [
-                    item.nombre_Producto ?? '-',
-                    item.nombre_Proveedor ?? 'Sin proveedor',
-                    `₡${(item.precio_Venta ?? 0).toLocaleString('es-CR')}`,
-                    String(item.stock_Actual ?? 0),
-                    estadoTexto(item.id_Estado)
-                ]
-            }));
+        case 'productos': {
+            const defaultImg = '/images/productos/no-imagen.svg';
+            return data.map(item => {
+                const src = item.imagen_Path || defaultImg;
+                const imgHtml = `<img src="${src}" class="producto-thumb" alt="${item.nombre_Producto ?? ''}" onerror="this.src='${defaultImg}'">`;
+                return {
+                    id: item.id_Producto,
+                    cells: [
+                        imgHtml,
+                        item.nombre_Producto ?? '-',
+                        item.nombre_Proveedor ?? 'Sin proveedor',
+                        `₡${(item.precio_Venta ?? 0).toLocaleString('es-CR')}`,
+                        String(item.stock_Actual ?? 0),
+                        estadoTexto(item.id_Estado)
+                    ]
+                };
+            });
+        }
         case 'proveedores':
             return data.map(item => ({
                 id: item.id_Proveedor,
                 cells: [
+                    item.identificacion_Proveedor ?? '-',
                     item.nombre_Proveedor ?? '-',
                     item.telefono_Proveedor ?? '-',
                     item.correo_Proveedor ?? '-',
@@ -241,6 +255,17 @@ function mapApiRows(module, data) {
                 id: item.id_Puesto,
                 cells: [
                     item.nombre_Puesto ?? '-',
+                    estadoTexto(item.id_Estado)
+                ]
+            }));
+        case 'clientes':
+            return data.map(item => ({
+                id: item.id_Cliente,
+                cells: [
+                    item.cedula ?? '-',
+                    item.nombre_Completo ?? '-',
+                    item.correo_Cliente ?? '-',
+                    item.telefono_Cliente ?? '-',
                     estadoTexto(item.id_Estado)
                 ]
             }));
@@ -323,7 +348,31 @@ function renderStockAlerts(data) {
     document.getElementById('moduleHeader').appendChild(panel);
 }
 
+function esVistaCajero(module) {
+    return module.key === 'productos' && currentRole === 'Cajas';
+}
+
+function renderIframeModule(url) {
+    els.tableStatus.textContent = '';
+    els.tableWrap.innerHTML = `<iframe src="${url}" class="module-embed-frame"></iframe>`;
+}
+
 async function fillTable(module) {
+    if (module.key === 'compras') {
+        renderIframeModule('/Compra/Historial');
+        return;
+    }
+
+    if (module.key === 'tiquetes') {
+        renderIframeModule('/Tiquete/Historial');
+        return;
+    }
+
+    if (module.key === 'reportes') {
+        renderIframeModule('/Reporte/Dashboard');
+        return;
+    }
+
     els.tableTitle.textContent = module.table.title;
 
     if (!module.table.sourceUrl) {
@@ -341,6 +390,7 @@ async function fillTable(module) {
 
         if (res.status === 204) {
             els.tableStatus.textContent = 'Sin registros';
+            if (esVistaCajero(module)) { renderProductGrid([]); return; }
             renderTable(module, []);
             return;
         }
@@ -352,13 +402,296 @@ async function fillTable(module) {
 
         if (module.key === 'inventario' && currentRole === 'Admin') renderStockAlerts(data);
 
+        if (esVistaCajero(module)) {
+            renderProductGrid(data.filter(p => p.id_Estado === 1));
+            return;
+        }
+
         renderTable(module, mapApiRows(module, data));
 
     } catch {
         els.tableStatus.textContent = 'Error al cargar datos';
+        if (esVistaCajero(module)) { renderProductGrid([]); return; }
         renderTable(module, []);
     }
 }
+
+function renderProductGrid(productos) {
+    const defaultImg = '/images/productos/no-imagen.svg';
+
+    productos.forEach(p => { catalogoProductos[p.id_Producto] = p; });
+
+    if (!productos.length) {
+        els.tableWrap.innerHTML = `<div class="empty-state">No hay productos disponibles.</div>`;
+        return;
+    }
+
+    const tarjetas = productos.map(p => {
+        const src = p.imagen_Path || defaultImg;
+        const sinStock = (p.stock_Actual ?? 0) <= 0;
+        return `
+            <div class="pos-card ${sinStock ? 'pos-card-sin-stock' : ''}" data-id="${p.id_Producto}" title="${sinStock ? 'Sin stock disponible' : 'Click para agregar al carrito'}">
+                <div class="pos-card-img-wrap">
+                    <img src="${src}" alt="${p.nombre_Producto ?? ''}" class="pos-card-img" onerror="this.src='${defaultImg}'">
+                </div>
+                <div class="pos-card-info">
+                    <div class="pos-card-nombre">${p.nombre_Producto ?? '-'}</div>
+                    <div class="pos-card-precio">₡${(p.precio_Venta ?? 0).toLocaleString('es-CR')}</div>
+                    <div class="pos-card-stock">${sinStock ? 'Sin stock' : `Stock: ${p.stock_Actual}`}</div>
+                </div>
+            </div>`;
+    }).join('');
+
+    els.tableWrap.innerHTML = `<div class="pos-grid">${tarjetas}</div>`;
+
+    if (currentRole === 'Cajas') {
+        els.tableWrap.querySelectorAll('.pos-card:not(.pos-card-sin-stock)').forEach(card => {
+            card.addEventListener('click', () => agregarAlCarrito(card.dataset.id));
+        });
+    }
+}
+
+// ── Carrito de venta (Cajero) ──────────────────────────
+const catalogoProductos = {};
+let carrito = [];
+
+function agregarAlCarrito(idProducto) {
+    const producto = catalogoProductos[idProducto];
+    if (!producto) return;
+
+    const enCarrito = carrito.find(i => i.id === idProducto);
+    const cantidadActual = enCarrito ? enCarrito.cantidad : 0;
+
+    if (cantidadActual + 1 > (producto.stock_Actual ?? 0)) {
+        showToast(`No hay más stock disponible de "${producto.nombre_Producto}".`, 'error');
+        return;
+    }
+
+    if (enCarrito) {
+        enCarrito.cantidad++;
+    } else {
+        carrito.push({
+            id: idProducto,
+            nombre: producto.nombre_Producto,
+            precio: producto.precio_Venta,
+            cantidad: 1
+        });
+    }
+
+    renderCarritoFlotante();
+    renderCarritoModal();
+    showToast(`"${producto.nombre_Producto}" agregado al carrito.`, 'success');
+}
+
+function cambiarCantidadCarrito(idProducto, delta) {
+    const item = carrito.find(i => i.id === idProducto);
+    if (!item) return;
+
+    const producto = catalogoProductos[idProducto];
+    const nuevaCantidad = item.cantidad + delta;
+
+    if (nuevaCantidad <= 0) {
+        carrito = carrito.filter(i => i.id !== idProducto);
+    } else if (producto && nuevaCantidad > (producto.stock_Actual ?? 0)) {
+        showToast('No hay más stock disponible.', 'error');
+        return;
+    } else {
+        item.cantidad = nuevaCantidad;
+    }
+
+    renderCarritoFlotante();
+    renderCarritoModal();
+}
+
+function quitarDelCarrito(idProducto) {
+    carrito = carrito.filter(i => i.id !== idProducto);
+    renderCarritoFlotante();
+    renderCarritoModal();
+}
+
+function totalCarrito() {
+    return carrito.reduce((sum, i) => sum + (i.precio * i.cantidad), 0);
+}
+
+function renderCarritoFlotante() {
+    const btn = document.getElementById('cartFloatButton');
+    if (!btn) return;
+
+    const cantidadTotal = carrito.reduce((sum, i) => sum + i.cantidad, 0);
+
+    if (currentRole === 'Cajas' && cantidadTotal > 0) {
+        btn.style.display = 'flex';
+        document.getElementById('cartFloatCount').textContent = cantidadTotal;
+        document.getElementById('cartFloatTotal').textContent = `₡${totalCarrito().toLocaleString('es-CR')}`;
+    } else {
+        btn.style.display = 'none';
+    }
+}
+
+function renderCarritoModal() {
+    const lista = document.getElementById('cartItemsList');
+    if (!lista) return;
+
+    if (carrito.length === 0) {
+        lista.innerHTML = `<div class="empty-state">El carrito está vacío.</div>`;
+    } else {
+        lista.innerHTML = carrito.map(i => `
+            <div class="cart-item-row">
+                <div class="cart-item-nombre">${i.nombre}</div>
+                <div class="cart-item-controls">
+                    <button type="button" class="mf-btn mf-btn-secondary cart-qty-btn" data-id="${i.id}" data-delta="-1">−</button>
+                    <span class="cart-item-cantidad">${i.cantidad}</span>
+                    <button type="button" class="mf-btn mf-btn-secondary cart-qty-btn" data-id="${i.id}" data-delta="1">+</button>
+                </div>
+                <div class="cart-item-subtotal">₡${(i.precio * i.cantidad).toLocaleString('es-CR')}</div>
+                <button type="button" class="mf-btn mf-btn-danger cart-quitar-btn" data-id="${i.id}">Quitar</button>
+            </div>
+        `).join('');
+
+        lista.querySelectorAll('.cart-qty-btn').forEach(btn => {
+            btn.addEventListener('click', () => cambiarCantidadCarrito(btn.dataset.id, parseInt(btn.dataset.delta, 10)));
+        });
+        lista.querySelectorAll('.cart-quitar-btn').forEach(btn => {
+            btn.addEventListener('click', () => quitarDelCarrito(btn.dataset.id));
+        });
+    }
+
+    document.getElementById('cartTotalMonto').textContent = `₡${totalCarrito().toLocaleString('es-CR')}`;
+    document.getElementById('cartErrorBanner').style.display = 'none';
+    document.getElementById('cartResultadoBox').style.display = 'none';
+    document.getElementById('cartResultadoBox').innerHTML = '';
+}
+
+let clienteSeleccionado = null;
+
+document.getElementById('cartFloatButton')?.addEventListener('click', () => {
+    renderCarritoModal();
+    document.getElementById('cartModal').classList.add('show');
+});
+
+document.getElementById('closeCartModal')?.addEventListener('click', () => {
+    document.getElementById('cartModal').classList.remove('show');
+});
+
+document.getElementById('cartModal')?.addEventListener('click', e => {
+    if (e.target === document.getElementById('cartModal')) {
+        document.getElementById('cartModal').classList.remove('show');
+    }
+});
+
+document.getElementById('cartVaciarBtn')?.addEventListener('click', () => {
+    if (carrito.length === 0) return;
+    carrito = [];
+    clienteSeleccionado = null;
+    document.getElementById('cartCedulaInput').value = '';
+    document.getElementById('cartClienteResultado').textContent = '';
+    renderCarritoFlotante();
+    renderCarritoModal();
+});
+
+document.getElementById('cartBuscarClienteBtn')?.addEventListener('click', async () => {
+    const cedula = document.getElementById('cartCedulaInput').value.trim();
+    const resultadoEl = document.getElementById('cartClienteResultado');
+
+    if (!cedula) {
+        clienteSeleccionado = null;
+        resultadoEl.textContent = 'Se emitirá a nombre de Receptor Genérico.';
+        return;
+    }
+
+    try {
+        const res = await fetch(`/Venta/BuscarCliente?cedula=${encodeURIComponent(cedula)}`);
+        const data = await res.json();
+
+        if (data.encontrado) {
+            clienteSeleccionado = data.id;
+            resultadoEl.textContent = `Cliente encontrado: ${data.nombre}`;
+            resultadoEl.style.color = 'var(--pt-blue-800)';
+        } else {
+            clienteSeleccionado = null;
+            resultadoEl.textContent = 'No se encontró un cliente con esa cédula. Se emitirá a nombre de Receptor Genérico.';
+            resultadoEl.style.color = 'var(--pt-gold-600)';
+        }
+    } catch {
+        clienteSeleccionado = null;
+        resultadoEl.textContent = 'No se pudo buscar el cliente. Se emitirá a nombre de Receptor Genérico.';
+    }
+});
+
+document.getElementById('cartConfirmarBtn')?.addEventListener('click', async () => {
+    if (carrito.length === 0) {
+        showToast('El carrito está vacío.', 'error');
+        return;
+    }
+
+    const payload = {
+        Id_Cliente: clienteSeleccionado,
+        SimularFallo: document.getElementById('cartSimularFallo').checked,
+        Detalles: carrito.map(i => ({
+            Id_Producto: i.id,
+            Cantidad: i.cantidad,
+            Precio_Unitario: i.precio
+        }))
+    };
+
+    const errorBanner = document.getElementById('cartErrorBanner');
+    const resultadoBox = document.getElementById('cartResultadoBox');
+    errorBanner.style.display = 'none';
+    resultadoBox.style.display = 'none';
+
+    try {
+        const res = await fetch('/Venta/Cobrar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (!data.ok) {
+            errorBanner.textContent = data.mensaje || 'No se pudo completar la venta.';
+            errorBanner.style.display = 'block';
+            return;
+        }
+
+        const estadoTexto = data.estado === 'Emitido' ? 'Emitido correctamente' : 'Guardado localmente (pendiente de envío a Hacienda)';
+        resultadoBox.innerHTML = `
+            <div class="cart-resultado-ok">
+                <p><strong>Venta registrada.</strong></p>
+                <p>Consecutivo: ${data.consecutivo}</p>
+                <p>Estado: ${estadoTexto}</p>
+                <p>Cliente: ${data.nombreCliente}</p>
+                <p>Total: ₡${(data.montoTotal ?? 0).toLocaleString('es-CR')}</p>
+                <div style="display:flex; gap:8px; margin-top:8px;">
+                    <a href="/Tiquete/Detalle/${data.idTiquete}" target="_blank" class="mf-btn mf-btn-secondary">Ver recibo</a>
+                    ${data.estado !== 'Emitido' ? `<button type="button" class="mf-btn mf-btn-primary" id="cartReintentarBtn" data-id="${data.idTiquete}">Reintentar envío</button>` : ''}
+                </div>
+            </div>
+        `;
+        resultadoBox.style.display = 'block';
+
+        document.getElementById('cartReintentarBtn')?.addEventListener('click', async () => {
+            const id = document.getElementById('cartReintentarBtn').dataset.id;
+            const r = await fetch(`/Venta/Reintentar?idTiquete=${id}`, { method: 'POST' });
+            const rData = await r.json();
+            showToast(rData.ok ? 'Envío reintentado correctamente.' : (rData.mensaje || 'No se pudo reintentar.'), rData.ok ? 'success' : 'error');
+            if (rData.ok) document.getElementById('cartReintentarBtn').remove();
+        });
+
+        carrito = [];
+        clienteSeleccionado = null;
+        document.getElementById('cartCedulaInput').value = '';
+        document.getElementById('cartClienteResultado').textContent = '';
+        renderCarritoFlotante();
+        showToast('Venta registrada correctamente.', 'success');
+
+        // Refresca el catalogo para reflejar el stock ya descontado
+        if (state.module) await fillTable(state.module);
+
+    } catch {
+        errorBanner.textContent = 'No se pudo comunicar con el servidor. Intenta de nuevo.';
+        errorBanner.style.display = 'block';
+    }
+});
 
 function renderTable(module, rows) {
     currentRows = rows;
@@ -525,7 +858,7 @@ async function renderModule(key) {
         btn.classList.toggle('active', btn.dataset.module === module.key);
     });
 
-    const soloLectura = module.key === 'inventario' && currentRole === 'Panadero';
+    const soloLectura = (module.key === 'inventario' && currentRole === 'Panadero') || esVistaCajero(module) || module.key === 'compras' || module.key === 'tiquetes' || module.key === 'reportes';
     const baseUrl = soloLectura ? null : crudRoutes[module.key];
     if (baseUrl && els.createButton) {
         els.createButton.textContent = 'Agregar';

@@ -9,6 +9,5 @@ CREATE TABLE [dbo].[ProductoTrabajador_TB] (
     CONSTRAINT [PK_ProductoTrabajador_TB] PRIMARY KEY CLUSTERED ([Id_Asignacion] ASC),
     CONSTRAINT [FK_ProductoTrabajador_Trabajador] FOREIGN KEY ([Id_Trabajador]) REFERENCES [dbo].[Trabajador_TB] ([Id_Trabajador]),
     CONSTRAINT [FK_ProductoTrabajador_Producto] FOREIGN KEY ([Id_Producto]) REFERENCES [dbo].[Producto_TB] ([Id_Producto]),
-    CONSTRAINT [FK_ProductoTrabajador_Estado] FOREIGN KEY ([Id_Estado]) REFERENCES [dbo].[Estados_TB] ([Id]),
-    CONSTRAINT [UQ_ProductoTrabajador_EmpleadoProducto] UNIQUE ([Id_Trabajador], [Id_Producto])
+    CONSTRAINT [FK_ProductoTrabajador_Estado] FOREIGN KEY ([Id_Estado]) REFERENCES [dbo].[Estados_TB] ([Id])
 );

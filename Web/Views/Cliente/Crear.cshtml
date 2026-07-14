@@ -1,0 +1,57 @@
+@model Abstracciones.Modelos.Cliente.Cliente.ClienteRequest
+
+@{
+    ViewData["Title"] = "Agregar Cliente";
+
+    if (ViewBag.Modal == true)
+    {
+        Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    }
+
+    bool isModal = ViewBag.Modal == true;
+}
+
+@if (ViewBag.ErrorApi != null)
+{
+    <div class="mf-error-banner">@ViewBag.ErrorApi</div>
+}
+
+<form asp-action="Crear" asp-route-modal="@isModal" method="post" class="modal-form">
+
+    <div class="mf-group">
+        <label asp-for="Cedula" class="mf-label">Cédula</label>
+        <input asp-for="Cedula" class="mf-input" />
+        <span asp-validation-for="Cedula" class="mf-error"></span>
+    </div>
+
+    <div class="mf-group">
+        <label asp-for="Nombre_Completo" class="mf-label">Nombre Completo</label>
+        <input asp-for="Nombre_Completo" class="mf-input" />
+        <span asp-validation-for="Nombre_Completo" class="mf-error"></span>
+    </div>
+
+    <div class="mf-group">
+        <label asp-for="Correo_Cliente" class="mf-label">Correo Electrónico <span style="font-weight:400;text-transform:none;">(opcional)</span></label>
+        <input asp-for="Correo_Cliente" class="mf-input" type="email" />
+        <span asp-validation-for="Correo_Cliente" class="mf-error"></span>
+    </div>
+
+    <div class="mf-group">
+        <label asp-for="Telefono_Cliente" class="mf-label">Teléfono <span style="font-weight:400;text-transform:none;">(opcional)</span></label>
+        <input asp-for="Telefono_Cliente" class="mf-input" />
+        <span asp-validation-for="Telefono_Cliente" class="mf-error"></span>
+    </div>
+
+    <div class="mf-actions">
+        <button type="submit" class="mf-btn mf-btn-primary">Guardar</button>
+        @if (!isModal)
+        {
+            <a asp-action="Index" class="mf-btn mf-btn-secondary">Volver</a>
+        }
+    </div>
+
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

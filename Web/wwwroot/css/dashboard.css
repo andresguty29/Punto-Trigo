@@ -665,8 +665,9 @@ body {
 
 .modal-box {
     width: min(560px, 92vw);
+    max-height: 90vh;
     border-radius: 16px;
-    overflow: hidden;
+    overflow-y: auto;
     background: var(--pt-white);
     border: 1px solid var(--pt-border);
     box-shadow: var(--pt-shadow-md);
@@ -1014,4 +1015,330 @@ body {
         right: 12px;
         max-width: none;
     }
+}
+
+
+/* ── Imágenes de productos ────────────────────────── */
+.producto-thumb {
+    width: 52px;
+    height: 52px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--pt-border);
+    display: block;
+}
+
+.producto-thumb-preview {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--pt-border);
+    display: block;
+}
+
+/* ── Vista de cajero: cuadrícula de productos ───────── */
+.pos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+    padding: 4px 0;
+}
+
+.pos-card {
+    background: var(--pt-white);
+    border: 1px solid var(--pt-border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--pt-shadow-sm);
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow .15s ease, transform .15s ease;
+}
+
+.pos-card:hover {
+    box-shadow: var(--pt-shadow-md);
+    transform: translateY(-2px);
+}
+
+.pos-card-sin-stock {
+    opacity: 0.55;
+}
+
+.pos-card-img-wrap {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: var(--pt-blue-050);
+}
+
+.pos-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.pos-card-info {
+    padding: 10px 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pos-card-nombre {
+    font-weight: 600;
+    color: var(--pt-ink);
+    font-size: 0.95rem;
+    line-height: 1.25;
+}
+
+.pos-card-precio {
+    font-weight: 700;
+    color: var(--pt-gold-600);
+    font-size: 1.05rem;
+}
+
+.pos-card-stock {
+    font-size: 0.82rem;
+    color: var(--pt-ink-soft);
+}
+
+/* ── Modulo embebido (Compras) ──────────────────────── */
+.module-embed-frame {
+    width: 100%;
+    min-height: 70vh;
+    border: none;
+    border-radius: 10px;
+    background: var(--pt-white);
+}
+
+/* ── Filas de insumos en formulario de Compra ───────── */
+.detalle-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: var(--pt-blue-050);
+    border: 1px solid var(--pt-border);
+    border-radius: 10px;
+}
+
+.detalle-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1 1 160px;
+}
+
+.detalle-campo-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--pt-ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.detalle-unidad {
+    background: var(--pt-blue-100);
+    color: var(--pt-ink);
+    cursor: not-allowed;
+}
+
+.detalle-row .btn-quitar-detalle {
+    align-self: flex-end;
+    height: 38px;
+}
+
+/* ── Carrito de venta (Cajero) ───────────────────────── */
+.cart-float-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 998;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 999px;
+    background: linear-gradient(120deg, var(--pt-blue-950), var(--pt-blue-800));
+    color: var(--pt-white);
+    font-weight: 700;
+    font-size: 0.95rem;
+    box-shadow: var(--pt-shadow-md);
+    cursor: pointer;
+}
+
+.cart-float-btn:hover {
+    filter: brightness(1.08);
+}
+
+.cart-modal-box {
+    width: min(640px, 94vw);
+}
+
+.cart-modal-body {
+    padding: 18px 22px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.cart-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 14px 22px;
+    border-top: 1px solid var(--pt-border);
+}
+
+.cart-item-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--pt-border);
+}
+
+.cart-item-nombre {
+    flex: 1 1 auto;
+    font-weight: 600;
+    color: var(--pt-ink);
+}
+
+.cart-item-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cart-item-controls .cart-qty-btn {
+    padding: 2px 10px;
+}
+
+.cart-item-cantidad {
+    min-width: 22px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.cart-item-subtotal {
+    min-width: 90px;
+    text-align: right;
+    font-weight: 700;
+    color: var(--pt-gold-600);
+}
+
+.cart-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    font-size: 1.1rem;
+    border-top: 2px solid var(--pt-border);
+    margin-top: 4px;
+}
+
+.cart-resultado-ok {
+    background: var(--pt-blue-050);
+    border: 1px solid var(--pt-border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 10px;
+}
+
+.cart-resultado-ok p {
+    margin: 2px 0;
+}
+
+/* ── Reporte financiero ──────────────────────────────── */
+.reporte-stats {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.reporte-stat-card {
+    flex: 1 1 180px;
+    background: var(--pt-white);
+    border: 1px solid var(--pt-border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    box-shadow: var(--pt-shadow-sm);
+}
+
+.reporte-stat-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--pt-ink-soft);
+    margin-bottom: 4px;
+}
+
+.reporte-stat-valor {
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+.reporte-chart-wrap {
+    position: relative;
+    background: var(--pt-white);
+    border: 1px solid var(--pt-border);
+    border-radius: 12px;
+    padding: 14px 18px 6px;
+    box-shadow: var(--pt-shadow-sm);
+}
+
+.reporte-legend {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 6px;
+}
+
+.reporte-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: var(--pt-ink);
+}
+
+.reporte-legend-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+.reporte-svg {
+    width: 100%;
+    height: auto;
+}
+
+.reporte-axis-label {
+    font-size: 9px;
+    fill: var(--pt-ink-soft);
+}
+
+.reporte-bar {
+    cursor: pointer;
+    transition: opacity .15s ease;
+}
+
+.reporte-bar:hover {
+    opacity: 0.82;
+}
+
+.reporte-tooltip {
+    position: fixed;
+    z-index: 10000;
+    background: var(--pt-blue-950);
+    color: var(--pt-white);
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    pointer-events: none;
+    white-space: nowrap;
 }

@@ -1,0 +1,73 @@
+@model Abstracciones.Modelos.Compra.Compra.CompraRequest
+
+@{
+    ViewData["Title"] = "Registrar Compra";
+
+    if (ViewBag.Modal == true)
+    {
+        Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    }
+
+    bool isModal = ViewBag.Modal == true;
+}
+
+@if (ViewBag.ErrorApi != null)
+{
+    <div class="mf-error-banner">@ViewBag.ErrorApi</div>
+}
+
+<form asp-action="Crear" asp-route-modal="@isModal" method="post" class="modal-form">
+
+    <div class="mf-group">
+        <label asp-for="Id_Proveedor" class="mf-label">Proveedor</label>
+        <select asp-for="Id_Proveedor" asp-items="ViewBag.Proveedores" class="mf-select" required>
+            <option value="">Seleccione un proveedor</option>
+        </select>
+        <span asp-validation-for="Id_Proveedor" class="mf-error"></span>
+    </div>
+
+    <div class="mf-group">
+        <label asp-for="Numero_Factura" class="mf-label">Número de Factura</label>
+        <input asp-for="Numero_Factura" class="mf-input" />
+        <span asp-validation-for="Numero_Factura" class="mf-error"></span>
+    </div>
+
+    <div class="mf-group">
+        <label asp-for="Categoria" class="mf-label">Categoría</label>
+        <select asp-for="Categoria" class="mf-select" required>
+            <option value="">Seleccione una categoría</option>
+            @foreach (var categoria in (string[])ViewBag.Categorias)
+            {
+                <option value="@categoria">@categoria</option>
+            }
+        </select>
+        <span asp-validation-for="Categoria" class="mf-error"></span>
+    </div>
+
+    <div class="mf-group">
+        <label asp-for="Descripcion_Adicional" class="mf-label">Descripción adicional <span style="font-weight:400;text-transform:none;">(requerida si la categoría es "Otro")</span></label>
+        <input asp-for="Descripcion_Adicional" class="mf-input" />
+        <span asp-validation-for="Descripcion_Adicional" class="mf-error"></span>
+    </div>
+
+    <div class="mf-group">
+        <label asp-for="Monto_Total" class="mf-label">Monto Total (₡)</label>
+        <input asp-for="Monto_Total" class="mf-input" type="number" step="0.01" min="0.01" required />
+        <span asp-validation-for="Monto_Total" class="mf-error"></span>
+    </div>
+
+    <partial name="_DetallesFields" model="Model.Detalles" />
+
+    <div class="mf-actions">
+        <button type="submit" class="mf-btn mf-btn-primary">Guardar Compra</button>
+        @if (!isModal)
+        {
+            <a asp-action="Historial" class="mf-btn mf-btn-secondary">Volver</a>
+        }
+    </div>
+
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

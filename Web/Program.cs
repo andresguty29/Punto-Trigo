@@ -29,10 +29,18 @@ AddCrud<PuestoService>(builder.Services);
 AddCrud<ProveedorService>(builder.Services);
 AddCrud<ProductoService>(builder.Services);
 AddCrud<ProduccionService>(builder.Services);
+AddCrud<ClienteService>(builder.Services);
+AddCrud<CompraService>(builder.Services);
+AddCrud<TiqueteService>(builder.Services);
+AddCrud<ReporteService>(builder.Services);
 
 var app = builder.Build();
 
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();

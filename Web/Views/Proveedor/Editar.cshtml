@@ -21,6 +21,12 @@
     <input type="hidden" asp-for="Id_Proveedor" />
 
     <div class="mf-group">
+        <label asp-for="Identificacion_Proveedor" class="mf-label">Identificación (cédula física o jurídica)</label>
+        <input asp-for="Identificacion_Proveedor" class="mf-input" />
+        <span asp-validation-for="Identificacion_Proveedor" class="mf-error"></span>
+    </div>
+
+    <div class="mf-group">
         <label asp-for="Nombre_Proveedor" class="mf-label">Nombre del Proveedor</label>
         <input asp-for="Nombre_Proveedor" class="mf-input" />
         <span asp-validation-for="Nombre_Proveedor" class="mf-error"></span>

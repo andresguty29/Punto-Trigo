@@ -80,7 +80,7 @@ public class HomeController : Controller
                 Table = new()
                 {
                     Title = "Catálogo de productos",
-                    Columns = ["Nombre", "Proveedor", "Precio", "Stock", "Estado"],
+                    Columns = ["Imagen", "Nombre", "Proveedor", "Precio", "Stock", "Estado"],
                     EmptyMessage = "Sin productos registrados.",
                     SourceUrl = "https://localhost:44378/api/Producto"
                 }
@@ -138,9 +138,55 @@ public class HomeController : Controller
                 Table = new()
                 {
                     Title = "Directorio de proveedores",
-                    Columns = ["Nombre", "Teléfono", "Correo", "Estado"],
+                    Columns = ["Identificación", "Nombre", "Teléfono", "Correo", "Estado"],
                     EmptyMessage = "Sin proveedores registrados.",
                     SourceUrl = "https://localhost:44378/api/Proveedor"
+                }
+            },
+            new()
+            {
+                Key = "compras",
+                Roles = ["Admin"],
+                Name = "Compras",
+                Tag = "Gastos y proveedores",
+                Description = "Registro de facturas de proveedores, control de egresos y stock de insumos.",
+                Accent = "#8A6A2B",
+                Table = new()
+            },
+            new()
+            {
+                Key = "tiquetes",
+                Roles = ["Admin", "Cajas"],
+                Name = "Tiquetes",
+                Tag = "Ventas",
+                Description = "Historial de tiquetes electronicos emitidos (Hacienda simulado).",
+                Accent = "#1D5EA8",
+                Table = new()
+            },
+            new()
+            {
+                Key = "reportes",
+                Roles = ["Admin"],
+                Name = "Reportes",
+                Tag = "Rentabilidad",
+                Description = "Comparativo de ingresos y egresos con graficas, exportacion a Excel/PDF.",
+                Accent = "#4A6C2F",
+                Table = new()
+            },
+            new()
+            {
+                Key = "clientes",
+                Roles = ["Admin"],
+                Name = "Clientes",
+                Tag = "Facturación",
+                Description = "Directorio de clientes frecuentes para agilizar la emisión de comprobantes.",
+                Accent = "#4A6C2F",
+                Table = new()
+                {
+                    Title = "Directorio de clientes",
+                    Columns = ["Cédula", "Nombre", "Correo", "Teléfono", "Estado"],
+                    EmptyMessage = "Sin clientes registrados.",
+                    SourceUrl = "https://localhost:44378/api/Cliente"
                 }
             }
         };

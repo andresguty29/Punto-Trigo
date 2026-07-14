@@ -9,6 +9,7 @@
     }
 
     bool isModal = ViewBag.Modal == true;
+    string? imagenActual = ViewBag.ImagenActual as string;
 }
 
 @if (ViewBag.ErrorApi != null)
@@ -19,6 +20,7 @@
 <form asp-action="Editar" asp-route-id="@Model.Id_Producto" asp-route-modal="@isModal" method="post" class="modal-form">
 
     <input type="hidden" asp-for="Id_Producto" />
+    <input type="hidden" asp-for="Imagen_Path" />
 
     <div class="mf-group">
         <label asp-for="Nombre_Producto" class="mf-label">Nombre del Producto</label>
@@ -45,6 +47,20 @@
         </select>
     </div>
 
+    <div class="mf-group">
+        <label class="mf-label">Imagen del producto</label>
+        <div style="margin-bottom:8px;">
+            <img id="imgPrevia"
+                 src="@(string.IsNullOrEmpty(imagenActual) ? "/images/productos/no-imagen.svg" : imagenActual)"
+                 alt="Imagen actual"
+                 class="producto-thumb-preview"
+                 onerror="this.src='/images/productos/no-imagen.svg'" />
+        </div>
+        <input type="file" accept=".jpg,.jpeg,.png,.webp" class="mf-input" id="inputArchivo" />
+        <input type="hidden" name="imagenBase64" id="imagenBase64" />
+        <small style="color:var(--pt-ink-soft);">Deja vacío para mantener la imagen actual.</small>
+    </div>
+
     <div class="mf-actions">
         <button type="submit" class="mf-btn mf-btn-primary">Guardar Cambios</button>
         @if (!isModal)
@@ -57,4 +73,17 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById('inputArchivo').addEventListener('change', function () {
+            const archivo = this.files[0];
+            if (!archivo) return;
+
+            const lector = new FileReader();
+            lector.onload = function (e) {
+                document.getElementById('imagenBase64').value = e.target.result;
+                document.getElementById('imgPrevia').src = e.target.result;
+            };
+            lector.readAsDataURL(archivo);
+        });
+    </script>
 }

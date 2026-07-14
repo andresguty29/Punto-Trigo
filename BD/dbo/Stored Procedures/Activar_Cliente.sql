@@ -1,0 +1,14 @@
+CREATE PROCEDURE Activar_Cliente
+	@Id_Cliente UNIQUEIDENTIFIER
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	BEGIN TRANSACTION
+
+		UPDATE dbo.Cliente_TB
+		SET Id_Estado = 1
+		WHERE Id_Cliente = @Id_Cliente
+
+	COMMIT TRANSACTION
+END

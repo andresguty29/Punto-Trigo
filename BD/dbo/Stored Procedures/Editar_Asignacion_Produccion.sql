@@ -13,9 +13,10 @@ BEGIN
         WHERE Id_Trabajador = @Id_Trabajador
           AND Id_Producto = @Id_Producto
           AND Id_Asignacion <> @Id_Asignacion
+          AND CAST(Fecha_Asignacion AS DATE) = CAST(GETDATE() AS DATE)
     )
     BEGIN
-        RAISERROR('Ya existe una asignacion con este trabajador y producto.', 16, 1);
+        RAISERROR('Ya existe una asignacion con este trabajador y producto para el dia de hoy.', 16, 1);
         RETURN;
     END
 

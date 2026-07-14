@@ -1,0 +1,59 @@
+@model Web.Controllers.ReclasificarCompraRequestConId
+
+@{
+    ViewData["Title"] = "Reclasificar Compra";
+
+    if (ViewBag.Modal == true)
+    {
+        Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    }
+
+    bool isModal = ViewBag.Modal == true;
+}
+
+@if (ViewBag.ErrorApi != null)
+{
+    <div class="mf-error-banner">@ViewBag.ErrorApi</div>
+}
+
+<p><strong>Factura:</strong> @ViewBag.NumeroFactura</p>
+
+<form asp-action="Reclasificar" asp-route-id="@Model.Id_Compra" asp-route-modal="@isModal" method="post" class="modal-form">
+
+    <div class="mf-group">
+        <label asp-for="Categoria" class="mf-label">Categoría</label>
+        <select asp-for="Categoria" class="mf-select" required>
+            @foreach (var categoria in Abstracciones.Modelos.Compra.Compra.CategoriasValidas)
+            {
+                if (categoria == Model.Categoria)
+                {
+                    <option value="@categoria" selected>@categoria</option>
+                }
+                else
+                {
+                    <option value="@categoria">@categoria</option>
+                }
+            }
+        </select>
+        <span asp-validation-for="Categoria" class="mf-error"></span>
+    </div>
+
+    <div class="mf-group">
+        <label asp-for="Descripcion_Adicional" class="mf-label">Descripción adicional <span style="font-weight:400;text-transform:none;">(requerida si la categoría es "Otro")</span></label>
+        <input asp-for="Descripcion_Adicional" class="mf-input" />
+        <span asp-validation-for="Descripcion_Adicional" class="mf-error"></span>
+    </div>
+
+    <div class="mf-actions">
+        <button type="submit" class="mf-btn mf-btn-primary">Guardar Cambios</button>
+        @if (!isModal)
+        {
+            <a asp-action="Historial" class="mf-btn mf-btn-secondary">Volver</a>
+        }
+    </div>
+
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,10 +1,11 @@
 ﻿
 CREATE PROCEDURE Agregar_Proveedor
 	@Id_Proveedor UNIQUEIDENTIFIER,
-	@Nombre_Proveedor VARCHAR(MAX),
-	@Telefono_Proveedor VARCHAR(MAX),
-	@Correo_Proveedor VARCHAR(MAX)
-	
+	@Identificacion_Proveedor VARCHAR(20),
+	@Nombre_Proveedor VARCHAR(150),
+	@Telefono_Proveedor VARCHAR(20),
+	@Correo_Proveedor VARCHAR(200)
+
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -15,6 +16,7 @@ BEGIN
 		(
 			[Id_Proveedor],
 			[Id_Estado],
+			[Identificacion_Proveedor],
 			[Nombre_Proveedor],
 			[Telefono_Proveedor],
 			[Correo_Proveedor]
@@ -22,7 +24,8 @@ BEGIN
 		VALUES
 		(
 			@Id_Proveedor,
-			1, 
+			1,
+			@Identificacion_Proveedor,
 			@Nombre_Proveedor,
 			@Telefono_Proveedor,
 			@Correo_Proveedor

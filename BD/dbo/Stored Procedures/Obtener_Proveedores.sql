@@ -7,9 +7,10 @@ BEGIN
 	SELECT
 		Id_Proveedor,
 		Id_Estado,
+		Identificacion_Proveedor,
 		Nombre_Proveedor,
 		Telefono_Proveedor,
 		Correo_Proveedor
 	FROM dbo.Proveedor_TB
-	
+
 END

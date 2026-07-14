@@ -1,0 +1,76 @@
+@model Abstracciones.Modelos.Tiquete.Tiquete.TiqueteResponse
+
+@{
+    Layout = null;
+    var detalles = (IEnumerable<Abstracciones.Modelos.Tiquete.Tiquete.DetalleTiqueteResponse>)ViewBag.Detalles;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Tiquete @Model.Consecutivo</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 30px; color: #222; }
+        h1 { margin-bottom: 4px; }
+        .subtitulo { color: #555; margin-bottom: 24px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+        th, td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; }
+        th { background: #f2f2f2; }
+        .meta { margin-bottom: 18px; }
+        .meta div { margin-bottom: 4px; }
+        .meta span { font-weight: bold; }
+        .estado-pendiente { color: #b8862f; font-weight: bold; }
+        .estado-emitido { color: #1d5ea8; font-weight: bold; }
+        .total { text-align: right; font-size: 1.2rem; font-weight: bold; margin-top: 12px; }
+        @@media print {
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body onload="window.print()">
+    <h1>Tiquete electrónico (simulado)</h1>
+    <div class="subtitulo">Punto Trigo — Panadería</div>
+
+    <div class="meta">
+        <div><span>Consecutivo:</span> @Model.Consecutivo</div>
+        <div><span>Clave (simulada):</span> @Model.Clave</div>
+        <div><span>Fecha:</span> @Model.Fecha_Emision.ToString("dd/MM/yyyy HH:mm")</div>
+        <div><span>Cliente:</span> @Model.Nombre_Cliente</div>
+        <div><span>Cajero:</span> @(Model.Nombre_Trabajador ?? "-")</div>
+        <div>
+            <span>Estado:</span>
+            @if (Model.Estado == "Emitido")
+            {
+                <span class="estado-emitido">Emitido</span>
+            }
+            else
+            {
+                <span class="estado-pendiente">Pendiente de envío a Hacienda</span>
+            }
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr><th>Producto</th><th>Cantidad</th><th>Precio unitario</th><th>Subtotal</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var d in detalles)
+            {
+                <tr>
+                    <td>@d.Nombre_Producto</td>
+                    <td>@d.Cantidad</td>
+                    <td>₡@d.Precio_Unitario.ToString("N2")</td>
+                    <td>₡@d.Subtotal.ToString("N2")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="total">Total: ₡@Model.Monto_Total.ToString("N2")</div>
+
+    <p class="no-print">
+        <button onclick="window.print()">Imprimir</button>
+    </p>
+</body>
+</html>

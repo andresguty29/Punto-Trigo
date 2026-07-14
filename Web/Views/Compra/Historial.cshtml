@@ -1,0 +1,157 @@
+@model IEnumerable<Abstracciones.Modelos.Compra.Compra.CompraResponse>
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Historial de Compras";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/dashboard.css" />
+</head>
+<body style="margin:0; background:var(--pt-blue-050,#f5f9ff);">
+    <div style="padding:24px;">
+        <h1 style="margin-top:0;">Historial de Compras</h1>
+
+        <p>
+            <a href="#" id="btnRegistrarCompra" class="mf-btn mf-btn-primary">Registrar Compra</a>
+        </p>
+
+        @if (ViewBag.ErrorApi != null)
+        {
+            <div class="mf-error-banner">@ViewBag.ErrorApi</div>
+        }
+
+        <form method="get" asp-action="Historial" style="display:flex; gap:8px; align-items:flex-end; margin-bottom:16px; flex-wrap:wrap;">
+            <div>
+                <label class="mf-label">Desde</label>
+                <input type="date" name="fechaInicio" class="mf-input" value="@ViewBag.FechaInicio" />
+            </div>
+            <div>
+                <label class="mf-label">Hasta</label>
+                <input type="date" name="fechaFin" class="mf-input" value="@ViewBag.FechaFin" />
+            </div>
+            <div>
+                <label class="mf-label">Monto mínimo</label>
+                <input type="number" step="0.01" name="montoMinimo" class="mf-input" value="@ViewBag.MontoMinimo" />
+            </div>
+            <button type="submit" class="mf-btn mf-btn-secondary">Filtrar</button>
+            <a asp-action="Historial" class="mf-btn mf-btn-secondary">Limpiar</a>
+        </form>
+
+        @if (!Model.Any())
+        {
+            <div class="empty-state">No se encontraron compras con los filtros indicados.</div>
+        }
+        else
+        {
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Proveedor</th>
+                        <th>N° Factura</th>
+                        <th>Categoría</th>
+                        <th>Monto</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var compra in Model)
+                    {
+                        <tr>
+                            <td>@compra.Fecha_Compra.ToString("dd/MM/yyyy")</td>
+                            <td>@compra.Nombre_Proveedor</td>
+                            <td>@compra.Numero_Factura</td>
+                            <td>@compra.Categoria @(compra.Categoria == "Otro" && !string.IsNullOrEmpty(compra.Descripcion_Adicional) ? $"({compra.Descripcion_Adicional})" : "")</td>
+                            <td>₡@compra.Monto_Total.ToString("N2")</td>
+                            <td>
+                                <span class="badge @(compra.Id_Estado == 1 ? "badge-ok" : "badge-danger")">
+                                    @(compra.Id_Estado == 1 ? "Activa" : "Anulada")
+                                </span>
+                            </td>
+                            <td>
+                                <button type="button" class="mf-btn mf-btn-secondary btn-reclasificar" data-id="@compra.Id_Compra">Reclasificar</button>
+                                @if (compra.Id_Estado == 1)
+                                {
+                                    <form asp-action="Anular" asp-route-id="@compra.Id_Compra" method="post" style="display:inline;"
+                                          onsubmit="return confirm('¿Deseas anular esta compra? Se revertirá el stock agregado.');">
+                                        <button type="submit" class="mf-btn mf-btn-danger">Anular</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+
+    <div id="crudModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header-custom">
+                <h3 id="crudModalTitle">Formulario</h3>
+                <button type="button" id="closeCrudModal" class="modal-close">&times;</button>
+            </div>
+            <iframe id="crudModalFrame" class="modal-frame"></iframe>
+        </div>
+    </div>
+
+    <script>
+        function openModal(title, url) {
+            const frame = document.getElementById('crudModalFrame');
+            document.getElementById('crudModalTitle').textContent = title;
+            frame.style.height = '200px';
+            frame.src = url;
+
+            frame.onload = () => {
+                const ajustarAltura = () => {
+                    try {
+                        const h = frame.contentDocument?.body?.scrollHeight;
+                        if (h) frame.style.height = h + 'px';
+                    } catch (_) { frame.style.height = '360px'; }
+                };
+                ajustarAltura();
+                setTimeout(ajustarAltura, 150);
+                setTimeout(ajustarAltura, 400);
+            };
+
+            document.getElementById('crudModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('crudModal').classList.remove('show');
+            document.getElementById('crudModalFrame').src = '';
+        }
+
+        document.getElementById('btnRegistrarCompra').addEventListener('click', e => {
+            e.preventDefault();
+            openModal('Registrar Compra', '/Compra/Crear?modal=true');
+        });
+
+        document.querySelectorAll('.btn-reclasificar').forEach(btn => {
+            btn.addEventListener('click', () => {
+                openModal('Reclasificar Compra', `/Compra/Reclasificar/${btn.dataset.id}?modal=true`);
+            });
+        });
+
+        document.getElementById('closeCrudModal').addEventListener('click', closeModal);
+        document.getElementById('crudModal').addEventListener('click', e => {
+            if (e.target === document.getElementById('crudModal')) closeModal();
+        });
+
+        window.addEventListener('message', e => {
+            if (e.data === 'crud-success') {
+                closeModal();
+                window.location.reload();
+            }
+        });
+    </script>
+</body>
+</html>
