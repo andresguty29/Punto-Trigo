@@ -32,6 +32,7 @@ AddCrud<ProduccionService>(builder.Services);
 AddCrud<ClienteService>(builder.Services);
 AddCrud<CompraService>(builder.Services);
 AddCrud<TiqueteService>(builder.Services);
+AddCrud<ReporteService>(builder.Services);
 
 var app = builder.Build();
 

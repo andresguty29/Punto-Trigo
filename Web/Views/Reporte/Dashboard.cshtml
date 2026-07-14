@@ -1,0 +1,183 @@
+@model IEnumerable<Abstracciones.Modelos.Reporte.Reporte.ReporteDiaResponse>
+@{
+    Layout = null;
+    ViewData["Title"] = "Reporte Financiero";
+
+    DateOnly fechaInicio = ViewBag.FechaInicio;
+    DateOnly fechaFin = ViewBag.FechaFin;
+    string? error = ViewBag.ErrorApi;
+
+    var dias = Model.OrderBy(d => d.Fecha).ToList();
+    var totalIngresos = dias.Sum(d => d.Ingresos);
+    var totalEgresos = dias.Sum(d => d.Egresos);
+    var utilidad = totalIngresos - totalEgresos;
+
+    // ── Geometria de la grafica de barras (SVG) ──────────
+    const int chartW = 760;
+    const int chartH = 260;
+    const int marginLeft = 64;
+    const int marginBottom = 34;
+    const int marginTop = 16;
+    int plotW = chartW - marginLeft - 12;
+    int plotH = chartH - marginTop - marginBottom;
+
+    decimal maxValor = dias.Count == 0 ? 1 : Math.Max(1, dias.Max(d => Math.Max(d.Ingresos, d.Egresos)));
+
+    string BarraRedondeada(double x, double yTop, double w, double h, double r)
+    {
+        if (h <= 0) h = 0.01;
+        if (r > h) r = h;
+        if (r > w / 2) r = w / 2;
+        double yBase = yTop + h;
+        return $"M {x:F1} {yBase:F1} L {x:F1} {(yTop + r):F1} Q {x:F1} {yTop:F1} {(x + r):F1} {yTop:F1} " +
+               $"L {(x + w - r):F1} {yTop:F1} Q {(x + w):F1} {yTop:F1} {(x + w):F1} {(yTop + r):F1} " +
+               $"L {(x + w):F1} {yBase:F1} Z";
+    }
+
+    int n = Math.Max(dias.Count, 1);
+    double slotW = plotW / (double)n;
+    double barGap = 2;
+    double barW = Math.Max(3, (slotW - barGap * 3) / 2);
+
+    // SVG <text> choca con la etiqueta reservada de Razor cuando lleva atributos,
+    // asi que se genera como string y se emite con Html.Raw.
+    string TextoSvg(double x, double y, string anchor, string clase, string contenido)
+    {
+        var seguro = System.Net.WebUtility.HtmlEncode(contenido);
+        return $"<text x=\"{x:F1}\" y=\"{y:F1}\" text-anchor=\"{anchor}\" class=\"{clase}\">{seguro}</text>";
+    }
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/dashboard.css" />
+</head>
+<body style="margin:0; background:var(--pt-blue-050,#f5f9ff);">
+<div style="padding:24px;">
+    <h1 style="margin-top:0;">Reporte Financiero</h1>
+    <p style="color:var(--pt-ink-soft);">Comparativo de ingresos (tiquetes emitidos) y egresos (compras a proveedores) por día.</p>
+
+    @if (error != null)
+    {
+        <div class="mf-error-banner">@error</div>
+    }
+
+    <form method="get" asp-action="Dashboard" style="display:flex; gap:8px; align-items:flex-end; margin-bottom:18px; flex-wrap:wrap;">
+        <div>
+            <label class="mf-label">Desde</label>
+            <input type="date" name="fechaInicio" class="mf-input" value="@fechaInicio.ToString("yyyy-MM-dd")" />
+        </div>
+        <div>
+            <label class="mf-label">Hasta</label>
+            <input type="date" name="fechaFin" class="mf-input" value="@fechaFin.ToString("yyyy-MM-dd")" />
+        </div>
+        <button type="submit" class="mf-btn mf-btn-secondary">Generar reporte</button>
+        <a href="/Reporte/ExportarCsv?fechaInicio=@fechaInicio.ToString("yyyy-MM-dd")&fechaFin=@fechaFin.ToString("yyyy-MM-dd")" class="mf-btn mf-btn-secondary">Exportar Excel (CSV)</a>
+        <a href="/Reporte/Imprimir?fechaInicio=@fechaInicio.ToString("yyyy-MM-dd")&fechaFin=@fechaFin.ToString("yyyy-MM-dd")" target="_blank" class="mf-btn mf-btn-secondary">Exportar PDF</a>
+    </form>
+
+    <div class="reporte-stats">
+        <div class="reporte-stat-card">
+            <div class="reporte-stat-label">Total ingresos</div>
+            <div class="reporte-stat-valor" style="color:var(--pt-blue-700);">₡@totalIngresos.ToString("N2")</div>
+        </div>
+        <div class="reporte-stat-card">
+            <div class="reporte-stat-label">Total egresos</div>
+            <div class="reporte-stat-valor" style="color:var(--pt-gold-600);">₡@totalEgresos.ToString("N2")</div>
+        </div>
+        <div class="reporte-stat-card">
+            <div class="reporte-stat-label">Utilidad</div>
+            <div class="reporte-stat-valor" style="color:@(utilidad >= 0 ? "var(--pt-blue-900)" : "#b23b3b");">₡@utilidad.ToString("N2")</div>
+        </div>
+    </div>
+
+    @if (dias.Count == 0)
+    {
+        <div class="empty-state" style="margin-top:16px;">
+            No hay ventas ni gastos registrados en el rango seleccionado.
+            @if (error == null)
+            {
+                <span>Prueba ampliar el rango de fechas, o registra una venta / compra para empezar a ver datos aquí.</span>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="reporte-chart-wrap">
+            <div class="reporte-legend">
+                <span class="reporte-legend-item"><span class="reporte-legend-swatch" style="background:var(--pt-blue-700);"></span>Ingresos</span>
+                <span class="reporte-legend-item"><span class="reporte-legend-swatch" style="background:var(--pt-gold-600);"></span>Egresos</span>
+            </div>
+
+            <svg viewBox="0 0 @chartW @chartH" class="reporte-svg" role="img" aria-label="Grafica comparativa de ingresos y egresos">
+                @for (int g = 1; g <= 4; g++)
+                {
+                    double gy = marginTop + plotH - (plotH * g / 4.0);
+                    <line x1="@marginLeft" y1="@gy.ToString("F1")" x2="@(chartW - 12)" y2="@gy.ToString("F1")" stroke="var(--pt-border)" stroke-width="1" />
+                    @Html.Raw(TextoSvg(marginLeft - 8, gy + 4, "end", "reporte-axis-label", $"₡{(maxValor * g / 4m):N0}"))
+                }
+                <line x1="@marginLeft" y1="@(marginTop + plotH)" x2="@(chartW - 12)" y2="@(marginTop + plotH)" stroke="var(--pt-ink-soft)" stroke-width="1" />
+
+                @for (int idx = 0; idx < dias.Count; idx++)
+                {
+                    var dia = dias[idx];
+                    double slotX = marginLeft + idx * slotW;
+                    double ingHeight = (double)(dia.Ingresos / maxValor) * plotH;
+                    double egrHeight = (double)(dia.Egresos / maxValor) * plotH;
+                    double xIng = slotX + barGap;
+                    double xEgr = xIng + barW + barGap;
+                    double yIng = marginTop + plotH - ingHeight;
+                    double yEgr = marginTop + plotH - egrHeight;
+
+                    <path d="@BarraRedondeada(xIng, yIng, barW, ingHeight, 4)" fill="var(--pt-blue-700)" class="reporte-bar"
+                          data-tooltip="@dia.Fecha.ToString("dd/MM"): Ingresos ₡@dia.Ingresos.ToString("N2")"></path>
+                    <path d="@BarraRedondeada(xEgr, yEgr, barW, egrHeight, 4)" fill="var(--pt-gold-600)" class="reporte-bar"
+                          data-tooltip="@dia.Fecha.ToString("dd/MM"): Egresos ₡@dia.Egresos.ToString("N2")"></path>
+
+                    if (dias.Count <= 15 || idx % Math.Max(1, dias.Count / 15) == 0)
+                    {
+                        @Html.Raw(TextoSvg(slotX + slotW / 2, chartH - marginBottom + 16, "middle", "reporte-axis-label", dia.Fecha.ToString("dd/MM")))
+                    }
+                }
+            </svg>
+            <div id="reporteTooltip" class="reporte-tooltip" style="display:none;"></div>
+        </div>
+
+        <table class="data-table" style="margin-top:18px;">
+            <thead>
+                <tr><th>Fecha</th><th>Ingresos</th><th>Egresos</th><th>Utilidad</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var dia in dias)
+                {
+                    <tr>
+                        <td>@dia.Fecha.ToString("dd/MM/yyyy")</td>
+                        <td>₡@dia.Ingresos.ToString("N2")</td>
+                        <td>₡@dia.Egresos.ToString("N2")</td>
+                        <td style="color:@(dia.Utilidad >= 0 ? "inherit" : "#b23b3b");">₡@dia.Utilidad.ToString("N2")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+<script>
+    const tooltip = document.getElementById('reporteTooltip');
+    document.querySelectorAll('.reporte-bar').forEach(bar => {
+        bar.addEventListener('mousemove', e => {
+            tooltip.textContent = bar.dataset.tooltip;
+            tooltip.style.left = (e.pageX + 12) + 'px';
+            tooltip.style.top = (e.pageY - 28) + 'px';
+            tooltip.style.display = 'block';
+        });
+        bar.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+    });
+</script>
+</body>
+</html>

@@ -149,6 +149,7 @@
     <Build Include="dbo\Stored Procedures\Reintentar_Envio_Tiquete.sql" />
     <Build Include="dbo\Tables\DetalleTiquete_TB.sql" />
     <Build Include="dbo\Tables\Tiquete_TB.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Reporte_Financiero.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="BD.refactorlog" />

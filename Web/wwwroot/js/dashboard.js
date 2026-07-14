@@ -368,6 +368,11 @@ async function fillTable(module) {
         return;
     }
 
+    if (module.key === 'reportes') {
+        renderIframeModule('/Reporte/Dashboard');
+        return;
+    }
+
     els.tableTitle.textContent = module.table.title;
 
     if (!module.table.sourceUrl) {
@@ -853,7 +858,7 @@ async function renderModule(key) {
         btn.classList.toggle('active', btn.dataset.module === module.key);
     });
 
-    const soloLectura = (module.key === 'inventario' && currentRole === 'Panadero') || esVistaCajero(module) || module.key === 'compras' || module.key === 'tiquetes';
+    const soloLectura = (module.key === 'inventario' && currentRole === 'Panadero') || esVistaCajero(module) || module.key === 'compras' || module.key === 'tiquetes' || module.key === 'reportes';
     const baseUrl = soloLectura ? null : crudRoutes[module.key];
     if (baseUrl && els.createButton) {
         els.createButton.textContent = 'Agregar';

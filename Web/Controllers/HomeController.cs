@@ -165,6 +165,16 @@ public class HomeController : Controller
             },
             new()
             {
+                Key = "reportes",
+                Roles = ["Admin"],
+                Name = "Reportes",
+                Tag = "Rentabilidad",
+                Description = "Comparativo de ingresos y egresos con graficas, exportacion a Excel/PDF.",
+                Accent = "#4A6C2F",
+                Table = new()
+            },
+            new()
+            {
                 Key = "clientes",
                 Roles = ["Admin"],
                 Name = "Clientes",
