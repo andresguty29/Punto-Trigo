@@ -34,6 +34,7 @@
                         <th>Cantidad</th>
                         <th>Motivo</th>
                         <th>Proveedor</th>
+                        <th>Vence</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -45,6 +46,7 @@
                         <td>@mov.Cantidad</td>
                         <td>@(string.IsNullOrWhiteSpace(mov.Motivo) ? "-" : mov.Motivo)</td>
                         <td>@(string.IsNullOrWhiteSpace(mov.Nombre_Proveedor) ? "-" : mov.Nombre_Proveedor)</td>
+                        <td>@(mov.Fecha_Vencimiento.HasValue ? mov.Fecha_Vencimiento.Value.ToString("dd/MM/yyyy") : "-")</td>
                     </tr>
                 }
                 </tbody>

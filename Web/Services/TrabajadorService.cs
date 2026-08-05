@@ -16,5 +16,34 @@ namespace Web.Services
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<IEnumerable<TrabajadorResponse>>() ?? [];
         }
+
+        public async Task<(bool ok, string? error)> ConfigurarPago(Guid id, ConfigurarPagoRequest configuracion)
+        {
+            var respuesta = await _httpClient.PatchAsJsonAsync($"api/Trabajador/{id}/pago", configuracion);
+            if (respuesta.IsSuccessStatusCode) return (true, null);
+
+            try
+            {
+                var body = await respuesta.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                return (false, body?.GetValueOrDefault("mensaje"));
+            }
+            catch { return (false, null); }
+        }
+
+        public async Task<(CalculoPagoResponse? resultado, string? error)> CalcularPago(Guid id, decimal? horasTrabajadas)
+        {
+            var url = $"api/Trabajador/{id}/pago/calcular" + (horasTrabajadas.HasValue ? $"?horasTrabajadas={horasTrabajadas}" : "");
+            var respuesta = await _httpClient.GetAsync(url);
+
+            if (respuesta.IsSuccessStatusCode)
+                return (await respuesta.Content.ReadFromJsonAsync<CalculoPagoResponse>(), null);
+
+            try
+            {
+                var body = await respuesta.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                return (null, body?.GetValueOrDefault("mensaje"));
+            }
+            catch { return (null, "No se pudo calcular el pago."); }
+        }
     }
 }

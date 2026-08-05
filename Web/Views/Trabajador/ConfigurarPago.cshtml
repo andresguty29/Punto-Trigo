@@ -1,0 +1,66 @@
+@model Abstracciones.Modelos.Trabajador.Trabajador.ConfigurarPagoRequest
+
+@{
+    ViewData["Title"] = "Configurar Tipo de Pago";
+
+    if (ViewBag.Modal == true)
+    {
+        Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    }
+
+    bool isModal = ViewBag.Modal == true;
+}
+
+<p><strong>Empleado:</strong> @ViewBag.NombreTrabajador</p>
+
+@if (ViewBag.ErrorApi != null)
+{
+    <div class="mf-error-banner">@ViewBag.ErrorApi</div>
+}
+
+<form asp-action="ConfigurarPago" asp-route-id="@ViewBag.IdTrabajador" asp-route-modal="@isModal" method="post" class="modal-form">
+
+    <div class="mf-group">
+        <label asp-for="Tipo_Pago" class="mf-label">Tipo de pago</label>
+        <select asp-for="Tipo_Pago" id="selectTipoPago" class="mf-select" required>
+            <option value="">Seleccione un tipo de pago</option>
+            @foreach (var tipo in (string[])ViewBag.TiposPago)
+            {
+                if (tipo == Model.Tipo_Pago)
+                {
+                    <option value="@tipo" selected>@tipo</option>
+                }
+                else
+                {
+                    <option value="@tipo">@tipo</option>
+                }
+            }
+        </select>
+        <span asp-validation-for="Tipo_Pago" class="mf-error"></span>
+    </div>
+
+    <div class="mf-group" id="grupoSalarioBase">
+        <label asp-for="Salario_Base" class="mf-label">Salario base mensual (₡) <span style="font-weight:400;text-transform:none;">(siempre el monto MENSUAL completo; si el pago es quincenal, el sistema paga la mitad en cada detalle)</span></label>
+        <input asp-for="Salario_Base" class="mf-input" type="number" step="0.01" min="0.01" />
+        <span asp-validation-for="Salario_Base" class="mf-error"></span>
+    </div>
+
+    <div class="mf-group">
+        <label asp-for="Tarifa_Hora" class="mf-label">Tarifa por hora (₡) <span style="font-weight:400;text-transform:none;">(opcional — solo se usa para calcular el pago de horas extra)</span></label>
+        <input asp-for="Tarifa_Hora" class="mf-input" type="number" step="0.01" min="0.01" />
+        <span asp-validation-for="Tarifa_Hora" class="mf-error"></span>
+    </div>
+
+    <div class="mf-actions">
+        <button type="submit" class="mf-btn mf-btn-primary">Guardar Configuración</button>
+        @if (!isModal)
+        {
+            <a asp-action="Index" class="mf-btn mf-btn-secondary">Volver</a>
+        }
+    </div>
+
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

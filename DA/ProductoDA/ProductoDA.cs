@@ -28,7 +28,8 @@ namespace DA.ProductoDA
                 Nombre_Producto = producto.Nombre_Producto,
                 Precio_Venta = producto.Precio_Venta,
                 Stock_Actual = producto.Stock_Actual,
-                Imagen_Path = producto.Imagen_Path
+                Imagen_Path = producto.Imagen_Path,
+                Codigo = producto.Codigo
             });
             return resultadoConsulta;
         }
@@ -45,7 +46,8 @@ namespace DA.ProductoDA
                 Nombre_Producto = producto.Nombre_Producto,
                 Precio_Venta = producto.Precio_Venta,
                 Stock_Actual = producto.Stock_Actual,
-                Imagen_Path = producto.Imagen_Path
+                Imagen_Path = producto.Imagen_Path,
+                Codigo = producto.Codigo
             });
             return resultadoConsulta;
         }

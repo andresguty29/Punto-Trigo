@@ -1,0 +1,110 @@
+@model IEnumerable<Abstracciones.Modelos.Asistencia.Asistencia.AsistenciaResponse>
+@{
+    Layout = null;
+    ViewData["Title"] = "Asistencia";
+
+    Guid idTrabajador = ViewBag.IdTrabajador;
+    var registros = Model.OrderByDescending(r => r.Fecha).ToList();
+    var resumen = (Abstracciones.Modelos.Asistencia.Asistencia.ResumenAsistenciaResponse?)ViewBag.Resumen;
+    var tipos = (string[])ViewBag.Tipos;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/dashboard.css" />
+</head>
+<body style="margin:0; background:var(--pt-blue-050,#f5f9ff);">
+<div style="padding:24px; max-width:720px;">
+    <h1 style="margin-top:0;">Asistencia — @ViewBag.NombreTrabajador</h1>
+
+    @if (TempData["AsistenciaOk"] != null)
+    {
+        <div class="mf-error-banner" style="background:var(--pt-blue-050); color:var(--pt-blue-800); border-color:var(--pt-blue-100);">@TempData["AsistenciaOk"]</div>
+    }
+    @if (TempData["AsistenciaError"] != null)
+    {
+        <div class="mf-error-banner">@TempData["AsistenciaError"]</div>
+    }
+
+    @if (resumen != null)
+    {
+        <div class="reporte-stats" style="margin-bottom:16px;">
+            <div class="reporte-stat-card">
+                <div class="reporte-stat-label">Faltas (mes actual)</div>
+                <div class="reporte-stat-valor">@resumen.Faltas</div>
+            </div>
+            <div class="reporte-stat-card">
+                <div class="reporte-stat-label">Retardos (mes actual)</div>
+                <div class="reporte-stat-valor">@resumen.Retardos</div>
+            </div>
+            <div class="reporte-stat-card">
+                <div class="reporte-stat-label">Días trabajados (mes actual)</div>
+                <div class="reporte-stat-valor">@resumen.Dias_Trabajados</div>
+            </div>
+            <div class="reporte-stat-card">
+                <div class="reporte-stat-label">Descuento estimado</div>
+                <div class="reporte-stat-valor" style="color:#b23b3b;">
+                    @(resumen.Descuento_Estimado.HasValue ? $"₡{resumen.Descuento_Estimado.Value:N2}" : "N/A (configure tipo de pago Mensual)")
+                </div>
+            </div>
+        </div>
+    }
+
+    <form method="post" action="/Trabajador/RegistrarAsistencia" class="modal-form" style="background:var(--pt-white); border:1px solid var(--pt-border); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <input type="hidden" name="Id_Trabajador" value="@idTrabajador" />
+
+        <div class="mf-group">
+            <label class="mf-label">Fecha</label>
+            <input type="date" name="Fecha" class="mf-input" required />
+        </div>
+
+        <div class="mf-group">
+            <label class="mf-label">Tipo de registro</label>
+            <select name="Tipo_Evento" class="mf-select" required>
+                <option value="">Seleccione un tipo</option>
+                @foreach (var tipo in tipos)
+                {
+                    <option value="@tipo">@tipo</option>
+                }
+            </select>
+        </div>
+
+        <div class="mf-group">
+            <label class="mf-label">Observaciones <span style="font-weight:400;text-transform:none;">(opcional)</span></label>
+            <input type="text" name="Observaciones" class="mf-input" />
+        </div>
+
+        <div class="mf-actions">
+            <button type="submit" class="mf-btn mf-btn-primary">Registrar</button>
+        </div>
+    </form>
+
+    @if (registros.Count == 0)
+    {
+        <div class="empty-state">Este empleado aún no tiene registros de asistencia.</div>
+    }
+    else
+    {
+        <table class="data-table">
+            <thead>
+                <tr><th>Fecha</th><th>Tipo</th><th>Observaciones</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var r in registros)
+                {
+                    <tr>
+                        <td>@r.Fecha.ToString("dd/MM/yyyy")</td>
+                        <td>@r.Tipo_Evento</td>
+                        <td>@r.Observaciones</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+</body>
+</html>

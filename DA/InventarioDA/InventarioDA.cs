@@ -78,7 +78,9 @@ namespace DA.InventarioDA
                 movimiento.Tipo,
                 movimiento.Cantidad,
                 movimiento.Motivo,
-                movimiento.Id_Proveedor
+                movimiento.Id_Proveedor,
+                movimiento.Fecha_Vencimiento,
+                movimiento.Costo_Unitario
             });
         }
 

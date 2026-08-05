@@ -1,0 +1,77 @@
+@model IEnumerable<Abstracciones.Modelos.Planilla.Planilla.DetallePagoResponse>
+@{
+    Layout = null;
+    ViewData["Title"] = "Historial de Salarios";
+
+    DateOnly? fechaInicio = ViewBag.FechaInicio;
+    DateOnly? fechaFin = ViewBag.FechaFin;
+    string? error = ViewBag.ErrorApi;
+    var registros = Model.OrderByDescending(r => r.Fecha_Generacion).ToList();
+    var totalPagado = registros.Sum(r => r.Monto_Neto);
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/dashboard.css" />
+</head>
+<body style="margin:0; background:var(--pt-blue-050,#f5f9ff);">
+<div style="padding:24px;">
+    <h1 style="margin-top:0;">Historial de Salarios</h1>
+    <p style="color:var(--pt-ink-soft);">Consulta de detalles de pago generados, para control de costos fijos de planilla.</p>
+
+    @if (error != null)
+    {
+        <div class="mf-error-banner">@error</div>
+    }
+
+    <form method="get" asp-action="Historial" style="display:flex; gap:8px; align-items:flex-end; margin-bottom:16px; flex-wrap:wrap;">
+        <div>
+            <label class="mf-label">Desde</label>
+            <input type="date" name="fechaInicio" class="mf-input" value="@fechaInicio?.ToString("yyyy-MM-dd")" />
+        </div>
+        <div>
+            <label class="mf-label">Hasta</label>
+            <input type="date" name="fechaFin" class="mf-input" value="@fechaFin?.ToString("yyyy-MM-dd")" />
+        </div>
+        <button type="submit" class="mf-btn mf-btn-secondary">Filtrar</button>
+        <a asp-action="Historial" class="mf-btn mf-btn-secondary">Limpiar</a>
+    </form>
+
+    <div class="reporte-stat-card" style="margin-bottom:16px; max-width:320px;">
+        <div class="reporte-stat-label">Total pagado en el rango seleccionado</div>
+        <div class="reporte-stat-valor" style="color:var(--pt-blue-700);">₡@totalPagado.ToString("N2")</div>
+    </div>
+
+    @if (registros.Count == 0)
+    {
+        <div class="empty-state">No hay datos disponibles para el periodo seleccionado.</div>
+    }
+    else
+    {
+        <table class="data-table">
+            <thead>
+                <tr><th>Empleado</th><th>Período</th><th>Rango</th><th>Ingresos</th><th>Deducciones</th><th>Neto pagado</th><th>Generado</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var r in registros)
+                {
+                    <tr>
+                        <td>@r.Nombre_Trabajador</td>
+                        <td>@r.Periodo</td>
+                        <td>@r.Fecha_Inicio.ToString("dd/MM/yyyy") - @r.Fecha_Fin.ToString("dd/MM/yyyy")</td>
+                        <td>₡@r.Total_Ingresos.ToString("N2")</td>
+                        <td>₡@r.Total_Deducciones.ToString("N2")</td>
+                        <td>₡@r.Monto_Neto.ToString("N2")</td>
+                        <td>@r.Fecha_Generacion.ToString("dd/MM/yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+</body>
+</html>

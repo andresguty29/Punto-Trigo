@@ -11,6 +11,8 @@ namespace Abstracciones.Interfaces.API.TrabajadorAPI
         Task<IActionResult> Editar(Guid Id, TrabajadorRequest trabajador);
         Task<IActionResult> Eliminar(Guid Id);
         Task<IActionResult> ObtenerPanaderos();
+        Task<IActionResult> ConfigurarPago(Guid Id, ConfigurarPagoRequest configuracion);
+        Task<IActionResult> CalcularPago(Guid Id, decimal? horasTrabajadas);
 
     }
 }

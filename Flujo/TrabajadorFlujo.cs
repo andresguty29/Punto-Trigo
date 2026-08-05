@@ -62,5 +62,37 @@ namespace Flujo
         {
             return _trabajadorDA.ObtenerPanaderos();
         }
+
+        public async Task<Guid> ConfigurarPago(Guid Id, ConfigurarPagoRequest configuracion)
+        {
+            if (!TiposPagoValidos.Contains(configuracion.Tipo_Pago))
+                throw new InvalidOperationException("El tipo de pago indicado no es válido.");
+
+            try
+            {
+                return await _trabajadorDA.ConfigurarPago(Id, configuracion);
+            }
+            catch (SqlException ex) when (ex.Number == 50000)
+            {
+                throw new InvalidOperationException(ex.Message);
+            }
+        }
+
+        public async Task<CalculoPagoResponse> CalcularPago(Guid Id, decimal? horasTrabajadas)
+        {
+            try
+            {
+                var resultado = await _trabajadorDA.CalcularPago(Id, horasTrabajadas);
+
+                if (resultado == null)
+                    throw new InvalidOperationException("No fue posible calcular el pago con la información disponible.");
+
+                return resultado;
+            }
+            catch (SqlException ex) when (ex.Number == 50000)
+            {
+                throw new InvalidOperationException(ex.Message);
+            }
+        }
     }
 }

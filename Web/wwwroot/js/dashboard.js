@@ -211,6 +211,7 @@ function mapApiRows(module, data) {
                     id: item.id_Producto,
                     cells: [
                         imgHtml,
+                        item.codigo ?? '-',
                         item.nombre_Producto ?? '-',
                         item.nombre_Proveedor ?? 'Sin proveedor',
                         `₡${(item.precio_Venta ?? 0).toLocaleString('es-CR')}`,
@@ -373,6 +374,21 @@ async function fillTable(module) {
         return;
     }
 
+    if (module.key === 'accesos') {
+        renderIframeModule('/Acceso/Historial');
+        return;
+    }
+
+    if (module.key === 'salarios') {
+        renderIframeModule('/Planilla/Historial');
+        return;
+    }
+
+    if (module.key === 'vencimientos') {
+        renderIframeModule('/Perdida/Historial');
+        return;
+    }
+
     els.tableTitle.textContent = module.table.title;
 
     if (!module.table.sourceUrl) {
@@ -416,17 +432,43 @@ async function fillTable(module) {
     }
 }
 
+let productosCajeroCompletos = [];
+
 function renderProductGrid(productos) {
-    const defaultImg = '/images/productos/no-imagen.svg';
-
     productos.forEach(p => { catalogoProductos[p.id_Producto] = p; });
+    productosCajeroCompletos = productos;
 
-    if (!productos.length) {
-        els.tableWrap.innerHTML = `<div class="empty-state">No hay productos disponibles.</div>`;
+    els.tableWrap.innerHTML = `
+        <div class="pos-buscador">
+            <input type="text" id="posBuscador" class="mf-input" placeholder="Buscar por código o nombre..." autocomplete="off" />
+        </div>
+        <div id="posGridContenedor"></div>
+    `;
+
+    const inputBuscador = document.getElementById('posBuscador');
+    inputBuscador.addEventListener('input', () => renderTarjetasProducto(productos, inputBuscador.value));
+
+    renderTarjetasProducto(productos, '');
+    inputBuscador.focus();
+}
+
+function renderTarjetasProducto(productos, filtro) {
+    const defaultImg = '/images/productos/no-imagen.svg';
+    const contenedor = document.getElementById('posGridContenedor');
+    const texto = filtro.trim().toLowerCase();
+
+    const filtrados = texto
+        ? productos.filter(p =>
+            (p.codigo ?? '').toLowerCase().includes(texto) ||
+            (p.nombre_Producto ?? '').toLowerCase().includes(texto))
+        : productos;
+
+    if (!filtrados.length) {
+        contenedor.innerHTML = `<div class="empty-state">${texto ? 'No se encontraron productos que coincidan con la búsqueda.' : 'No hay productos disponibles.'}</div>`;
         return;
     }
 
-    const tarjetas = productos.map(p => {
+    const tarjetas = filtrados.map(p => {
         const src = p.imagen_Path || defaultImg;
         const sinStock = (p.stock_Actual ?? 0) <= 0;
         return `
@@ -435,6 +477,7 @@ function renderProductGrid(productos) {
                     <img src="${src}" alt="${p.nombre_Producto ?? ''}" class="pos-card-img" onerror="this.src='${defaultImg}'">
                 </div>
                 <div class="pos-card-info">
+                    ${p.codigo ? `<div class="pos-card-codigo">${p.codigo}</div>` : ''}
                     <div class="pos-card-nombre">${p.nombre_Producto ?? '-'}</div>
                     <div class="pos-card-precio">₡${(p.precio_Venta ?? 0).toLocaleString('es-CR')}</div>
                     <div class="pos-card-stock">${sinStock ? 'Sin stock' : `Stock: ${p.stock_Actual}`}</div>
@@ -442,10 +485,10 @@ function renderProductGrid(productos) {
             </div>`;
     }).join('');
 
-    els.tableWrap.innerHTML = `<div class="pos-grid">${tarjetas}</div>`;
+    contenedor.innerHTML = `<div class="pos-grid">${tarjetas}</div>`;
 
     if (currentRole === 'Cajas') {
-        els.tableWrap.querySelectorAll('.pos-card:not(.pos-card-sin-stock)').forEach(card => {
+        contenedor.querySelectorAll('.pos-card:not(.pos-card-sin-stock)').forEach(card => {
             card.addEventListener('click', () => agregarAlCarrito(card.dataset.id));
         });
     }
@@ -738,12 +781,19 @@ function renderPagedTable(module) {
         const activo = row.cells.some(c => String(c).toLowerCase() === 'activo');
         const esInventario = module.key === 'inventario';
         const esProduccion = module.key === 'produccion';
+        const esPlanilla = module.key === 'planilla';
         const actionsCell = baseUrl && row.id ? `
             <td>
                 <button class="row-btn row-btn-edit" data-id="${row.id}" data-module="${module.key}">Editar</button>
                 ${esInventario ? `<button class="row-btn row-btn-movimiento" data-id="${row.id}" data-module="${module.key}">Registrar movimiento</button>` : ''}
                 ${esInventario ? `<button class="row-btn row-btn-historial" data-id="${row.id}" data-module="${module.key}">Ver historial</button>` : ''}
                 ${esProduccion ? `<button class="row-btn row-btn-imprimir" data-id="${row.id}">Imprimir receta</button>` : ''}
+                ${esPlanilla ? `<button class="row-btn row-btn-pago" data-id="${row.id}">Configurar pago</button>` : ''}
+                ${esPlanilla ? `<button class="row-btn row-btn-vacaciones" data-id="${row.id}">Vacaciones</button>` : ''}
+                ${esPlanilla ? `<button class="row-btn row-btn-asistencia" data-id="${row.id}">Asistencia</button>` : ''}
+                ${esPlanilla ? `<button class="row-btn row-btn-prestamos" data-id="${row.id}">Préstamos</button>` : ''}
+                ${esPlanilla ? `<button class="row-btn row-btn-horasextra" data-id="${row.id}">Horas extra</button>` : ''}
+                ${esPlanilla ? `<button class="row-btn row-btn-detallepago" data-id="${row.id}">Generar detalle de pago</button>` : ''}
                 ${activo
                     ? `<button class="row-btn row-btn-delete" data-id="${row.id}" data-module="${module.key}" data-activo="true">Desactivar registro</button>`
                     : `<button class="row-btn row-btn-activate" data-id="${row.id}" data-module="${module.key}" data-activo="false">Reactivar registro</button>`
@@ -810,6 +860,42 @@ function renderPagedTable(module) {
         });
     });
 
+    els.tableWrap.querySelectorAll('.row-btn-pago').forEach(btn => {
+        btn.addEventListener('click', () => {
+            openModal('Configurar Tipo de Pago', `/Trabajador/ConfigurarPago/${btn.dataset.id}?modal=true`);
+        });
+    });
+
+    els.tableWrap.querySelectorAll('.row-btn-vacaciones').forEach(btn => {
+        btn.addEventListener('click', () => {
+            window.open(`/Trabajador/Vacaciones/${btn.dataset.id}`, '_blank');
+        });
+    });
+
+    els.tableWrap.querySelectorAll('.row-btn-asistencia').forEach(btn => {
+        btn.addEventListener('click', () => {
+            window.open(`/Trabajador/Asistencia/${btn.dataset.id}`, '_blank');
+        });
+    });
+
+    els.tableWrap.querySelectorAll('.row-btn-prestamos').forEach(btn => {
+        btn.addEventListener('click', () => {
+            window.open(`/Trabajador/Prestamos/${btn.dataset.id}`, '_blank');
+        });
+    });
+
+    els.tableWrap.querySelectorAll('.row-btn-horasextra').forEach(btn => {
+        btn.addEventListener('click', () => {
+            window.open(`/Trabajador/HorasExtra/${btn.dataset.id}`, '_blank');
+        });
+    });
+
+    els.tableWrap.querySelectorAll('.row-btn-detallepago').forEach(btn => {
+        btn.addEventListener('click', () => {
+            openModal('Generar Detalle de Pago', `/Trabajador/GenerarDetallePago/${btn.dataset.id}?modal=true`);
+        });
+    });
+
     els.tableWrap.querySelectorAll('.row-btn-edit').forEach(btn => {
         btn.addEventListener('click', () => {
             openModal(`Editar ${module.name}`, `${crudRoutes[btn.dataset.module]}/Editar/${btn.dataset.id}?modal=true`);
@@ -857,8 +943,9 @@ async function renderModule(key) {
     document.querySelectorAll('.sidebar-item').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.module === module.key);
     });
+    abrirGrupoDelModulo(module.key);
 
-    const soloLectura = (module.key === 'inventario' && currentRole === 'Panadero') || esVistaCajero(module) || module.key === 'compras' || module.key === 'tiquetes' || module.key === 'reportes';
+    const soloLectura = (module.key === 'inventario' && currentRole === 'Panadero') || esVistaCajero(module) || module.key === 'compras' || module.key === 'tiquetes' || module.key === 'reportes' || module.key === 'accesos' || module.key === 'salarios' || module.key === 'vencimientos';
     const baseUrl = soloLectura ? null : crudRoutes[module.key];
     if (baseUrl && els.createButton) {
         els.createButton.textContent = 'Agregar';
@@ -866,6 +953,16 @@ async function renderModule(key) {
         els.createButton.style.display = 'inline-flex';
     } else if (els.createButton) {
         els.createButton.style.display = 'none';
+    }
+
+    const imprimirListaBtn = document.getElementById('imprimirListaButton');
+    if (imprimirListaBtn) {
+        if (module.key === 'produccion' && currentRole === 'Admin') {
+            imprimirListaBtn.style.display = 'inline-flex';
+            imprimirListaBtn.onclick = () => openModal('Imprimir Lista de Producción', '/Produccion/SeleccionarListaEmpleado?modal=true');
+        } else {
+            imprimirListaBtn.style.display = 'none';
+        }
     }
 
     els.title.textContent       = module.name;
@@ -877,6 +974,12 @@ async function renderModule(key) {
 
 // ── Eventos globales ───────────────────────────────────
 els.sidebar.addEventListener('click', e => {
+    const headerBtn = e.target.closest('.sidebar-group-header');
+    if (headerBtn) {
+        headerBtn.closest('.sidebar-group').classList.toggle('open');
+        return;
+    }
+
     const btn = e.target.closest('[data-module]');
     if (!btn) return;
 
@@ -887,6 +990,12 @@ els.sidebar.addEventListener('click', e => {
 
     renderModule(btn.dataset.module);
 });
+
+function abrirGrupoDelModulo(key) {
+    const btn = els.sidebar.querySelector(`[data-module="${key}"]`);
+    const grupo = btn?.closest('.sidebar-group');
+    grupo?.classList.add('open');
+}
 
 sidebarUi.toggle?.addEventListener('click', () => {
     sidebarHidden = !sidebarHidden;
@@ -936,9 +1045,74 @@ async function cargarNotificacionesPanadero() {
     } catch { /* sin notificacion si falla */ }
 }
 
+async function cargarAlertaVencimientos() {
+    if (currentRole !== 'Admin') return;
+
+    try {
+        const res = await fetch(`https://localhost:44378/api/Perdida/pendientes`);
+        if (res.status === 204) return;
+        if (!res.ok) return;
+
+        const data = await res.json();
+
+        if (data.length > 0) {
+            NotificationManager.add(
+                'warning',
+                'Productos vencidos',
+                `Hay ${data.length} lote(s) de inventario vencidos pendientes de procesar como pérdida.`,
+                'vencimientos'
+            );
+        }
+    } catch { /* sin notificacion si falla */ }
+}
+
+function mostrarBienvenida() {
+    state.selected = null;
+    state.module = null;
+
+    document.querySelectorAll('.sidebar-item').forEach(btn => btn.classList.remove('active'));
+
+    if (els.createButton) els.createButton.style.display = 'none';
+    const imprimirListaBtn = document.getElementById('imprimirListaButton');
+    if (imprimirListaBtn) imprimirListaBtn.style.display = 'none';
+
+    const nombreUsuario = document.querySelector('.avatar-dropdown-name')?.textContent?.trim() ?? '';
+    const fechaHoy = new Date().toLocaleDateString('es-CR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const rolTexto = { Admin: 'Administrador', Cajas: 'Cajero', Panadero: 'Panadero' }[currentRole] ?? currentRole;
+
+    els.title.textContent = 'Bienvenido a Punto Trigo';
+    els.tag.textContent = '';
+    els.description.textContent = '';
+    els.tableTitle.textContent = '';
+    els.tableStatus.textContent = '';
+
+    els.tableWrap.innerHTML = `
+        <div class="welcome-screen">
+            <div class="welcome-icon">🥖</div>
+            <div class="welcome-title">Hola, ${nombreUsuario}</div>
+            <div class="welcome-subtitle">Selecciona un módulo del menú para comenzar a trabajar.</div>
+            <div class="welcome-cards">
+                <div class="welcome-card">
+                    <div class="welcome-card-label">Rol</div>
+                    <div class="welcome-card-value">${rolTexto}</div>
+                </div>
+                <div class="welcome-card">
+                    <div class="welcome-card-label">Fecha</div>
+                    <div class="welcome-card-value" style="text-transform:capitalize;">${fechaHoy}</div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+document.getElementById('brandHomeLink')?.addEventListener('click', () => {
+    mostrarBienvenida();
+});
+
 applySidebarState();
-renderModule(state.selected);
+mostrarBienvenida();
 cargarNotificacionesPanadero();
+cargarAlertaVencimientos();
 
 // ── Avatar dropdown ────────────────────────────────
 document.getElementById('avatarBtn')?.addEventListener('click', e => {

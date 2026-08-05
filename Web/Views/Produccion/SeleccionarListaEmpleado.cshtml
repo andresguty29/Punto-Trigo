@@ -1,0 +1,38 @@
+@{
+    ViewData["Title"] = "Imprimir Lista de Producción";
+
+    if (ViewBag.Modal == true)
+    {
+        Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    }
+}
+
+<form method="get" action="/Produccion/ImprimirListaEmpleado" target="_blank" class="modal-form">
+
+    <div class="mf-group">
+        <label class="mf-label">Empleado</label>
+        <select name="idTrabajador" class="mf-select" required>
+            <option value="">Seleccione un empleado</option>
+            @foreach (var item in (IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Trabajadores)
+            {
+                <option value="@item.Value">@item.Text</option>
+            }
+        </select>
+    </div>
+
+    <div class="mf-group">
+        <label class="mf-label">Turno</label>
+        <select name="turno" class="mf-select" required>
+            <option value="">Seleccione un turno</option>
+            @foreach (var turno in (string[])ViewBag.Turnos)
+            {
+                <option value="@turno">@turno</option>
+            }
+        </select>
+    </div>
+
+    <div class="mf-actions">
+        <button type="submit" class="mf-btn mf-btn-primary">Generar documento</button>
+    </div>
+
+</form>

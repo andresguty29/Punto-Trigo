@@ -1,0 +1,131 @@
+@model IEnumerable<Abstracciones.Modelos.RegistroAcceso.RegistroAcceso.RegistroAccesoResponse>
+@{
+    Layout = null;
+    ViewData["Title"] = "Registro de Accesos";
+
+    DateOnly? fechaInicio = ViewBag.FechaInicio;
+    DateOnly? fechaFin = ViewBag.FechaFin;
+    string? nombreUsuario = ViewBag.NombreUsuario;
+    string? error = ViewBag.ErrorApi;
+    var usuarios = (List<string?>)ViewBag.Usuarios;
+
+    var registros = Model.OrderByDescending(r => r.Fecha_Login).ToList();
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/dashboard.css" />
+</head>
+<body style="margin:0; background:var(--pt-blue-050,#f5f9ff);">
+<div style="padding:24px;">
+    <h1 style="margin-top:0;">Registro de Accesos</h1>
+    <p style="color:var(--pt-ink-soft);">Historial de inicios y cierres de sesión, incluyendo intentos fallidos, para control de asistencia y trazabilidad.</p>
+
+    @if (error != null)
+    {
+        <div class="mf-error-banner">@error</div>
+    }
+
+    <form method="get" asp-action="Historial" style="display:flex; gap:8px; align-items:flex-end; margin-bottom:16px; flex-wrap:wrap;">
+        <div>
+            <label class="mf-label">Desde</label>
+            <input type="date" name="fechaInicio" class="mf-input" value="@fechaInicio?.ToString("yyyy-MM-dd")" />
+        </div>
+        <div>
+            <label class="mf-label">Hasta</label>
+            <input type="date" name="fechaFin" class="mf-input" value="@fechaFin?.ToString("yyyy-MM-dd")" />
+        </div>
+        <div>
+            <label class="mf-label">Usuario</label>
+            <select name="nombreUsuario" class="mf-select">
+                <option value="">Todos</option>
+                @foreach (var u in usuarios)
+                {
+                    if (u == nombreUsuario)
+                    {
+                        <option value="@u" selected>@u</option>
+                    }
+                    else
+                    {
+                        <option value="@u">@u</option>
+                    }
+                }
+            </select>
+        </div>
+        <button type="submit" class="mf-btn mf-btn-secondary">Filtrar</button>
+        <a asp-action="Historial" class="mf-btn mf-btn-secondary">Limpiar</a>
+        <a href="/Acceso/ExportarCsv?fechaInicio=@fechaInicio?.ToString("yyyy-MM-dd")&fechaFin=@fechaFin?.ToString("yyyy-MM-dd")&nombreUsuario=@nombreUsuario" class="mf-btn mf-btn-secondary">Exportar CSV</a>
+        <button type="button" onclick="window.location.reload()" class="mf-btn mf-btn-secondary">Actualizar</button>
+    </form>
+
+    @if (registros.Count == 0)
+    {
+        <div class="empty-state">No hay registros de acceso disponibles.</div>
+    }
+    else
+    {
+        <table class="data-table" id="tablaAccesos">
+            <thead>
+                <tr>
+                    <th class="th-sort" data-key="usuario">Usuario ⇅</th>
+                    <th class="th-sort" data-key="login">Fecha Login ⇅</th>
+                    <th class="th-sort" data-key="logout">Fecha Logout ⇅</th>
+                    <th class="th-sort" data-key="estado">Estado ⇅</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in registros)
+                {
+                    var claseBadge = r.Estado switch
+                    {
+                        "Activa" => "badge-ok",
+                        "Cerrada" => "badge-warn",
+                        _ => "badge-danger"
+                    };
+                    <tr data-usuario="@r.Nombre_Usuario" data-login="@r.Fecha_Login.Ticks" data-logout="@(r.Fecha_Logout?.Ticks ?? 0)" data-estado="@r.Estado">
+                        <td>@r.Nombre_Usuario</td>
+                        <td>@r.Fecha_Login.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                        <td>@(r.Fecha_Logout.HasValue ? r.Fecha_Logout.Value.ToString("dd/MM/yyyy HH:mm:ss") : "-")</td>
+                        <td><span class="badge @claseBadge">@r.Estado</span></td>
+                        <td><a href="/Acceso/Detalle/@r.Id_Registro" target="_blank" class="mf-btn mf-btn-secondary">Ver detalle</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+<script>
+    let sortDir = {};
+    document.querySelectorAll('.th-sort').forEach(th => {
+        th.style.cursor = 'pointer';
+        th.addEventListener('click', () => {
+            const key = th.dataset.key;
+            sortDir[key] = !sortDir[key];
+            const tbody = document.querySelector('#tablaAccesos tbody');
+            const filas = Array.from(tbody.querySelectorAll('tr'));
+
+            filas.sort((a, b) => {
+                let va, vb;
+                if (key === 'usuario' || key === 'estado') {
+                    va = a.dataset[key].toLowerCase();
+                    vb = b.dataset[key].toLowerCase();
+                    return sortDir[key] ? va.localeCompare(vb) : vb.localeCompare(va);
+                } else {
+                    va = parseInt(a.dataset[key], 10);
+                    vb = parseInt(b.dataset[key], 10);
+                    return sortDir[key] ? va - vb : vb - va;
+                }
+            });
+
+            filas.forEach(f => tbody.appendChild(f));
+        });
+    });
+</script>
+</body>
+</html>

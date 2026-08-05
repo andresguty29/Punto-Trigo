@@ -1,0 +1,70 @@
+@model IEnumerable<Abstracciones.Modelos.Vacacion.Vacacion.VacacionAsignadaResponse>
+@{
+    Layout = null;
+    ViewData["Title"] = "Vacaciones";
+
+    DateOnly? fechaIngreso = ViewBag.FechaIngreso;
+    Guid idTrabajador = ViewBag.IdTrabajador;
+    var vacaciones = Model.OrderBy(v => v.Anio_Antiguedad).ToList();
+    var totalDias = vacaciones.Sum(v => v.Dias_Asignados);
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/dashboard.css" />
+</head>
+<body style="margin:0; background:var(--pt-blue-050,#f5f9ff);">
+<div style="padding:24px; max-width:640px;">
+    <h1 style="margin-top:0;">Vacaciones — @ViewBag.NombreTrabajador</h1>
+
+    @if (TempData["VacacionOk"] != null)
+    {
+        <div class="mf-error-banner" style="background:var(--pt-blue-050); color:var(--pt-blue-800); border-color:var(--pt-blue-100);">@TempData["VacacionOk"]</div>
+    }
+    @if (TempData["VacacionError"] != null)
+    {
+        <div class="mf-error-banner">@TempData["VacacionError"]</div>
+    }
+
+    <p>
+        <strong>Fecha de ingreso:</strong> @(fechaIngreso.HasValue ? fechaIngreso.Value.ToString("dd/MM/yyyy") : "No registrada")
+    </p>
+
+    <div class="reporte-stat-card" style="margin-bottom:16px;">
+        <div class="reporte-stat-label">Total de días asignados históricamente</div>
+        <div class="reporte-stat-valor" style="color:var(--pt-blue-700);">@totalDias días</div>
+    </div>
+
+    <form method="post" action="/Trabajador/AsignarVacaciones/@idTrabajador" style="margin-bottom:18px;">
+        <button type="submit" class="mf-btn mf-btn-primary">Asignar vacaciones del período actual</button>
+    </form>
+
+    @if (vacaciones.Count == 0)
+    {
+        <div class="empty-state">Este empleado aún no tiene vacaciones asignadas.</div>
+    }
+    else
+    {
+        <table class="data-table">
+            <thead>
+                <tr><th>Año de antigüedad</th><th>Días asignados</th><th>Fecha de asignación</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var v in vacaciones)
+                {
+                    <tr>
+                        <td>@v.Anio_Antiguedad</td>
+                        <td>@v.Dias_Asignados</td>
+                        <td>@v.Fecha_Asignacion.ToString("dd/MM/yyyy HH:mm")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+</body>
+</html>

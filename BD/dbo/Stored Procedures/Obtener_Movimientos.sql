@@ -13,7 +13,9 @@ BEGIN
         m.[Motivo],
         m.[Id_Proveedor],
         p.[Nombre_Proveedor],
-        m.[Id_Estado]
+        m.[Id_Estado],
+        m.[Fecha_Vencimiento],
+        m.[Costo_Unitario]
     FROM [dbo].[MovimientoInventario_TB] m
     LEFT JOIN [dbo].[Proveedor_TB] p ON m.[Id_Proveedor] = p.[Id_Proveedor]
     WHERE m.[Id_Inventario] = @Id_Inventario

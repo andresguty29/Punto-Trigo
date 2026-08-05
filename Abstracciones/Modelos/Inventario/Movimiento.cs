@@ -19,6 +19,11 @@ namespace Abstracciones.Modelos.Inventario
             public string? Motivo { get; set; }
 
             public Guid? Id_Proveedor { get; set; }
+
+            public DateOnly? Fecha_Vencimiento { get; set; }
+
+            [Range(0, 99999999.99, ErrorMessage = "El costo no puede ser negativo")]
+            public decimal? Costo_Unitario { get; set; }
         }
 
         public class MovimientoRequest : MovimientoBase { }

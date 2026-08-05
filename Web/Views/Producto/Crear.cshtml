@@ -19,6 +19,12 @@
 <form asp-action="Crear" asp-route-modal="@isModal" method="post" class="modal-form">
 
     <div class="mf-group">
+        <label asp-for="Codigo" class="mf-label">Código <span style="font-weight:400;text-transform:none;">(opcional, para búsqueda rápida en caja)</span></label>
+        <input asp-for="Codigo" class="mf-input" placeholder="Ej: PAN-001" />
+        <span asp-validation-for="Codigo" class="mf-error"></span>
+    </div>
+
+    <div class="mf-group">
         <label asp-for="Nombre_Producto" class="mf-label">Nombre del Producto</label>
         <input asp-for="Nombre_Producto" class="mf-input" />
         <span asp-validation-for="Nombre_Producto" class="mf-error"></span>

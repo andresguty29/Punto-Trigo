@@ -1342,3 +1342,127 @@ body {
     pointer-events: none;
     white-space: nowrap;
 }
+
+/* ── Grupos del sidebar ──────────────────────────────── */
+.sidebar-group-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: none;
+    background: transparent;
+    text-align: left;
+    padding: 12px 18px;
+    color: var(--pt-blue-800);
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+}
+
+.sidebar-group-header:hover {
+    background: var(--pt-blue-050);
+}
+
+.sidebar-group-chevron {
+    transition: transform .18s ease;
+    flex-shrink: 0;
+}
+
+.sidebar-group.open .sidebar-group-chevron {
+    transform: rotate(180deg);
+}
+
+.sidebar-group-items {
+    display: none;
+    flex-direction: column;
+}
+
+.sidebar-group.open .sidebar-group-items {
+    display: flex;
+}
+
+.sidebar-subitem {
+    padding-left: 30px;
+    font-size: 0.87rem;
+}
+
+.sidebar-group.has-active .sidebar-group-header {
+    color: var(--pt-blue-900);
+}
+
+/* ── Pantalla de bienvenida ──────────────────────────── */
+.welcome-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.welcome-icon {
+    font-size: 3.2rem;
+    margin-bottom: 10px;
+}
+
+.welcome-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--pt-blue-900);
+    margin-bottom: 4px;
+}
+
+.welcome-subtitle {
+    color: var(--pt-ink-soft);
+    font-size: 0.95rem;
+    margin-bottom: 28px;
+}
+
+.welcome-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    max-width: 720px;
+}
+
+.welcome-card {
+    background: var(--pt-white);
+    border: 1px solid var(--pt-border);
+    border-radius: 14px;
+    padding: 16px 20px;
+    min-width: 160px;
+    box-shadow: var(--pt-shadow-sm);
+    text-align: left;
+}
+
+.welcome-card-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--pt-ink-soft);
+    margin-bottom: 4px;
+}
+
+.welcome-card-value {
+    font-weight: 700;
+    color: var(--pt-blue-900);
+    font-size: 1.05rem;
+}
+
+/* ── Buscador de productos (vista Cajero) ────────────── */
+.pos-buscador {
+    margin-bottom: 16px;
+    max-width: 360px;
+}
+
+.pos-card-codigo {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--pt-ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 2px;
+}

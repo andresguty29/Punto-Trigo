@@ -12,7 +12,8 @@ BEGIN
         p.[Nombre_Producto],
         p.[Precio_Venta],
         p.[Stock_Actual],
-        p.[Imagen_Path]
+        p.[Imagen_Path],
+        p.[Codigo]
     FROM [dbo].[Producto_TB] p
     LEFT JOIN [dbo].[Proveedor_TB] pv ON p.[Id_Proveedor] = pv.[Id_Proveedor]
     WHERE p.[Id_Producto] = @Id_Producto

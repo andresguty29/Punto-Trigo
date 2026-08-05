@@ -16,5 +16,7 @@ namespace Abstracciones.Interfaces.Flujo.Trabajador
         Task<Guid> Eliminar(Guid Id);
         Task<Guid> Activar(Guid Id);
         Task<IEnumerable<TrabajadorResponse>> ObtenerPanaderos();
+        Task<Guid> ConfigurarPago(Guid Id, ConfigurarPagoRequest configuracion);
+        Task<CalculoPagoResponse> CalcularPago(Guid Id, decimal? horasTrabajadas);
     }
 }

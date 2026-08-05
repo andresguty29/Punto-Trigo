@@ -1,0 +1,59 @@
+@model Abstracciones.Modelos.Planilla.Planilla.GenerarDetallePagoRequest
+
+@{
+    ViewData["Title"] = "Generar Detalle de Pago";
+
+    if (ViewBag.Modal == true)
+    {
+        Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    }
+
+    bool isModal = ViewBag.Modal == true;
+}
+
+<p><strong>Empleado:</strong> @ViewBag.NombreTrabajador</p>
+
+@if (ViewBag.ErrorApi != null)
+{
+    <div class="mf-error-banner">@ViewBag.ErrorApi</div>
+}
+
+<form asp-action="GenerarDetallePago" asp-route-modal="@isModal" method="post" class="modal-form">
+
+    <input type="hidden" asp-for="Id_Trabajador" />
+
+    <div class="mf-group">
+        <label asp-for="Periodo" class="mf-label">Período <span style="font-weight:400;text-transform:none;">(ej. "Agosto 2026" o "1ra quincena Agosto 2026")</span></label>
+        <input asp-for="Periodo" class="mf-input" required />
+        <span asp-validation-for="Periodo" class="mf-error"></span>
+    </div>
+
+    <div class="mf-group">
+        <label asp-for="Fecha_Inicio" class="mf-label">Desde</label>
+        <input asp-for="Fecha_Inicio" class="mf-input" type="date" required />
+        <span asp-validation-for="Fecha_Inicio" class="mf-error"></span>
+    </div>
+
+    <div class="mf-group">
+        <label asp-for="Fecha_Fin" class="mf-label">Hasta</label>
+        <input asp-for="Fecha_Fin" class="mf-input" type="date" required />
+        <span asp-validation-for="Fecha_Fin" class="mf-error"></span>
+    </div>
+
+    <p style="color:var(--pt-ink-soft); font-size:0.85rem;">
+        El sistema calculará automáticamente el salario del período, horas extra, descuentos por faltas/retardos y préstamos pendientes.
+    </p>
+
+    <div class="mf-actions">
+        <button type="submit" class="mf-btn mf-btn-primary">Generar Detalle</button>
+        @if (!isModal)
+        {
+            <a asp-action="Index" class="mf-btn mf-btn-secondary">Volver</a>
+        }
+    </div>
+
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

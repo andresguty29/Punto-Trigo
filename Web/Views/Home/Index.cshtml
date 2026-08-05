@@ -19,7 +19,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Punto Trigo</title>
     <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
-    <link rel="stylesheet" href="~/css/dashboard.css" />
+    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
 </head>
 <body>
 
@@ -34,7 +34,7 @@
                     </svg>
                 </button>
 
-                <div class="topbar-brand">
+                <div class="topbar-brand" id="brandHomeLink" style="cursor:pointer;" title="Ir a la pantalla principal">
                     <span>Punto Trigo</span>
                     <span class="topbar-subtitle">Sistema de Gestión Comercial</span>
                 </div>
@@ -89,9 +89,37 @@
                     <span class="sidebar-title">Modulos</span>
                 </div>
 
-                @foreach (var module in Model.Modules)
+                @{
+                    var gruposSidebar = Model.Modules
+                        .GroupBy(m => m.Group)
+                        .ToList();
+                }
+                @foreach (var grupo in gruposSidebar)
                 {
-                    <button class="sidebar-item" data-module="@module.Key">@module.Name</button>
+                    if (string.IsNullOrEmpty(grupo.Key))
+                    {
+                        foreach (var module in grupo)
+                        {
+                            <button class="sidebar-item" data-module="@module.Key">@module.Name</button>
+                        }
+                    }
+                    else
+                    {
+                        <div class="sidebar-group" data-group-name="@grupo.Key">
+                            <button type="button" class="sidebar-group-header">
+                                <span>@grupo.Key</span>
+                                <svg class="sidebar-group-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </button>
+                            <div class="sidebar-group-items">
+                                @foreach (var module in grupo)
+                                {
+                                    <button class="sidebar-item sidebar-subitem" data-module="@module.Key">@module.Name</button>
+                                }
+                            </div>
+                        </div>
+                    }
                 }
             </nav>
 
@@ -108,6 +136,7 @@
                             <h2 id="tableTitle"></h2>
                             <span class="status-note" id="tableStatus">Listo</span>
                         </div>
+                        <button id="imprimirListaButton" type="button" class="mf-btn mf-btn-secondary" style="display:none;">Imprimir lista de empleado</button>
                         <button id="createButton" type="button" class="btn-create">Agregar</button>
                     </div>
                     <div id="tableWrap"></div>

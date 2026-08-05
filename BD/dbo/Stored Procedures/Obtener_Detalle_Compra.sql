@@ -12,7 +12,8 @@ BEGIN
 		i.[Unidad],
 		dc.[Cantidad],
 		dc.[Unidad_Ingresada],
-		dc.[Costo_Unitario]
+		dc.[Costo_Unitario],
+		dc.[Fecha_Vencimiento]
 	FROM [dbo].[DetalleCompra_TB] dc
 	INNER JOIN [dbo].[Inventario_TB] i ON dc.[Id_Inventario] = i.[Id_Inventario]
 	WHERE dc.[Id_Compra] = @Id_Compra
