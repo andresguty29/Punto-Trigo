@@ -1,0 +1,63 @@
+@model Abstracciones.Modelos.Planilla.Planilla.DetallePagoResponse
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Detalle de Pago - @Model.Nombre_Trabajador</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 30px; color: #222; }
+        h1 { margin-bottom: 4px; }
+        .subtitulo { color: #555; margin-bottom: 20px; }
+        .meta { margin-bottom: 18px; }
+        .meta div { margin-bottom: 4px; }
+        .meta span { font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+        th, td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; }
+        th { background: #f2f2f2; }
+        .total-row td { font-weight: bold; background: #f7f7f7; }
+        .neto { text-align: right; font-size: 1.3rem; font-weight: bold; margin-top: 16px; }
+        @@media print {
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body onload="window.print()">
+    <h1>Detalle de Pago</h1>
+    <div class="subtitulo">Punto Trigo — Panadería</div>
+
+    <div class="meta">
+        <div><span>Empleado:</span> @Model.Nombre_Trabajador</div>
+        <div><span>Período:</span> @Model.Periodo</div>
+        <div><span>Rango:</span> @Model.Fecha_Inicio.ToString("dd/MM/yyyy") al @Model.Fecha_Fin.ToString("dd/MM/yyyy")</div>
+        <div><span>Fecha de generación:</span> @Model.Fecha_Generacion.ToString("dd/MM/yyyy HH:mm")</div>
+    </div>
+
+    <h3>Ingresos</h3>
+    <table>
+        <tbody>
+            <tr><td>Salario base del período</td><td>₡@((Model.Salario_Base_Aplicado ?? 0).ToString("N2"))</td></tr>
+            <tr><td>Horas extra</td><td>₡@Model.Ingreso_Horas_Extra.ToString("N2")</td></tr>
+            <tr class="total-row"><td>Total ingresos</td><td>₡@Model.Total_Ingresos.ToString("N2")</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Deducciones</h3>
+    <table>
+        <tbody>
+            <tr><td>Faltas / retardos</td><td>₡@Model.Deduccion_Asistencia.ToString("N2")</td></tr>
+            <tr><td>Préstamos / adelantos</td><td>₡@Model.Deduccion_Prestamos.ToString("N2")</td></tr>
+            <tr><td>Caja Costarricense de Seguro Social (CCSS 10.83%)</td><td>₡@Model.Deduccion_CCSS.ToString("N2")</td></tr>
+            <tr class="total-row"><td>Total deducciones</td><td>₡@Model.Total_Deducciones.ToString("N2")</td></tr>
+        </tbody>
+    </table>
+
+    <div class="neto">Monto neto a pagar: ₡@Model.Monto_Neto.ToString("N2")</div>
+
+    <p class="no-print">
+        <button onclick="window.print()">Imprimir</button>
+    </p>
+</body>
+</html>

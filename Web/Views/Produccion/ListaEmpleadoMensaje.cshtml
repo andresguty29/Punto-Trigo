@@ -1,0 +1,23 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "Lista de Producción";
+    bool esAdvertencia = ViewBag.EsAdvertencia == true;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 40px; color: #222; text-align: center; }
+        .icono { font-size: 2.4rem; margin-bottom: 10px; }
+        .mensaje { font-size: 1.05rem; max-width: 480px; margin: 0 auto; color: @(esAdvertencia ? "#8a6a2b" : "#b23b3b"); }
+        button { margin-top: 20px; padding: 8px 18px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="icono">@(esAdvertencia ? "⚠️" : "❌")</div>
+    <p class="mensaje">@ViewBag.MensajeEstado</p>
+    <button onclick="window.close()">Cerrar</button>
+</body>
+</html>

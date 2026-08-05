@@ -1,10 +1,11 @@
 CREATE PROCEDURE Agregar_Detalle_Compra
-	@Id_DetalleCompra UNIQUEIDENTIFIER,
-	@Id_Compra        UNIQUEIDENTIFIER,
-	@Id_Inventario    UNIQUEIDENTIFIER,
-	@Cantidad         DECIMAL(10,2),
-	@Unidad_Ingresada VARCHAR(20),
-	@Costo_Unitario   DECIMAL(18,2) = NULL
+	@Id_DetalleCompra   UNIQUEIDENTIFIER,
+	@Id_Compra          UNIQUEIDENTIFIER,
+	@Id_Inventario      UNIQUEIDENTIFIER,
+	@Cantidad           DECIMAL(10,2),
+	@Unidad_Ingresada   VARCHAR(20),
+	@Costo_Unitario     DECIMAL(18,2) = NULL,
+	@Fecha_Vencimiento  DATE = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -24,6 +25,9 @@ BEGIN
 		RETURN
 	END
 
+	DECLARE @Id_Proveedor UNIQUEIDENTIFIER
+	SELECT @Id_Proveedor = Id_Proveedor FROM [dbo].[Compra_TB] WHERE Id_Compra = @Id_Compra
+
 	BEGIN TRANSACTION
 
 		INSERT INTO [dbo].[DetalleCompra_TB]
@@ -33,7 +37,8 @@ BEGIN
 			[Id_Inventario],
 			[Cantidad],
 			[Unidad_Ingresada],
-			[Costo_Unitario]
+			[Costo_Unitario],
+			[Fecha_Vencimiento]
 		)
 		VALUES
 		(
@@ -42,12 +47,23 @@ BEGIN
 			@Id_Inventario,
 			@Cantidad,
 			@Unidad_Ingresada,
-			@Costo_Unitario
+			@Costo_Unitario,
+			@Fecha_Vencimiento
 		)
 
 		UPDATE [dbo].[Inventario_TB]
 		SET Stock_Actual = Stock_Actual + @Cantidad
 		WHERE Id_Inventario = @Id_Inventario
+
+		-- Se registra tambien como movimiento de Entrada para trazabilidad y control de vencimientos
+		INSERT INTO [dbo].[MovimientoInventario_TB]
+		(
+			[Id_Movimiento], [Id_Inventario], [Tipo], [Cantidad], [Motivo], [Id_Proveedor], [Fecha_Vencimiento], [Costo_Unitario]
+		)
+		VALUES
+		(
+			NEWID(), @Id_Inventario, 'Entrada', @Cantidad, 'Compra a proveedor', @Id_Proveedor, @Fecha_Vencimiento, @Costo_Unitario
+		)
 
 		SELECT @Id_DetalleCompra
 

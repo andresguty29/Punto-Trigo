@@ -9,7 +9,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     .AddCookie(options =>
     {
         options.LoginPath       = "/Login";
-        options.AccessDeniedPath = "/Login";
+        options.AccessDeniedPath = "/Login/AccesoDenegado";
         options.ExpireTimeSpan  = TimeSpan.FromHours(8);
         options.SlidingExpiration = true;
         options.Cookie.HttpOnly = true;
@@ -33,6 +33,14 @@ AddCrud<ClienteService>(builder.Services);
 AddCrud<CompraService>(builder.Services);
 AddCrud<TiqueteService>(builder.Services);
 AddCrud<ReporteService>(builder.Services);
+AddCrud<RegistroAccesoService>(builder.Services);
+AddCrud<BitacoraService>(builder.Services);
+AddCrud<VacacionService>(builder.Services);
+AddCrud<AsistenciaService>(builder.Services);
+AddCrud<PrestamoService>(builder.Services);
+AddCrud<HorasExtraService>(builder.Services);
+AddCrud<PlanillaService>(builder.Services);
+AddCrud<PerdidaService>(builder.Services);
 
 var app = builder.Build();
 

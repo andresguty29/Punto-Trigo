@@ -150,6 +150,36 @@
     <Build Include="dbo\Tables\DetalleTiquete_TB.sql" />
     <Build Include="dbo\Tables\Tiquete_TB.sql" />
     <Build Include="dbo\Stored Procedures\Obtener_Reporte_Financiero.sql" />
+    <Build Include="dbo\Stored Procedures\Asignar_Vacaciones.sql" />
+    <Build Include="dbo\Tables\Asistencia_TB.sql" />
+    <Build Include="dbo\Tables\Bitacora_TB.sql" />
+    <Build Include="dbo\Tables\HorasExtra_TB.sql" />
+    <Build Include="dbo\Tables\PlanillaPago_TB.sql" />
+    <Build Include="dbo\Tables\Prestamo_TB.sql" />
+    <Build Include="dbo\Tables\RegistroAcceso_TB.sql" />
+    <Build Include="dbo\Tables\VacacionAsignada_TB.sql" />
+    <Build Include="dbo\Stored Procedures\Calcular_Pago_Trabajador.sql" />
+    <Build Include="dbo\Stored Procedures\Cerrar_Sesion_Acceso.sql" />
+    <Build Include="dbo\Stored Procedures\Configurar_Pago_Trabajador.sql" />
+    <Build Include="dbo\Stored Procedures\Generar_Detalle_Pago.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Asistencia_Trabajador.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Bitacora.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Detalle_Pago.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Historial_Planillas.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Horas_Extra_Trabajador.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Prestamos_Trabajador.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Registro_Acceso.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Registros_Acceso.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Vacaciones_Trabajador.sql" />
+    <Build Include="dbo\Stored Procedures\Registrar_Acceso.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Resumen_Asistencia.sql" />
+    <Build Include="dbo\Stored Procedures\Registrar_Asistencia.sql" />
+    <Build Include="dbo\Stored Procedures\Registrar_Bitacora.sql" />
+    <Build Include="dbo\Stored Procedures\Registrar_Horas_Extra.sql" />
+    <Build Include="dbo\Stored Procedures\Registrar_Prestamo.sql" />
+    <Build Include="dbo\Stored Procedures\Obtener_Vencimientos_Pendientes.sql" />
+    <Build Include="dbo\Tables\PerdidaInventario_TB.sql" />
+    <Build Include="dbo\Stored Procedures\Procesar_Perdida_Vencimiento.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="BD.refactorlog" />

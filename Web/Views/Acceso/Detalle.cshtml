@@ -1,0 +1,27 @@
+@model Abstracciones.Modelos.RegistroAcceso.RegistroAcceso.RegistroAccesoResponse
+@{
+    Layout = null;
+    ViewData["Title"] = "Detalle de Acceso";
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/dashboard.css" />
+</head>
+<body style="margin:0; background:var(--pt-blue-050,#f5f9ff);">
+    <div style="padding:24px; max-width:520px;">
+        <h1 style="margin-top:0;">Detalle del registro de acceso</h1>
+
+        <div class="reporte-stat-card" style="margin-top:12px;">
+            <p><strong>Usuario:</strong> @Model.Nombre_Usuario</p>
+            <p><strong>Fecha de inicio de sesión:</strong> @Model.Fecha_Login.ToString("dd/MM/yyyy HH:mm:ss")</p>
+            <p><strong>Fecha de cierre de sesión:</strong> @(Model.Fecha_Logout.HasValue ? Model.Fecha_Logout.Value.ToString("dd/MM/yyyy HH:mm:ss") : "Sesión activa / no cerrada")</p>
+            <p><strong>Acción:</strong> @(Model.Exitoso ? "Inicio de sesión exitoso" : "Intento fallido de inicio de sesión")</p>
+            <p><strong>Estado:</strong> @Model.Estado</p>
+        </div>
+    </div>
+</body>
+</html>

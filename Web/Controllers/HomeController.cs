@@ -21,9 +21,11 @@ public class HomeController : Controller
 
         var todosModulos = new List<DashboardModuleViewModel>
         {
+            // ── Sistema ──────────────────────────────────
             new()
             {
                 Key = "usuarios",
+                Group = "Sistema",
                 Roles = ["Admin"],
                 Name = "Usuarios",
                 Tag = "Acceso y seguridad",
@@ -39,7 +41,21 @@ public class HomeController : Controller
             },
             new()
             {
+                Key = "accesos",
+                Group = "Sistema",
+                Roles = ["Admin"],
+                Name = "Accesos",
+                Tag = "Seguridad",
+                Description = "Historial de inicios y cierres de sesion, incluyendo intentos fallidos.",
+                Accent = "#0B3D6E",
+                Table = new()
+            },
+
+            // ── Recursos Humanos ──────────────────────────
+            new()
+            {
                 Key = "planilla",
+                Group = "Recursos Humanos",
                 Roles = ["Admin"],
                 Name = "Planilla",
                 Tag = "Recursos humanos",
@@ -56,6 +72,7 @@ public class HomeController : Controller
             new()
             {
                 Key = "puestos",
+                Group = "Recursos Humanos",
                 Roles = ["Admin"],
                 Name = "Puestos",
                 Tag = "Organización",
@@ -71,7 +88,21 @@ public class HomeController : Controller
             },
             new()
             {
+                Key = "salarios",
+                Group = "Recursos Humanos",
+                Roles = ["Admin"],
+                Name = "Historial de Salarios",
+                Tag = "Recursos Humanos",
+                Description = "Consulta de detalles de pago generados por periodo, para control de costos de planilla.",
+                Accent = "#0B3D6E",
+                Table = new()
+            },
+
+            // ── Ventas ─────────────────────────────────────
+            new()
+            {
                 Key = "productos",
+                Group = "Ventas",
                 Roles = ["Admin", "Cajas"],
                 Name = "Productos",
                 Tag = "Catálogo",
@@ -80,14 +111,45 @@ public class HomeController : Controller
                 Table = new()
                 {
                     Title = "Catálogo de productos",
-                    Columns = ["Imagen", "Nombre", "Proveedor", "Precio", "Stock", "Estado"],
+                    Columns = ["Imagen", "Código", "Nombre", "Proveedor", "Precio", "Stock", "Estado"],
                     EmptyMessage = "Sin productos registrados.",
                     SourceUrl = "https://localhost:44378/api/Producto"
                 }
             },
             new()
             {
+                Key = "tiquetes",
+                Group = "Ventas",
+                Roles = ["Admin", "Cajas"],
+                Name = "Tiquetes",
+                Tag = "Ventas",
+                Description = "Historial de tiquetes electronicos emitidos (Hacienda simulado).",
+                Accent = "#1D5EA8",
+                Table = new()
+            },
+            new()
+            {
+                Key = "clientes",
+                Group = "Ventas",
+                Roles = ["Admin"],
+                Name = "Clientes",
+                Tag = "Facturación",
+                Description = "Directorio de clientes frecuentes para agilizar la emisión de comprobantes.",
+                Accent = "#4A6C2F",
+                Table = new()
+                {
+                    Title = "Directorio de clientes",
+                    Columns = ["Cédula", "Nombre", "Correo", "Teléfono", "Estado"],
+                    EmptyMessage = "Sin clientes registrados.",
+                    SourceUrl = "https://localhost:44378/api/Cliente"
+                }
+            },
+
+            // ── Compras e Inventario ────────────────────────
+            new()
+            {
                 Key = "inventario",
+                Group = "Compras e Inventario",
                 Roles = ["Admin", "Panadero"],
                 Name = "Inventario",
                 Tag = "Almacén",
@@ -101,6 +163,47 @@ public class HomeController : Controller
                     SourceUrl = "https://localhost:44378/api/Inventario"
                 }
             },
+            new()
+            {
+                Key = "compras",
+                Group = "Compras e Inventario",
+                Roles = ["Admin"],
+                Name = "Compras",
+                Tag = "Gastos y proveedores",
+                Description = "Registro de facturas de proveedores, control de egresos y stock de insumos.",
+                Accent = "#8A6A2B",
+                Table = new()
+            },
+            new()
+            {
+                Key = "proveedores",
+                Group = "Compras e Inventario",
+                Roles = ["Admin"],
+                Name = "Proveedores",
+                Tag = "Abastecimiento",
+                Description = "Directorio de proveedores para abastecimiento y compras.",
+                Accent = "#0B3D6E",
+                Table = new()
+                {
+                    Title = "Directorio de proveedores",
+                    Columns = ["Identificación", "Nombre", "Teléfono", "Correo", "Estado"],
+                    EmptyMessage = "Sin proveedores registrados.",
+                    SourceUrl = "https://localhost:44378/api/Proveedor"
+                }
+            },
+            new()
+            {
+                Key = "vencimientos",
+                Group = "Compras e Inventario",
+                Roles = ["Admin"],
+                Name = "Productos Vencidos",
+                Tag = "Inventario",
+                Description = "Lotes de inventario vencidos, pendientes de procesar como perdida.",
+                Accent = "#C41E1E",
+                Table = new()
+            },
+
+            // ── Sin agrupar ────────────────────────────────
             new()
             {
                 Key = "produccion",
@@ -129,42 +232,6 @@ public class HomeController : Controller
             },
             new()
             {
-                Key = "proveedores",
-                Roles = ["Admin"],
-                Name = "Proveedores",
-                Tag = "Abastecimiento",
-                Description = "Directorio de proveedores para abastecimiento y compras.",
-                Accent = "#0B3D6E",
-                Table = new()
-                {
-                    Title = "Directorio de proveedores",
-                    Columns = ["Identificación", "Nombre", "Teléfono", "Correo", "Estado"],
-                    EmptyMessage = "Sin proveedores registrados.",
-                    SourceUrl = "https://localhost:44378/api/Proveedor"
-                }
-            },
-            new()
-            {
-                Key = "compras",
-                Roles = ["Admin"],
-                Name = "Compras",
-                Tag = "Gastos y proveedores",
-                Description = "Registro de facturas de proveedores, control de egresos y stock de insumos.",
-                Accent = "#8A6A2B",
-                Table = new()
-            },
-            new()
-            {
-                Key = "tiquetes",
-                Roles = ["Admin", "Cajas"],
-                Name = "Tiquetes",
-                Tag = "Ventas",
-                Description = "Historial de tiquetes electronicos emitidos (Hacienda simulado).",
-                Accent = "#1D5EA8",
-                Table = new()
-            },
-            new()
-            {
                 Key = "reportes",
                 Roles = ["Admin"],
                 Name = "Reportes",
@@ -172,22 +239,6 @@ public class HomeController : Controller
                 Description = "Comparativo de ingresos y egresos con graficas, exportacion a Excel/PDF.",
                 Accent = "#4A6C2F",
                 Table = new()
-            },
-            new()
-            {
-                Key = "clientes",
-                Roles = ["Admin"],
-                Name = "Clientes",
-                Tag = "Facturación",
-                Description = "Directorio de clientes frecuentes para agilizar la emisión de comprobantes.",
-                Accent = "#4A6C2F",
-                Table = new()
-                {
-                    Title = "Directorio de clientes",
-                    Columns = ["Cédula", "Nombre", "Correo", "Teléfono", "Estado"],
-                    EmptyMessage = "Sin clientes registrados.",
-                    SourceUrl = "https://localhost:44378/api/Cliente"
-                }
             }
         };
 

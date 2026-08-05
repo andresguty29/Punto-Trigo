@@ -190,6 +190,79 @@ namespace Web.Controllers
             return View(asignacion);
         }
 
+        public static readonly string[] TurnosValidos = ["Mañana", "Tarde", "Noche"];
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> SeleccionarListaEmpleado(bool modal = true)
+        {
+            var panaderos = await _trabajadorService.ObtenerPanaderos();
+
+            ViewBag.Trabajadores = panaderos
+                .OrderBy(t => t.Nombre_Completo)
+                .Select(t => new SelectListItem
+                {
+                    Value = t.Id_Trabajador.ToString(),
+                    Text = t.Nombre_Completo
+                }).ToList();
+
+            ViewBag.Turnos = TurnosValidos;
+            ViewBag.Modal = modal;
+            return View();
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ImprimirListaEmpleado(Guid? idTrabajador, string? turno)
+        {
+            if (idTrabajador == null || string.IsNullOrWhiteSpace(turno))
+            {
+                ViewBag.MensajeEstado = "Debes seleccionar un empleado y un turno para generar la lista.";
+                ViewBag.EsAdvertencia = true;
+                return View("ListaEmpleadoMensaje");
+            }
+
+            if (!TurnosValidos.Contains(turno))
+            {
+                ViewBag.MensajeEstado = $"El turno \"{turno}\" no es válido. Los turnos permitidos son: {string.Join(", ", TurnosValidos)}.";
+                ViewBag.EsAdvertencia = false;
+                return View("ListaEmpleadoMensaje");
+            }
+
+            try
+            {
+                var panaderos = await _trabajadorService.ObtenerPanaderos();
+                var empleado = panaderos.FirstOrDefault(p => p.Id_Trabajador == idTrabajador);
+
+                if (empleado == null)
+                {
+                    ViewBag.MensajeEstado = "El empleado seleccionado no existe o no está activo.";
+                    ViewBag.EsAdvertencia = false;
+                    return View("ListaEmpleadoMensaje");
+                }
+
+                var lista = await _produccionService.ObtenerListaDiaria(idTrabajador.Value);
+
+                if (!lista.Any())
+                {
+                    ViewBag.MensajeEstado = $"{empleado.Nombre_Completo} no tiene productos de producción asignados para hoy.";
+                    ViewBag.EsAdvertencia = true;
+                    return View("ListaEmpleadoMensaje");
+                }
+
+                ViewBag.NombreEmpleado = empleado.Nombre_Completo;
+                ViewBag.Turno = turno;
+                ViewBag.Fecha = DateTime.Now;
+                return View(lista);
+            }
+            catch
+            {
+                ViewBag.MensajeEstado = "No se pudo generar el documento. Intenta de nuevo.";
+                ViewBag.EsAdvertencia = false;
+                return View("ListaEmpleadoMensaje");
+            }
+        }
+
         private async Task CargarCombos()
         {
             var panaderos = await _trabajadorService.ObtenerPanaderos();

@@ -43,6 +43,11 @@
                     <input type="number" name="Detalles[@i].Costo_Unitario" class="mf-input" step="0.01" min="0" value="@Model[i].Costo_Unitario" />
                 </div>
 
+                <div class="detalle-campo" style="max-width:160px;">
+                    <label class="detalle-campo-label">Vence <span style="font-weight:400;">(opcional)</span></label>
+                    <input type="date" name="Detalles[@i].Fecha_Vencimiento" class="mf-input" value="@Model[i].Fecha_Vencimiento?.ToString("yyyy-MM-dd")" />
+                </div>
+
                 <button type="button" class="mf-btn mf-btn-secondary btn-quitar-detalle" title="Quitar este insumo de la compra">Quitar</button>
             </div>
         }
@@ -79,6 +84,11 @@
         <div class="detalle-campo" style="max-width:150px;">
             <label class="detalle-campo-label">Costo unitario ₡ <span style="font-weight:400;">(opcional)</span></label>
             <input type="number" name="Detalles[__INDEX__].Costo_Unitario" class="mf-input" step="0.01" min="0" />
+        </div>
+
+        <div class="detalle-campo" style="max-width:160px;">
+            <label class="detalle-campo-label">Vence <span style="font-weight:400;">(opcional)</span></label>
+            <input type="date" name="Detalles[__INDEX__].Fecha_Vencimiento" class="mf-input" />
         </div>
 
         <button type="button" class="mf-btn mf-btn-secondary btn-quitar-detalle" title="Quitar este insumo de la compra">Quitar</button>

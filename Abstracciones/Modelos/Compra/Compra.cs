@@ -21,6 +21,8 @@ namespace Abstracciones.Modelos.Compra
 
             [Range(0, 9999999.99, ErrorMessage = "El costo no puede ser negativo")]
             public decimal? Costo_Unitario { get; set; }
+
+            public DateOnly? Fecha_Vencimiento { get; set; }
         }
 
         public class DetalleCompraRequest : DetalleCompraBase { }

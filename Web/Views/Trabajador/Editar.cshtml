@@ -40,6 +40,12 @@
         <span asp-validation-for="Id_Puesto" class="mf-error"></span>
     </div>
 
+    <div class="mf-group">
+        <label asp-for="Fecha_Ingreso" class="mf-label">Fecha de ingreso <span style="font-weight:400;text-transform:none;">(opcional)</span></label>
+        <input asp-for="Fecha_Ingreso" class="mf-input" type="date" />
+        <span asp-validation-for="Fecha_Ingreso" class="mf-error"></span>
+    </div>
+
     <div class="mf-actions">
         <button type="submit" class="mf-btn mf-btn-primary">Guardar Cambios</button>
         @if (!isModal)

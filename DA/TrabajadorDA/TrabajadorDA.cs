@@ -26,7 +26,8 @@ namespace DA.TrabajadorDA
                 Id_Trabajador = Guid.NewGuid(),
                 Cedula = trabajador.Cedula,
                 Nombre_Completo = trabajador.Nombre_Completo,
-                Id_Puesto = trabajador.Id_Puesto
+                Id_Puesto = trabajador.Id_Puesto,
+                Fecha_Ingreso = trabajador.Fecha_Ingreso.HasValue ? trabajador.Fecha_Ingreso.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null
             });
 
             return resultadoConsulta;
@@ -43,7 +44,8 @@ namespace DA.TrabajadorDA
                 Id_Trabajador = Id,
                 Cedula = trabajador.Cedula,
                 Nombre_Completo = trabajador.Nombre_Completo,
-                Id_Puesto = trabajador.Id_Puesto
+                Id_Puesto = trabajador.Id_Puesto,
+                Fecha_Ingreso = trabajador.Fecha_Ingreso.HasValue ? trabajador.Fecha_Ingreso.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null
             });
 
             return resultadoConsulta;
@@ -94,6 +96,32 @@ namespace DA.TrabajadorDA
         public async Task<IEnumerable<TrabajadorResponse>> ObtenerPanaderos()
         {
             return await _sqlConnection.QueryAsync<TrabajadorResponse>("Obtener_Trabajadores_Panaderos");
+        }
+
+        public async Task<Guid> ConfigurarPago(Guid Id, ConfigurarPagoRequest configuracion)
+        {
+            await verificarTrabajadorExiste(Id);
+
+            return await _sqlConnection.ExecuteScalarAsync<Guid>("Configurar_Pago_Trabajador", new
+            {
+                Id_Trabajador = Id,
+                configuracion.Tipo_Pago,
+                configuracion.Salario_Base,
+                configuracion.Tarifa_Hora
+            });
+        }
+
+        public async Task<CalculoPagoResponse> CalcularPago(Guid Id, decimal? horasTrabajadas)
+        {
+            await verificarTrabajadorExiste(Id);
+
+            var resultado = await _sqlConnection.QueryAsync<CalculoPagoResponse>("Calcular_Pago_Trabajador", new
+            {
+                Id_Trabajador = Id,
+                Horas_Trabajadas = horasTrabajadas
+            });
+
+            return resultado.FirstOrDefault();
         }
 
         private async Task verificarTrabajadorExiste(Guid Id)

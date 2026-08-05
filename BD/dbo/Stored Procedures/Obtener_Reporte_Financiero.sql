@@ -14,14 +14,29 @@ BEGIN
 		  AND CAST(Fecha_Emision AS DATE) BETWEEN @Fecha_Inicio AND @Fecha_Fin
 		GROUP BY CAST(Fecha_Emision AS DATE)
 	),
-	Egresos AS (
+	EgresosCompras AS (
 		SELECT
 			CAST(Fecha_Compra AS DATE) AS Fecha,
-			SUM(Monto_Total) AS Monto
+			Monto_Total AS Monto
 		FROM [dbo].[Compra_TB]
 		WHERE Id_Estado = 1
 		  AND CAST(Fecha_Compra AS DATE) BETWEEN @Fecha_Inicio AND @Fecha_Fin
-		GROUP BY CAST(Fecha_Compra AS DATE)
+	),
+	EgresosPerdidas AS (
+		SELECT
+			CAST(Fecha_Procesado AS DATE) AS Fecha,
+			Costo_Total AS Monto
+		FROM [dbo].[PerdidaInventario_TB]
+		WHERE CAST(Fecha_Procesado AS DATE) BETWEEN @Fecha_Inicio AND @Fecha_Fin
+	),
+	Egresos AS (
+		SELECT Fecha, SUM(Monto) AS Monto
+		FROM (
+			SELECT Fecha, Monto FROM EgresosCompras
+			UNION ALL
+			SELECT Fecha, Monto FROM EgresosPerdidas
+		) todo
+		GROUP BY Fecha
 	)
 	SELECT
 		COALESCE(i.Fecha, e.Fecha) AS Fecha,

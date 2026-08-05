@@ -17,6 +17,9 @@ namespace Abstracciones.Modelos.Producto
 
             [Range(0, int.MaxValue, ErrorMessage = "El stock no puede ser negativo")]
             public int Stock_Actual { get; set; }
+
+            [StringLength(30, ErrorMessage = "El código no puede superar los 30 caracteres")]
+            public string? Codigo { get; set; }
         }
 
         public class ProductoRequest : ProductoBase

@@ -1,0 +1,75 @@
+@model IEnumerable<Abstracciones.Modelos.Produccion.Produccion.ListaProduccionResponse>
+@{
+    Layout = null;
+    DateTime fecha = ViewBag.Fecha;
+    string turno = ViewBag.Turno;
+    string nombreEmpleado = ViewBag.NombreEmpleado;
+    var productos = Model.ToList();
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Lista de Producción - @nombreEmpleado</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 30px; color: #222; }
+        h1 { margin-bottom: 4px; }
+        .subtitulo { color: #555; margin-bottom: 20px; }
+        .meta { display: flex; gap: 30px; margin-bottom: 20px; padding: 10px 0; border-top: 2px solid #333; border-bottom: 2px solid #333; }
+        .meta div span { display: block; font-size: 0.78rem; text-transform: uppercase; color: #666; }
+        .meta div strong { font-size: 1.05rem; }
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+        th { background: #f2f2f2; }
+        .col-check { width: 60px; text-align: center; }
+        .checkbox { width: 22px; height: 22px; border: 2px solid #333; display: inline-block; }
+        .col-obs { width: 30%; }
+        @@media print {
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body onload="window.print()">
+    <h1>Lista de Producción</h1>
+    <div class="subtitulo">Punto Trigo — Panadería</div>
+
+    <div class="meta">
+        <div><span>Fecha</span><strong>@fecha.ToString("dd/MM/yyyy")</strong></div>
+        <div><span>Turno</span><strong>@turno</strong></div>
+        <div><span>Responsable</span><strong>@nombreEmpleado</strong></div>
+    </div>
+
+    @if (!productos.Any())
+    {
+        <p>No hay productos asignados para esta lista.</p>
+    }
+    else
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th class="col-check">✔</th>
+                    <th>Producto</th>
+                    <th>Cantidad diaria</th>
+                    <th class="col-obs">Observaciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in productos)
+                {
+                    <tr>
+                        <td class="col-check"><span class="checkbox"></span></td>
+                        <td>@item.Nombre_Producto</td>
+                        <td>@item.Cantidad_Diaria</td>
+                        <td></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <p class="no-print">
+        <button onclick="window.print()">Imprimir</button>
+    </p>
+</body>
+</html>

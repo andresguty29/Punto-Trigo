@@ -5,7 +5,8 @@ CREATE PROCEDURE Agregar_Producto
 	@Nombre_Producto VARCHAR(MAX),
 	@Precio_Venta    DECIMAL(18,2),
 	@Stock_Actual    INT,
-	@Imagen_Path     VARCHAR(500) = NULL
+	@Imagen_Path     VARCHAR(500) = NULL,
+	@Codigo          VARCHAR(30) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -20,7 +21,8 @@ BEGIN
 			[Nombre_Producto],
 			[Precio_Venta],
 			[Stock_Actual],
-			[Imagen_Path]
+			[Imagen_Path],
+			[Codigo]
 		)
 		VALUES
 		(
@@ -30,7 +32,8 @@ BEGIN
 			@Nombre_Producto,
 			@Precio_Venta,
 			@Stock_Actual,
-			@Imagen_Path
+			@Imagen_Path,
+			@Codigo
 		)
 
 		SELECT @Id_Producto

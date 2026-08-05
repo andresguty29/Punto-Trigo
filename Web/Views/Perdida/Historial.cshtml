@@ -1,0 +1,107 @@
+@model IEnumerable<Abstracciones.Modelos.Perdida.Perdida.VencimientoPendienteResponse>
+@{
+    Layout = null;
+    ViewData["Title"] = "Productos Vencidos";
+
+    var pendientes = Model.OrderBy(p => p.Fecha_Vencimiento).ToList();
+    var totalPerdida = pendientes.Sum(p => Math.Min(p.Cantidad, p.Stock_Actual) * (p.Costo_Unitario ?? 0));
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/dashboard.css" />
+</head>
+<body style="margin:0; background:var(--pt-blue-050,#f5f9ff);">
+<div style="padding:24px;">
+    <h1 style="margin-top:0;">Productos Vencidos</h1>
+    <p style="color:var(--pt-ink-soft);">
+        Lotes de inventario con fecha de vencimiento cumplida. Al procesarlos, se descuentan del stock y se registran
+        como pérdida en el reporte financiero (egresos).
+    </p>
+
+    @if (TempData["PerdidaOk"] != null)
+    {
+        <div class="mf-error-banner" style="background:var(--pt-blue-050); color:var(--pt-blue-800); border-color:var(--pt-blue-100);">@TempData["PerdidaOk"]</div>
+    }
+    @if (TempData["PerdidaError"] != null)
+    {
+        <div class="mf-error-banner">@TempData["PerdidaError"]</div>
+    }
+
+    <div class="reporte-stat-card" style="margin-bottom:16px; max-width:320px;">
+        <div class="reporte-stat-label">Pérdida estimada pendiente de procesar</div>
+        <div class="reporte-stat-valor" style="color:#b23b3b;">₡@totalPerdida.ToString("N2")</div>
+    </div>
+
+    @if (pendientes.Count == 0)
+    {
+        <div class="empty-state">No hay productos vencidos pendientes de procesar.</div>
+    }
+    else
+    {
+        <table class="data-table">
+            <thead>
+                <tr><th>Insumo</th><th>Cantidad del lote</th><th>Stock actual</th><th>Vencimiento</th><th>Costo unitario</th><th>Pérdida estimada</th><th>Acciones</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var p in pendientes)
+                {
+                    var cantidadAfectada = Math.Min(p.Cantidad, p.Stock_Actual);
+                    var perdidaEstimada = cantidadAfectada * (p.Costo_Unitario ?? 0);
+                    <tr>
+                        <td>@p.Nombre_Inventario</td>
+                        <td>@p.Cantidad @p.Unidad</td>
+                        <td>@p.Stock_Actual @p.Unidad</td>
+                        <td>@p.Fecha_Vencimiento.ToString("dd/MM/yyyy")</td>
+                        <td>@(p.Costo_Unitario.HasValue ? $"₡{p.Costo_Unitario.Value:N2}" : "No registrado")</td>
+                        <td>₡@perdidaEstimada.ToString("N2")</td>
+                        <td>
+                            <form method="post" asp-action="Procesar" class="form-procesar-perdida" style="display:inline;">
+                                <input type="hidden" name="idMovimiento" value="@p.Id_Movimiento" />
+                                <button type="submit" class="mf-btn mf-btn-danger">Procesar como pérdida</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+<div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+        <p class="confirm-msg" id="confirmMsg">¿Confirmas procesar este lote vencido como pérdida? Se descontará del stock.</p>
+        <div class="confirm-actions">
+            <button class="mf-btn mf-btn-danger" id="confirmOk">Sí, procesar</button>
+            <button class="mf-btn mf-btn-secondary" id="confirmCancel">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let formPendiente = null;
+
+    document.querySelectorAll('.form-procesar-perdida').forEach(form => {
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            formPendiente = form;
+            document.getElementById('confirmOverlay').classList.add('show');
+        });
+    });
+
+    document.getElementById('confirmOk').addEventListener('click', () => {
+        document.getElementById('confirmOverlay').classList.remove('show');
+        if (formPendiente) formPendiente.submit();
+    });
+
+    document.getElementById('confirmCancel').addEventListener('click', () => {
+        document.getElementById('confirmOverlay').classList.remove('show');
+        formPendiente = null;
+    });
+</script>
+</body>
+</html>

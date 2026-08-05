@@ -57,6 +57,16 @@
         </select>
     </div>
 
+    <div class="mf-group" id="grupoVencimiento">
+        <label asp-for="Fecha_Vencimiento" class="mf-label">Fecha de vencimiento <span style="font-weight:400;text-transform:none;">(opcional, solo entradas)</span></label>
+        <input asp-for="Fecha_Vencimiento" class="mf-input" type="date" />
+    </div>
+
+    <div class="mf-group" id="grupoCosto">
+        <label asp-for="Costo_Unitario" class="mf-label">Costo unitario (₡) <span style="font-weight:400;text-transform:none;">(opcional, solo entradas — se usa para valorar pérdidas por vencimiento)</span></label>
+        <input asp-for="Costo_Unitario" class="mf-input" type="number" step="0.01" min="0" />
+    </div>
+
     <div class="mf-actions">
         <button type="submit" class="mf-btn mf-btn-primary">Registrar</button>
         @if (!isModal)
@@ -69,4 +79,14 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        function actualizarCamposMovimiento() {
+            const tipo = document.querySelector('[name="Tipo"]').value;
+            const esEntrada = tipo === 'Entrada';
+            document.getElementById('grupoVencimiento').style.display = esEntrada ? 'block' : 'none';
+            document.getElementById('grupoCosto').style.display = esEntrada ? 'block' : 'none';
+        }
+        document.querySelector('[name="Tipo"]').addEventListener('change', actualizarCamposMovimiento);
+        actualizarCamposMovimiento();
+    </script>
 }

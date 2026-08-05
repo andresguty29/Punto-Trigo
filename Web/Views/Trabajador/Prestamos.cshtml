@@ -1,0 +1,89 @@
+@model IEnumerable<Abstracciones.Modelos.Prestamo.Prestamo.PrestamoResponse>
+@{
+    Layout = null;
+    ViewData["Title"] = "Préstamos y Adelantos";
+
+    Guid idTrabajador = ViewBag.IdTrabajador;
+    var registros = Model.OrderByDescending(r => r.Fecha).ToList();
+    var totalPendiente = registros.Sum(r => r.Saldo_Pendiente);
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/dashboard.css" />
+</head>
+<body style="margin:0; background:var(--pt-blue-050,#f5f9ff);">
+<div style="padding:24px; max-width:720px;">
+    <h1 style="margin-top:0;">Préstamos y Adelantos — @ViewBag.NombreTrabajador</h1>
+
+    @if (TempData["PrestamoOk"] != null)
+    {
+        <div class="mf-error-banner" style="background:var(--pt-blue-050); color:var(--pt-blue-800); border-color:var(--pt-blue-100);">@TempData["PrestamoOk"]</div>
+    }
+    @if (TempData["PrestamoError"] != null)
+    {
+        <div class="mf-error-banner">@TempData["PrestamoError"]</div>
+    }
+
+    <div class="reporte-stat-card" style="margin-bottom:16px;">
+        <div class="reporte-stat-label">Total pendiente por deducir</div>
+        <div class="reporte-stat-valor" style="color:#b23b3b;">₡@totalPendiente.ToString("N2")</div>
+    </div>
+
+    <form method="post" action="/Trabajador/RegistrarPrestamo" class="modal-form" style="background:var(--pt-white); border:1px solid var(--pt-border); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <input type="hidden" name="Id_Trabajador" value="@idTrabajador" />
+
+        <div class="mf-group">
+            <label class="mf-label">Monto (₡)</label>
+            <input type="number" step="0.01" min="0.01" name="Monto" class="mf-input" required />
+        </div>
+
+        <div class="mf-group">
+            <label class="mf-label">Fecha</label>
+            <input type="date" name="Fecha" class="mf-input" required />
+        </div>
+
+        <div class="mf-group">
+            <label class="mf-label">Descripción <span style="font-weight:400;text-transform:none;">(opcional)</span></label>
+            <input type="text" name="Descripcion" class="mf-input" />
+        </div>
+
+        <div class="mf-actions">
+            <button type="submit" class="mf-btn mf-btn-primary">Registrar</button>
+        </div>
+    </form>
+
+    <p style="color:var(--pt-ink-soft); font-size:0.85rem;">
+        El monto registrado se deducirá automáticamente al generar el detalle de pago del empleado (módulo de Planilla).
+    </p>
+
+    @if (registros.Count == 0)
+    {
+        <div class="empty-state">Este empleado no tiene préstamos o adelantos registrados.</div>
+    }
+    else
+    {
+        <table class="data-table">
+            <thead>
+                <tr><th>Fecha</th><th>Monto</th><th>Saldo pendiente</th><th>Descripción</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var r in registros)
+                {
+                    <tr>
+                        <td>@r.Fecha.ToString("dd/MM/yyyy")</td>
+                        <td>₡@r.Monto.ToString("N2")</td>
+                        <td>₡@r.Saldo_Pendiente.ToString("N2")</td>
+                        <td>@r.Descripcion</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+</body>
+</html>

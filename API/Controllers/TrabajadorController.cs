@@ -94,5 +94,33 @@ namespace API.Controllers
             return Ok(resultado);
         }
 
+        [HttpPatch("{Id}/pago")]
+        public async Task<IActionResult> ConfigurarPago(Guid Id, ConfigurarPagoRequest configuracion)
+        {
+            try
+            {
+                var resultado = await _trabajadorFlujo.ConfigurarPago(Id, configuracion);
+                return Ok(resultado);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { mensaje = ex.Message });
+            }
+        }
+
+        [HttpGet("{Id}/pago/calcular")]
+        public async Task<IActionResult> CalcularPago(Guid Id, decimal? horasTrabajadas)
+        {
+            try
+            {
+                var resultado = await _trabajadorFlujo.CalcularPago(Id, horasTrabajadas);
+                return Ok(resultado);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { mensaje = ex.Message });
+            }
+        }
+
     }
 }

@@ -40,7 +40,8 @@ namespace DA.CompraDA
                     detalle.Id_Inventario,
                     detalle.Cantidad,
                     detalle.Unidad_Ingresada,
-                    detalle.Costo_Unitario
+                    detalle.Costo_Unitario,
+                    detalle.Fecha_Vencimiento
                 });
             }
 

@@ -2,7 +2,8 @@
     @Id_Trabajador UNIQUEIDENTIFIER,
     @Cedula VARCHAR(MAX),
     @Nombre_Completo VARCHAR(MAX),
-    @Id_Puesto UNIQUEIDENTIFIER
+    @Id_Puesto UNIQUEIDENTIFIER,
+    @Fecha_Ingreso DATE = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -15,7 +16,8 @@ BEGIN
             [Cedula],
             [Nombre_Completo],
             [Id_Estado],
-            [Id_Puesto]
+            [Id_Puesto],
+            [Fecha_Ingreso]
         )
         VALUES
         (
@@ -23,7 +25,8 @@ BEGIN
             @Cedula,
             @Nombre_Completo,
             1,
-            @Id_Puesto
+            @Id_Puesto,
+            @Fecha_Ingreso
         );
 
         SELECT @Id_Trabajador AS Id_Trabajador;

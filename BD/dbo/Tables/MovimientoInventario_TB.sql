@@ -7,6 +7,8 @@ CREATE TABLE [dbo].[MovimientoInventario_TB] (
     [Motivo]        NVARCHAR(200)    NULL,
     [Id_Proveedor]  UNIQUEIDENTIFIER NULL,
     [Id_Estado]     INT              NOT NULL DEFAULT 1,
+    [Fecha_Vencimiento] DATE         NULL,
+    [Costo_Unitario]    DECIMAL(18,2) NULL,
 
     CONSTRAINT PK_MovimientoInventario PRIMARY KEY ([Id_Movimiento]),
     CONSTRAINT FK_Movimiento_Inventario FOREIGN KEY ([Id_Inventario])

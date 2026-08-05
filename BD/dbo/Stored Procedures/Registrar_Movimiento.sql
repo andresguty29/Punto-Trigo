@@ -1,10 +1,12 @@
 CREATE PROCEDURE Registrar_Movimiento
-    @Id_Movimiento UNIQUEIDENTIFIER,
-    @Id_Inventario UNIQUEIDENTIFIER,
-    @Tipo          NVARCHAR(10),
-    @Cantidad      DECIMAL(10,2),
-    @Motivo        NVARCHAR(200) = NULL,
-    @Id_Proveedor  UNIQUEIDENTIFIER = NULL
+    @Id_Movimiento      UNIQUEIDENTIFIER,
+    @Id_Inventario      UNIQUEIDENTIFIER,
+    @Tipo               NVARCHAR(10),
+    @Cantidad           DECIMAL(10,2),
+    @Motivo             NVARCHAR(200) = NULL,
+    @Id_Proveedor       UNIQUEIDENTIFIER = NULL,
+    @Fecha_Vencimiento  DATE = NULL,
+    @Costo_Unitario     DECIMAL(18,2) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -22,8 +24,8 @@ BEGIN
         END
     END
 
-    INSERT INTO [dbo].[MovimientoInventario_TB] (Id_Movimiento, Id_Inventario, Tipo, Cantidad, Motivo, Id_Proveedor)
-    VALUES (@Id_Movimiento, @Id_Inventario, @Tipo, @Cantidad, @Motivo, @Id_Proveedor)
+    INSERT INTO [dbo].[MovimientoInventario_TB] (Id_Movimiento, Id_Inventario, Tipo, Cantidad, Motivo, Id_Proveedor, Fecha_Vencimiento, Costo_Unitario)
+    VALUES (@Id_Movimiento, @Id_Inventario, @Tipo, @Cantidad, @Motivo, @Id_Proveedor, @Fecha_Vencimiento, @Costo_Unitario)
 
     UPDATE [dbo].[Inventario_TB]
     SET Stock_Actual = CASE

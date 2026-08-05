@@ -1,0 +1,78 @@
+@model IEnumerable<Abstracciones.Modelos.HorasExtra.HorasExtra.HorasExtraResponse>
+@{
+    Layout = null;
+    ViewData["Title"] = "Horas Adicionales";
+
+    Guid idTrabajador = ViewBag.IdTrabajador;
+    var registros = Model.OrderByDescending(r => r.Fecha).ToList();
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/dashboard.css" />
+</head>
+<body style="margin:0; background:var(--pt-blue-050,#f5f9ff);">
+<div style="padding:24px; max-width:720px;">
+    <h1 style="margin-top:0;">Horas Adicionales — @ViewBag.NombreTrabajador</h1>
+
+    @if (TempData["HorasExtraOk"] != null)
+    {
+        <div class="mf-error-banner" style="background:var(--pt-blue-050); color:var(--pt-blue-800); border-color:var(--pt-blue-100);">@TempData["HorasExtraOk"]</div>
+    }
+    @if (TempData["HorasExtraError"] != null)
+    {
+        <div class="mf-error-banner">@TempData["HorasExtraError"]</div>
+    }
+
+    <form method="post" action="/Trabajador/RegistrarHorasExtra" class="modal-form" style="background:var(--pt-white); border:1px solid var(--pt-border); border-radius:12px; padding:16px; margin-bottom:18px;">
+        <input type="hidden" name="Id_Trabajador" value="@idTrabajador" />
+
+        <div class="mf-group">
+            <label class="mf-label">Fecha</label>
+            <input type="date" name="Fecha" class="mf-input" required />
+        </div>
+
+        <div class="mf-group">
+            <label class="mf-label">Horas trabajadas</label>
+            <input type="number" step="0.5" min="0.5" max="24" name="Horas" class="mf-input" required />
+        </div>
+
+        <div class="mf-actions">
+            <button type="submit" class="mf-btn mf-btn-primary">Registrar</button>
+        </div>
+    </form>
+
+    <p style="color:var(--pt-ink-soft); font-size:0.85rem;">
+        El pago se calcula automáticamente a 1.5x la tarifa por hora configurada del empleado. Si no tiene tarifa configurada, el monto quedará pendiente hasta que se configure.
+    </p>
+
+    @if (registros.Count == 0)
+    {
+        <div class="empty-state">Este empleado no tiene horas adicionales registradas.</div>
+    }
+    else
+    {
+        <table class="data-table">
+            <thead>
+                <tr><th>Fecha</th><th>Horas</th><th>Tarifa aplicada</th><th>Monto calculado</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var r in registros)
+                {
+                    <tr>
+                        <td>@r.Fecha.ToString("dd/MM/yyyy")</td>
+                        <td>@r.Horas</td>
+                        <td>@(r.Tarifa_Aplicada.HasValue ? $"₡{r.Tarifa_Aplicada.Value:N2}" : "-")</td>
+                        <td>@(r.Monto_Calculado.HasValue ? $"₡{r.Monto_Calculado.Value:N2}" : "Pendiente (configure tarifa por hora)")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+</body>
+</html>
