@@ -1,3 +1,4 @@
+--comentario prueba trigger.
 CREATE PROCEDURE Activar_Trabajador
 	@Id_Trabajador UNIQUEIDENTIFIER
 AS
