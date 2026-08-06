@@ -70,6 +70,7 @@ const dashboardData = JSON.parse(
 const modules = dashboardData.modules;
 const currentRole = dashboardData.role;
 const currentIdTrabajador = dashboardData.idTrabajador;
+const apiBaseUrl = dashboardData.apiBaseUrl;
 
 const state = {
     selected: modules[0]?.key ?? null,
@@ -1027,7 +1028,7 @@ async function cargarNotificacionesPanadero() {
     if (currentRole !== 'Panadero' || !currentIdTrabajador) return;
 
     try {
-        const res = await fetch(`https://localhost:44378/api/Produccion/lista-diaria?Id_Trabajador=${currentIdTrabajador}`);
+        const res = await fetch(`${apiBaseUrl}api/Produccion/lista-diaria?Id_Trabajador=${currentIdTrabajador}`);
         if (res.status === 204) return;
         if (!res.ok) return;
 
@@ -1049,7 +1050,7 @@ async function cargarAlertaVencimientos() {
     if (currentRole !== 'Admin') return;
 
     try {
-        const res = await fetch(`https://localhost:44378/api/Perdida/pendientes`);
+        const res = await fetch(`${apiBaseUrl}api/Perdida/pendientes`);
         if (res.status === 204) return;
         if (!res.ok) return;
 

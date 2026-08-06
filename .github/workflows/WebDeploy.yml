@@ -1,0 +1,48 @@
+name: Build and Deploy Web
+
+env:
+  AZURE_WEBAPP_NAME: PuntoTrigoFront        # Cambia esto al nombre real de tu App Service para el frontend
+  AZURE_WEBAPP_PACKAGE_PATH: './Web'
+  DOTNET_VERSION: '8.0'
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - 'BD/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Replace API base URL in appsettings.json
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/appsettings.json'
+        env:
+          ApiSettings.BaseUrl: ${{ secrets.API_PUBLIC_BASE_URL }}
+
+      - name: Restore, Build and Publish
+        run: |
+          dotnet restore ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          dotnet build ${{ env.AZURE_WEBAPP_PACKAGE_PATH }} --configuration Release --no-restore
+          dotnet publish ${{ env.AZURE_WEBAPP_PACKAGE_PATH }} -c Release -o ./publish --no-restore
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_WEB_PUBLISH_PROFILE }}
+          package: ./publish

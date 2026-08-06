@@ -6,6 +6,7 @@ public class DashboardViewModel
     public string UserInitials { get; init; } = "PT";
     public string CurrentRole { get; init; } = "";
     public string IdTrabajador { get; init; } = "";
+    public string ApiBaseUrl { get; init; } = "";
     public IReadOnlyList<DashboardModuleViewModel> Modules { get; init; } = [];
 }
 

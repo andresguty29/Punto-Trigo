@@ -8,6 +8,13 @@ namespace Web.Controllers;
 [Authorize]
 public class HomeController : Controller
 {
+    private readonly IConfiguration _configuracion;
+
+    public HomeController(IConfiguration configuracion)
+    {
+        _configuracion = configuracion;
+    }
+
     public IActionResult Index()
     {
         var nombre   = User.Identity?.Name ?? "PT";
@@ -18,6 +25,8 @@ public class HomeController : Controller
 
         var rol = User.FindFirstValue(ClaimTypes.Role) ?? "";
         var idTrabajador = User.FindFirstValue("Id_Trabajador") ?? "";
+
+        var apiBaseUrl = (_configuracion["ApiSettings:BaseUrl"] ?? "https://localhost:44378/").TrimEnd('/') + "/";
 
         var todosModulos = new List<DashboardModuleViewModel>
         {
@@ -36,7 +45,7 @@ public class HomeController : Controller
                     Title = "Directorio de usuarios",
                     Columns = ["Usuario", "Trabajador", "Estado"],
                     EmptyMessage = "Sin usuarios registrados.",
-                    SourceUrl = "https://localhost:44378/api/Usuario"
+                    SourceUrl = apiBaseUrl + "api/Usuario"
                 }
             },
             new()
@@ -66,7 +75,7 @@ public class HomeController : Controller
                     Title = "Empleados",
                     Columns = ["Cédula", "Nombre", "Puesto", "Estado"],
                     EmptyMessage = "Sin trabajadores registrados.",
-                    SourceUrl = "https://localhost:44378/api/Trabajador"
+                    SourceUrl = apiBaseUrl + "api/Trabajador"
                 }
             },
             new()
@@ -83,7 +92,7 @@ public class HomeController : Controller
                     Title = "Catálogo de puestos",
                     Columns = ["Puesto", "Estado"],
                     EmptyMessage = "Sin puestos registrados.",
-                    SourceUrl = "https://localhost:44378/api/Puesto"
+                    SourceUrl = apiBaseUrl + "api/Puesto"
                 }
             },
             new()
@@ -113,7 +122,7 @@ public class HomeController : Controller
                     Title = "Catálogo de productos",
                     Columns = ["Imagen", "Código", "Nombre", "Proveedor", "Precio", "Stock", "Estado"],
                     EmptyMessage = "Sin productos registrados.",
-                    SourceUrl = "https://localhost:44378/api/Producto"
+                    SourceUrl = apiBaseUrl + "api/Producto"
                 }
             },
             new()
@@ -141,7 +150,7 @@ public class HomeController : Controller
                     Title = "Directorio de clientes",
                     Columns = ["Cédula", "Nombre", "Correo", "Teléfono", "Estado"],
                     EmptyMessage = "Sin clientes registrados.",
-                    SourceUrl = "https://localhost:44378/api/Cliente"
+                    SourceUrl = apiBaseUrl + "api/Cliente"
                 }
             },
 
@@ -160,7 +169,7 @@ public class HomeController : Controller
                     Title = "Items de inventario",
                     Columns = ["Nombre", "Unidad", "Stock actual", "Stock mínimo", "Proveedor", "Estado"],
                     EmptyMessage = "Sin items registrados.",
-                    SourceUrl = "https://localhost:44378/api/Inventario"
+                    SourceUrl = apiBaseUrl + "api/Inventario"
                 }
             },
             new()
@@ -188,7 +197,7 @@ public class HomeController : Controller
                     Title = "Directorio de proveedores",
                     Columns = ["Identificación", "Nombre", "Teléfono", "Correo", "Estado"],
                     EmptyMessage = "Sin proveedores registrados.",
-                    SourceUrl = "https://localhost:44378/api/Proveedor"
+                    SourceUrl = apiBaseUrl + "api/Proveedor"
                 }
             },
             new()
@@ -217,7 +226,7 @@ public class HomeController : Controller
                     Title = "Lista diaria de produccion",
                     Columns = ["Empleado", "Producto", "Cantidad diaria", "Realizado", "Estado"],
                     EmptyMessage = "Sin tareas diarias registradas.",
-                    SourceUrl = "https://localhost:44378/api/Produccion/lista-diaria"
+                    SourceUrl = apiBaseUrl + "api/Produccion/lista-diaria"
                 }
             },
             new()
@@ -252,6 +261,7 @@ public class HomeController : Controller
             UserInitials = initials,
             CurrentRole  = rol,
             IdTrabajador = idTrabajador,
+            ApiBaseUrl   = apiBaseUrl,
             Modules      = modulosDelRol
         };
 
